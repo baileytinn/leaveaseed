@@ -1,0 +1,3104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Leave a Seed App</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --soil: #1E1208;
+  --bark: #3A2210;
+  --moss: #2D4A1E;
+  --sage: #4E7240;
+  --fern: #7AAF6A;
+  --mint: #A8D090;
+  --straw: #D4A843;
+  --wheat: #EDD080;
+  --cream: #F7F0E0;
+  --parchment: #FBF6EC;
+  --rust: #A84A20;
+  --terra: #C4622A;
+  --sky: #5A9BB5;
+  --white: #FFFFFF;
+  --card-shadow: 0 4px 24px rgba(30,18,8,0.10);
+  --radius: 1.2rem;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--parchment);
+  color: var(--soil);
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* APP SHELL */
+.app-shell {
+  min-height: 100vh;
+  padding-bottom: 80px;
+  position: relative;
+}
+
+/* SCREENS */
+.screen {
+  display: none;
+  min-height: calc(100vh - 80px);
+  animation: screenIn 0.3s ease;
+}
+.screen.active { display: block; }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* TOP BAR */
+.top-bar {
+  padding: 1.2rem 1.2rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(251,246,236,0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(30,18,8,0.06);
+}
+
+.top-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--moss);
+}
+.top-logo span { color: var(--straw); }
+
+.top-actions { display: flex; gap: 0.7rem; align-items: center; }
+
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid rgba(30,18,8,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.icon-btn:hover { background: var(--cream); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: white;
+  border-top: 1px solid rgba(30,18,8,0.08);
+  display: flex;
+  padding: 0.6rem 0 0.8rem;
+  z-index: 200;
+  box-shadow: 0 -4px 20px rgba(30,18,8,0.07);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: all 0.2s;
+}
+
+.nav-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.nav-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(30,18,8,0.35);
+  transition: color 0.2s;
+}
+
+.nav-item.active .nav-label { color: var(--moss); }
+.nav-item.active .nav-icon { transform: scale(1.15); }
+
+.nav-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--moss);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.nav-item.active .nav-dot { opacity: 1; }
+
+/* ===================== */
+/* MARKETPLACE SCREEN    */
+/* ===================== */
+.search-bar {
+  margin: 1rem 1.2rem;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.search-input {
+  flex: 1;
+  background: white;
+  border: 1.5px solid rgba(30,18,8,0.1);
+  border-radius: 2rem;
+  padding: 0.75rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--soil);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--moss); }
+.search-input::placeholder { color: rgba(30,18,8,0.3); }
+
+.filter-btn {
+  background: var(--moss);
+  border: none;
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.category-chips {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0 1.2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 1rem;
+}
+.category-chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  white-space: nowrap;
+  padding: 0.45rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid rgba(30,18,8,0.12);
+  background: white;
+  color: var(--bark);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.chip.active {
+  background: var(--moss);
+  color: white;
+  border-color: var(--moss);
+}
+
+.section-label {
+  padding: 0 1.2rem;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-label h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.section-label a {
+  font-size: 0.8rem;
+  color: var(--moss);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.featured-scroll {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1.2rem 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 1.2rem;
+}
+.featured-scroll::-webkit-scrollbar { display: none; }
+
+.featured-card {
+  flex-shrink: 0;
+  width: 160px;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.featured-card:hover { transform: translateY(-3px); }
+
+.featured-img {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  position: relative;
+}
+.featured-card:nth-child(1) .featured-img { background: linear-gradient(135deg, #2D4A1E, #4E7240); }
+.featured-card:nth-child(2) .featured-img { background: linear-gradient(135deg, #7A3A10, #C4622A); }
+.featured-card:nth-child(3) .featured-img { background: linear-gradient(135deg, #1A3A4A, #5A9BB5); }
+.featured-card:nth-child(4) .featured-img { background: linear-gradient(135deg, #4A3A10, #D4A843); }
+.featured-card:nth-child(5) .featured-img { background: linear-gradient(135deg, #3A1A4A, #8A6AB5); }
+
+.verified-dot {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--straw);
+  color: var(--soil);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 1rem;
+}
+
+.featured-info { padding: 0.8rem; }
+.featured-info h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  line-height: 1.2;
+}
+.featured-info .vendor {
+  font-size: 0.7rem;
+  color: rgba(30,18,8,0.45);
+  margin-bottom: 0.5rem;
+}
+.featured-info .price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.featured-info .price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--moss);
+}
+.add-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--moss);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+}
+.add-btn:active { transform: scale(0.9); background: var(--bark); }
+
+.seed-list { padding: 0 1.2rem; display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem; }
+
+.seed-row {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.seed-row:hover { transform: translateX(4px); }
+
+.seed-emoji-box {
+  width: 54px; height: 54px;
+  border-radius: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.seed-row:nth-child(1) .seed-emoji-box { background: rgba(45,74,30,0.1); }
+.seed-row:nth-child(2) .seed-emoji-box { background: rgba(212,168,67,0.15); }
+.seed-row:nth-child(3) .seed-emoji-box { background: rgba(184,92,42,0.1); }
+.seed-row:nth-child(4) .seed-emoji-box { background: rgba(90,155,181,0.15); }
+
+.seed-row-info { flex: 1; }
+.seed-row-info h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.seed-row-info .meta {
+  font-size: 0.75rem;
+  color: rgba(30,18,8,0.45);
+}
+.seed-row-right { text-align: right; }
+.seed-row-right .price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--moss);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* ===================== */
+/* LEARN SCREEN          */
+/* ===================== */
+.learn-hero {
+  margin: 1rem 1.2rem;
+  background: linear-gradient(135deg, var(--moss), var(--sage));
+  border-radius: 1.5rem;
+  padding: 1.8rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.learn-hero::after {
+  content: '🌿';
+  position: absolute;
+  font-size: 6rem;
+  right: -1rem; bottom: -1rem;
+  opacity: 0.12;
+}
+.learn-hero h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.learn-hero p {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  font-weight: 300;
+}
+.learn-hero-btn {
+  background: var(--straw);
+  color: var(--soil);
+  border: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.learn-tracks { padding: 0 1.2rem; margin-bottom: 1.5rem; }
+
+.track-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.track-card:hover { transform: translateX(4px); }
+
+.track-icon {
+  width: 52px; height: 52px;
+  border-radius: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.track-card:nth-child(1) .track-icon { background: rgba(45,74,30,0.1); }
+.track-card:nth-child(2) .track-icon { background: rgba(212,168,67,0.15); }
+.track-card:nth-child(3) .track-icon { background: rgba(90,155,181,0.15); }
+.track-card:nth-child(4) .track-icon { background: rgba(168,92,32,0.1); }
+
+.track-info { flex: 1; }
+.track-info h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.track-info p { font-size: 0.78rem; color: rgba(30,18,8,0.5); line-height: 1.4; }
+
+.track-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+.track-lessons {
+  font-size: 0.72rem;
+  color: var(--moss);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.track-free {
+  font-size: 0.68rem;
+  background: rgba(45,74,30,0.1);
+  color: var(--moss);
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: 700;
+}
+
+.planting-cal { padding: 0 1.2rem; margin-bottom: 1.5rem; }
+.cal-card {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  border: 1.5px solid rgba(30,18,8,0.08);
+}
+.cal-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.zip-row {
+  display: flex;
+  gap: 0.6rem;
+}
+.zip-input {
+  flex: 1;
+  background: white;
+  border: 1.5px solid rgba(30,18,8,0.12);
+  border-radius: 2rem;
+  padding: 0.65rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+}
+.zip-btn {
+  background: var(--moss);
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.65rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.cal-results {
+  margin-top: 1rem;
+  display: none;
+}
+.cal-results.show { display: block; }
+.cal-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(30,18,8,0.06);
+}
+.cal-item:last-child { border-bottom: none; }
+.cal-emoji { font-size: 1.2rem; }
+.cal-item-info { flex: 1; }
+.cal-item-info h5 { font-size: 0.85rem; font-weight: 600; }
+.cal-item-info span { font-size: 0.75rem; color: rgba(30,18,8,0.5); }
+.cal-status {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-weight: 700;
+}
+.status-now { background: rgba(45,74,30,0.15); color: var(--moss); }
+.status-soon { background: rgba(212,168,67,0.2); color: #8A6A00; }
+
+/* ===================== */
+/* IMPACT SCREEN         */
+/* ===================== */
+.impact-header {
+  background: linear-gradient(160deg, var(--rust), var(--terra));
+  padding: 2rem 1.2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.impact-header::before {
+  content: '🌍';
+  position: absolute;
+  font-size: 10rem;
+  right: -2rem; top: -2rem;
+  opacity: 0.08;
+}
+.impact-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+.impact-header p {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.impact-cards {
+  padding: 0 1.2rem;
+  margin-top: -1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.impact-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: var(--card-shadow);
+}
+.impact-card .big-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.impact-card:nth-child(1) .big-num { color: var(--moss); }
+.impact-card:nth-child(2) .big-num { color: var(--terra); }
+.impact-card:nth-child(3) .big-num { color: var(--sky); }
+.impact-card:nth-child(4) .big-num { color: var(--straw); }
+
+.impact-card .card-label {
+  font-size: 0.75rem;
+  color: rgba(30,18,8,0.5);
+  line-height: 1.3;
+}
+
+.progress-section { padding: 0 1.2rem; margin-bottom: 1.5rem; }
+.progress-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.goal-item { margin-bottom: 1.2rem; }
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.goal-header span:first-child { font-size: 0.85rem; font-weight: 600; }
+.goal-header span:last-child { font-size: 0.82rem; color: rgba(30,18,8,0.45); }
+
+.progress-bar {
+  height: 8px;
+  background: rgba(30,18,8,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+.fill-green { background: linear-gradient(90deg, var(--moss), var(--fern)); }
+.fill-orange { background: linear-gradient(90deg, var(--rust), var(--terra)); }
+.fill-blue { background: linear-gradient(90deg, #1A3A4A, var(--sky)); }
+
+.recent-impact { padding: 0 1.2rem; margin-bottom: 1rem; }
+.recent-impact h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.impact-feed { display: flex; flex-direction: column; gap: 0.7rem; }
+.feed-item {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  box-shadow: 0 2px 12px rgba(30,18,8,0.07);
+}
+.feed-dot {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.feed-item:nth-child(1) .feed-dot { background: rgba(45,74,30,0.12); }
+.feed-item:nth-child(2) .feed-dot { background: rgba(168,92,32,0.12); }
+.feed-item:nth-child(3) .feed-dot { background: rgba(90,155,181,0.15); }
+
+.feed-text h5 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.15rem; }
+.feed-text p { font-size: 0.75rem; color: rgba(30,18,8,0.45); }
+
+/* ===================== */
+/* COMMUNITY SCREEN      */
+/* ===================== */
+.community-tabs {
+  display: flex;
+  padding: 0.8rem 1.2rem;
+  gap: 0.5rem;
+}
+.com-tab {
+  flex: 1;
+  padding: 0.55rem;
+  border-radius: 0.8rem;
+  background: white;
+  border: 1.5px solid rgba(30,18,8,0.1);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  color: var(--bark);
+  transition: all 0.2s;
+}
+.com-tab.active {
+  background: var(--moss);
+  color: white;
+  border-color: var(--moss);
+}
+
+.post-composer {
+  margin: 0 1.2rem 1.2rem;
+  background: white;
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--card-shadow);
+}
+.composer-row {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--moss), var(--fern));
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.compose-input {
+  flex: 1;
+  border: 1.5px solid rgba(30,18,8,0.1);
+  border-radius: 2rem;
+  padding: 0.6rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--soil);
+  outline: none;
+  background: var(--parchment);
+}
+.compose-input::placeholder { color: rgba(30,18,8,0.3); }
+
+.posts-feed { padding: 0 1.2rem; display: flex; flex-direction: column; gap: 1rem; }
+
+.post-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: var(--card-shadow);
+}
+.post-header {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.post-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: white;
+}
+.av1 { background: linear-gradient(135deg, #2D4A1E, #7AAF6A); }
+.av2 { background: linear-gradient(135deg, #7A3A10, #C4622A); }
+.av3 { background: linear-gradient(135deg, #1A3A4A, #5A9BB5); }
+.av4 { background: linear-gradient(135deg, #4A2A7A, #8A6AB5); }
+
+.post-meta h5 { font-size: 0.88rem; font-weight: 600; }
+.post-meta span { font-size: 0.72rem; color: rgba(30,18,8,0.4); }
+
+.post-tag {
+  margin-left: auto;
+  font-size: 0.68rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-weight: 700;
+}
+.tag-tip { background: rgba(45,74,30,0.1); color: var(--moss); }
+.tag-q { background: rgba(212,168,67,0.2); color: #8A6A00; }
+.tag-share { background: rgba(90,155,181,0.15); color: #2A6A8A; }
+
+.post-body { font-size: 0.88rem; line-height: 1.65; color: var(--bark); margin-bottom: 1rem; }
+
+.post-img {
+  border-radius: 0.8rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  height: 140px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem;
+  background: linear-gradient(135deg, rgba(45,74,30,0.1), rgba(122,175,106,0.2));
+}
+
+.post-actions {
+  display: flex;
+  gap: 1.2rem;
+}
+.post-action {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: rgba(30,18,8,0.4);
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: color 0.2s;
+}
+.post-action:hover { color: var(--moss); }
+.post-action.liked { color: var(--terra); }
+
+/* CART BADGE */
+.cart-badge {
+  background: var(--terra);
+  color: white;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute;
+  top: -4px; right: -4px;
+}
+.icon-btn { position: relative; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--soil);
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* SCROLL PADDING */
+.screen > *:last-child { padding-bottom: 1rem; }
+
+/* ===================== */
+/* AUTH SCREENS          */
+/* ===================== */
+.auth-screen {
+  display: none;
+  min-height: 100vh;
+  animation: screenIn 0.35s ease;
+  position: relative;
+}
+.auth-screen.active { display: block; }
+
+/* Splash / onboarding */
+.auth-splash {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--moss) 0%, #1a3010 60%, var(--bark) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.auth-splash::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.15), transparent 70%);
+  top: -100px; right: -100px;
+}
+.auth-splash::after {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(122,175,106,0.12), transparent 70%);
+  bottom: -50px; left: -50px;
+}
+
+.splash-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.3rem;
+  position: relative; z-index: 1;
+}
+.splash-logo span { color: var(--straw); }
+
+.splash-tagline {
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 3rem;
+  position: relative; z-index: 1;
+}
+
+.splash-seed {
+  font-size: 7rem;
+  margin-bottom: 2.5rem;
+  animation: float 4s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+
+.splash-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  position: relative; z-index: 1;
+}
+.splash-headline em { color: var(--wheat); font-style: italic; }
+
+.splash-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  font-weight: 300;
+  max-width: 320px;
+  position: relative; z-index: 1;
+}
+
+.splash-btns { display: flex; flex-direction: column; gap: 0.8rem; width: 100%; max-width: 320px; position: relative; z-index: 1; }
+
+.btn-splash-primary {
+  background: var(--straw);
+  color: var(--soil);
+  border: none;
+  padding: 1rem;
+  border-radius: 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(212,168,67,0.35);
+}
+.btn-splash-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,168,67,0.45); }
+
+.btn-splash-outline {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.35);
+  padding: 1rem;
+  border-radius: 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-splash-outline:hover { border-color: white; background: rgba(255,255,255,0.07); }
+
+.splash-guest {
+  margin-top: 1.2rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  text-decoration: underline;
+  position: relative; z-index: 1;
+}
+.splash-guest:hover { color: rgba(255,255,255,0.7); }
+
+/* Auth form shared */
+.auth-form-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form-top {
+  background: linear-gradient(160deg, var(--moss), #1a3010);
+  padding: 3.5rem 1.5rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.auth-form-top::after {
+  content: '🌱';
+  position: absolute;
+  font-size: 8rem;
+  right: -1rem; bottom: -2rem;
+  opacity: 0.08;
+}
+
+.auth-back {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: background 0.2s;
+}
+.auth-back:hover { background: rgba(255,255,255,0.25); }
+
+.auth-form-top h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.4rem;
+}
+.auth-form-top p {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  font-weight: 300;
+}
+
+.auth-form-body {
+  background: var(--parchment);
+  flex: 1;
+  border-radius: 2rem 2rem 0 0;
+  margin-top: -1.5rem;
+  padding: 2rem 1.5rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.form-group { margin-bottom: 1.2rem; }
+
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bark);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  background: white;
+  border: 1.5px solid rgba(30,18,8,0.12);
+  border-radius: 1rem;
+  padding: 0.85rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--soil);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px rgba(45,74,30,0.1);
+}
+.form-input::placeholder { color: rgba(30,18,8,0.3); }
+
+.form-input-row { display: flex; gap: 0.7rem; }
+.form-input-row .form-group { flex: 1; }
+
+.role-picker { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; }
+
+.role-option {
+  border: 1.5px solid rgba(30,18,8,0.12);
+  border-radius: 1rem;
+  padding: 0.8rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+}
+.role-option.selected {
+  border-color: var(--moss);
+  background: rgba(45,74,30,0.07);
+}
+.role-option-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+.role-option-label { font-size: 0.72rem; font-weight: 700; color: var(--bark); }
+.role-option.selected .role-option-label { color: var(--moss); }
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.2rem 0;
+  color: rgba(30,18,8,0.3);
+  font-size: 0.8rem;
+}
+.form-divider::before, .form-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(30,18,8,0.1);
+}
+
+.social-btns { display: flex; flex-direction: column; gap: 0.7rem; }
+.social-btn {
+  width: 100%;
+  border: 1.5px solid rgba(30,18,8,0.12);
+  border-radius: 1rem;
+  padding: 0.8rem;
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--soil);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: background 0.2s;
+}
+.social-btn:hover { background: var(--cream); }
+
+.btn-auth-submit {
+  width: 100%;
+  background: var(--moss);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(45,74,30,0.3);
+}
+.btn-auth-submit:hover { background: var(--bark); transform: translateY(-1px); }
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+  color: rgba(30,18,8,0.5);
+}
+.auth-switch a {
+  color: var(--moss);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forgot-link {
+  text-align: right;
+  margin-top: -0.8rem;
+  margin-bottom: 1rem;
+}
+.forgot-link a {
+  font-size: 0.8rem;
+  color: var(--moss);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ===================== */
+/* PROFILE SCREEN        */
+/* ===================== */
+.profile-header {
+  background: linear-gradient(160deg, var(--moss), #1a3010);
+  padding: 1rem 1.2rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.profile-header::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.15), transparent 70%);
+  top: -80px; right: -60px;
+}
+
+.profile-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.profile-top-bar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+}
+.settings-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  position: relative; z-index: 1;
+}
+
+.profile-avatar-lg {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--straw), var(--terra));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.3);
+  position: relative;
+}
+.avatar-edit {
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 22px; height: 22px;
+  background: var(--straw);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+.profile-name-block h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+.profile-name-block .profile-role {
+  font-size: 0.78rem;
+  background: rgba(212,168,67,0.25);
+  color: var(--wheat);
+  padding: 0.2rem 0.7rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 0.3rem;
+}
+.profile-name-block .profile-location {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.profile-stats-bar {
+  background: white;
+  border-radius: 1.2rem;
+  margin: -1.5rem 1.2rem 0;
+  padding: 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  box-shadow: var(--card-shadow);
+  position: relative; z-index: 2;
+}
+
+.pstat {
+  text-align: center;
+  padding: 0.3rem 0;
+}
+.pstat:not(:last-child) {
+  border-right: 1px solid rgba(30,18,8,0.08);
+}
+.pstat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--moss);
+  display: block;
+}
+.pstat-label {
+  font-size: 0.68rem;
+  color: rgba(30,18,8,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.profile-impact-banner {
+  margin: 1.2rem 1.2rem 0;
+  background: linear-gradient(135deg, var(--rust), var(--terra));
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.pib-icon { font-size: 2.5rem; flex-shrink: 0; }
+.pib-text h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+.pib-text p { font-size: 0.78rem; color: rgba(255,255,255,0.75); line-height: 1.4; }
+
+.profile-section { padding: 1.2rem 1.2rem 0; }
+.profile-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--soil);
+}
+
+.recent-seeds { display: flex; gap: 0.8rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.5rem; }
+.recent-seeds::-webkit-scrollbar { display: none; }
+
+.mini-seed-card {
+  flex-shrink: 0;
+  background: white;
+  border-radius: 1rem;
+  padding: 0.8rem;
+  width: 90px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(30,18,8,0.07);
+}
+.mini-seed-card .seed-em { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+.mini-seed-card span { font-size: 0.68rem; color: var(--bark); line-height: 1.3; display: block; font-weight: 600; }
+
+.profile-menu { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.menu-item {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+  box-shadow: 0 2px 10px rgba(30,18,8,0.05);
+}
+.menu-item:hover { background: var(--cream); transform: translateX(3px); }
+
+.menu-item-icon {
+  width: 40px; height: 40px;
+  border-radius: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.mi1 { background: rgba(45,74,30,0.1); }
+.mi2 { background: rgba(212,168,67,0.15); }
+.mi3 { background: rgba(90,155,181,0.15); }
+.mi4 { background: rgba(168,92,32,0.1); }
+.mi5 { background: rgba(30,18,8,0.06); }
+
+.menu-item-text { flex: 1; }
+.menu-item-text h4 { font-size: 0.9rem; font-weight: 600; color: var(--soil); margin-bottom: 0.1rem; }
+.menu-item-text p { font-size: 0.75rem; color: rgba(30,18,8,0.45); }
+.menu-arrow { color: rgba(30,18,8,0.25); font-size: 0.9rem; }
+
+.signout-btn {
+  width: 100%;
+  border: 1.5px solid rgba(168,92,32,0.3);
+  background: transparent;
+  color: var(--rust);
+  border-radius: 3rem;
+  padding: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+.signout-btn:hover { background: rgba(168,92,32,0.06); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ===================== */
+/* SEED DETAIL OVERLAY   */
+/* ===================== */
+.overlay-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--parchment);
+  z-index: 500;
+  overflow-y: auto;
+  animation: slideUp 0.35s cubic-bezier(0.32,0.72,0,1);
+}
+.overlay-screen.active { display: block; }
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.detail-hero {
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7rem;
+  position: relative;
+}
+.detail-back {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+.detail-fav {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s;
+}
+.detail-fav:active { transform: scale(1.3); }
+
+.detail-body {
+  background: white;
+  border-radius: 2rem 2rem 0 0;
+  margin-top: -1.8rem;
+  padding: 1.8rem 1.4rem 7rem;
+  position: relative;
+}
+
+.detail-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+.detail-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 2rem;
+  letter-spacing: 0.04em;
+}
+.badge-green { background: rgba(45,74,30,0.1); color: var(--moss); }
+.badge-gold { background: rgba(212,168,67,0.15); color: #7A5A00; }
+.badge-blue { background: rgba(90,155,181,0.15); color: #1A5A7A; }
+
+.detail-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--soil);
+  margin-bottom: 0.3rem;
+  line-height: 1.2;
+}
+.detail-vendor {
+  font-size: 0.82rem;
+  color: var(--moss);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.detail-vendor:hover { text-decoration: underline; }
+
+.detail-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+}
+.detail-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--moss);
+}
+.detail-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--bark);
+}
+.stars { color: var(--straw); font-size: 1rem; }
+
+.detail-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+.qty-label { font-size: 0.82rem; font-weight: 700; color: var(--bark); }
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--cream);
+  border-radius: 2rem;
+  overflow: hidden;
+}
+.qty-btn {
+  width: 36px; height: 36px;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--moss);
+  transition: background 0.15s;
+}
+.qty-btn:hover { background: rgba(45,74,30,0.1); }
+.qty-num {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.detail-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  color: var(--soil);
+}
+
+.detail-desc {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--bark);
+  margin-bottom: 1.4rem;
+  font-weight: 300;
+}
+
+.detail-specs {
+  background: var(--parchment);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.4rem;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(30,18,8,0.06);
+  font-size: 0.83rem;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-key { color: rgba(30,18,8,0.5); font-weight: 500; }
+.spec-val { font-weight: 700; color: var(--soil); }
+
+.growing-steps-mini { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.4rem; }
+.gs-item {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+.gs-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--moss);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.gs-text { font-size: 0.84rem; line-height: 1.5; color: var(--bark); }
+
+.reviews-list { display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.4rem; }
+.review-item {
+  background: var(--parchment);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.review-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.ra1 { background: linear-gradient(135deg, var(--moss), var(--fern)); }
+.ra2 { background: linear-gradient(135deg, var(--rust), var(--terra)); }
+.ra3 { background: linear-gradient(135deg, #1A3A4A, var(--sky)); }
+
+.review-meta h5 { font-size: 0.82rem; font-weight: 700; }
+.review-meta span { font-size: 0.7rem; color: rgba(30,18,8,0.4); }
+.review-stars { margin-left: auto; color: var(--straw); font-size: 0.8rem; }
+.review-text { font-size: 0.82rem; line-height: 1.6; color: var(--bark); }
+
+.detail-cta-bar {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: white;
+  border-top: 1px solid rgba(30,18,8,0.08);
+  padding: 1rem 1.4rem;
+  display: flex;
+  gap: 0.8rem;
+  z-index: 10;
+  box-shadow: 0 -4px 20px rgba(30,18,8,0.08);
+}
+.btn-detail-cart {
+  flex: 1;
+  background: var(--moss);
+  color: white;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-detail-cart:hover { background: var(--bark); }
+.btn-detail-cart:active { transform: scale(0.97); }
+.btn-detail-buy {
+  flex: 1;
+  background: var(--straw);
+  color: var(--soil);
+  border: none;
+  border-radius: 3rem;
+  padding: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(212,168,67,0.35);
+}
+.btn-detail-buy:hover { opacity: 0.9; }
+
+/* ===================== */
+/* VENDOR DASHBOARD      */
+/* ===================== */
+.vendor-dash-header {
+  background: linear-gradient(160deg, var(--bark) 0%, #1a0a04 100%);
+  padding: 1rem 1.2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.vendor-dash-header::before {
+  content: '🌾';
+  position: absolute;
+  font-size: 12rem;
+  right: -2rem; top: -2rem;
+  opacity: 0.06;
+}
+.vendor-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.vendor-top-bar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+.vendor-close {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: white;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.vendor-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative; z-index: 1;
+}
+.vendor-logo {
+  width: 58px; height: 58px;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--straw), var(--terra));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.vendor-name-block h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+.vendor-badge {
+  font-size: 0.7rem;
+  background: rgba(212,168,67,0.25);
+  color: var(--wheat);
+  padding: 0.2rem 0.7rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  display: inline-block;
+  border: 1px solid rgba(212,168,67,0.3);
+}
+
+.vendor-kpi-grid {
+  background: white;
+  border-radius: 1.2rem;
+  margin: -1.5rem 1.2rem 0;
+  padding: 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  box-shadow: var(--card-shadow);
+  position: relative; z-index: 2;
+}
+.vkpi {
+  background: var(--parchment);
+  border-radius: 0.8rem;
+  padding: 1rem;
+}
+.vkpi-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+.vkpi:nth-child(1) .vkpi-num { color: var(--moss); }
+.vkpi:nth-child(2) .vkpi-num { color: var(--straw); }
+.vkpi:nth-child(3) .vkpi-num { color: var(--sky); }
+.vkpi:nth-child(4) .vkpi-num { color: var(--terra); }
+.vkpi-label { font-size: 0.72rem; color: rgba(30,18,8,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.vendor-section { padding: 1.2rem 1.2rem 0; }
+.vendor-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.vendor-chart {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 0;
+}
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.chart-label { font-size: 0.68rem; color: rgba(30,18,8,0.4); font-weight: 600; }
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.bar {
+  width: 100%;
+  border-radius: 0.4rem 0.4rem 0 0;
+  background: linear-gradient(180deg, var(--fern), var(--moss));
+  transition: height 0.6s ease;
+  min-height: 4px;
+}
+.bar-val { font-size: 0.62rem; color: rgba(30,18,8,0.4); font-weight: 600; }
+
+.chart-months {
+  display: flex;
+  justify-content: space-around;
+}
+.chart-month { font-size: 0.65rem; color: rgba(30,18,8,0.35); font-weight: 600; }
+
+.vendor-seed-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.vseed-row {
+  background: white;
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 2px 10px rgba(30,18,8,0.06);
+}
+.vseed-emoji {
+  font-size: 1.6rem;
+  width: 44px; height: 44px;
+  border-radius: 0.7rem;
+  background: var(--parchment);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.vseed-info { flex: 1; }
+.vseed-info h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.15rem; }
+.vseed-info p { font-size: 0.72rem; color: rgba(30,18,8,0.45); }
+.vseed-right { text-align: right; }
+.vseed-sales { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--moss); display: block; }
+.vseed-units { font-size: 0.7rem; color: rgba(30,18,8,0.4); }
+
+.vseed-status {
+  font-size: 0.68rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+  display: inline-block;
+}
+.status-live { background: rgba(45,74,30,0.1); color: var(--moss); }
+.status-low { background: rgba(212,168,67,0.2); color: #7A5A00; }
+.status-draft { background: rgba(30,18,8,0.07); color: rgba(30,18,8,0.4); }
+
+.vendor-actions { display: flex; gap: 0.8rem; padding: 1.2rem; }
+.btn-vendor-add {
+  flex: 1;
+  background: var(--moss);
+  color: white;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-vendor-add:hover { background: var(--bark); }
+.btn-vendor-payout {
+  flex: 1;
+  background: var(--straw);
+  color: var(--soil);
+  border: none;
+  border-radius: 3rem;
+  padding: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(212,168,67,0.3);
+}
+.btn-vendor-payout:hover { opacity: 0.88; }
+
+.order-feed { display: flex; flex-direction: column; gap: 0.7rem; }
+.order-item {
+  background: white;
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 2px 10px rgba(30,18,8,0.06);
+}
+.order-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(45,74,30,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.order-info { flex: 1; }
+.order-info h5 { font-size: 0.84rem; font-weight: 700; margin-bottom: 0.12rem; }
+.order-info p { font-size: 0.72rem; color: rgba(30,18,8,0.45); }
+.order-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--moss);
+}
+
+.vendor-menu-items { display: flex; flex-direction: column; gap: 0.5rem; }
+
+
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">🌱 Added to cart!</div>
+
+  <!-- ======================== -->
+  <!-- MARKETPLACE SCREEN       -->
+  <!-- ======================== -->
+  <div class="screen active" id="screen-market">
+    <div class="top-bar">
+      <span class="top-logo">🌱 Leave a <span>Seed</span></span>
+      <div class="top-actions">
+        <div class="icon-btn" onclick="showToast('🔔 Notifications coming soon!')">🔔</div>
+        <div class="icon-btn" id="cart-btn" onclick="showToast('🛒 Cart: 0 items')">
+          🛒
+          <span class="cart-badge" id="cart-count" style="display:none">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input class="search-input" type="text" placeholder="Search 12,000+ seeds...">
+      <button class="filter-btn">⚙️</button>
+    </div>
+
+    <div class="category-chips">
+      <div class="chip active" onclick="setChip(this)">All Seeds</div>
+      <div class="chip" onclick="setChip(this)">Heirloom</div>
+      <div class="chip" onclick="setChip(this)">Organic</div>
+      <div class="chip" onclick="setChip(this)">Vegetables</div>
+      <div class="chip" onclick="setChip(this)">Herbs</div>
+      <div class="chip" onclick="setChip(this)">Flowers</div>
+      <div class="chip" onclick="setChip(this)">Fruit</div>
+    </div>
+
+    <div class="section-label">
+      <h2>✨ Featured Seeds</h2>
+      <a href="#">See all</a>
+    </div>
+
+    <div class="featured-scroll">
+      <div class="featured-card" onclick="openSeedDetail('tomato')">
+        <div class="featured-img">🍅<span class="verified-dot">✓ Verified</span></div>
+        <div class="featured-info">
+          <h4>Cherokee Purple Tomato</h4>
+          <div class="vendor">Appalachian Seeds</div>
+          <div class="price-row">
+            <span class="price">$4.99</span>
+            <button class="add-btn" onclick="event.stopPropagation();addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="featured-card" onclick="openSeedDetail('pepper')">
+        <div class="featured-img">🌶️<span class="verified-dot">✓ Verified</span></div>
+        <div class="featured-info">
+          <h4>Ancho Poblano Pepper</h4>
+          <div class="vendor">Southwest Seed Guild</div>
+          <div class="price-row">
+            <span class="price">$3.49</span>
+            <button class="add-btn" onclick="event.stopPropagation();addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="featured-card" onclick="openSeedDetail('lettuce')">
+        <div class="featured-img">🥬<span class="verified-dot">✓ Verified</span></div>
+        <div class="featured-info">
+          <h4>Butterhead Lettuce</h4>
+          <div class="vendor">Prairie Roots Org.</div>
+          <div class="price-row">
+            <span class="price">$2.99</span>
+            <button class="add-btn" onclick="event.stopPropagation();addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="featured-card" onclick="openSeedDetail('corn')">
+        <div class="featured-img">🌽<span class="verified-dot">✓ Verified</span></div>
+        <div class="featured-info">
+          <h4>Glass Gem Corn</h4>
+          <div class="vendor">Heritage Seed Farm</div>
+          <div class="price-row">
+            <span class="price">$6.99</span>
+            <button class="add-btn" onclick="event.stopPropagation();addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="featured-card" onclick="openSeedDetail('basil')">
+        <div class="featured-img">🫐<span class="verified-dot">✓ Verified</span></div>
+        <div class="featured-info">
+          <h4>Genovese Basil</h4>
+          <div class="vendor">Golden Gate Growers</div>
+          <div class="price-row">
+            <span class="price">$2.99</span>
+            <button class="add-btn" onclick="event.stopPropagation();addToCart(this)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">
+      <h2>🌿 All Seeds</h2>
+      <a href="#">Filter</a>
+    </div>
+
+    <div class="seed-list">
+      <div class="seed-row">
+        <div class="seed-emoji-box">🌿</div>
+        <div class="seed-row-info">
+          <h4>Genovese Basil</h4>
+          <div class="meta">Organic · Herb · Golden Gate Growers</div>
+        </div>
+        <div class="seed-row-right">
+          <span class="price">$2.99</span>
+          <button class="add-btn" onclick="addToCart(this)">+</button>
+        </div>
+      </div>
+      <div class="seed-row">
+        <div class="seed-emoji-box">🥦</div>
+        <div class="seed-row-info">
+          <h4>Calabrese Broccoli</h4>
+          <div class="meta">Heirloom · Vegetable · Midwest Seed Co.</div>
+        </div>
+        <div class="seed-row-right">
+          <span class="price">$3.49</span>
+          <button class="add-btn" onclick="addToCart(this)">+</button>
+        </div>
+      </div>
+      <div class="seed-row">
+        <div class="seed-emoji-box">🎃</div>
+        <div class="seed-row-info">
+          <h4>Sugar Pie Pumpkin</h4>
+          <div class="meta">Organic · Vegetable · Harvest Moon Seeds</div>
+        </div>
+        <div class="seed-row-right">
+          <span class="price">$4.49</span>
+          <button class="add-btn" onclick="addToCart(this)">+</button>
+        </div>
+      </div>
+      <div class="seed-row">
+        <div class="seed-emoji-box">🥕</div>
+        <div class="seed-row-info">
+          <h4>Danvers 126 Carrot</h4>
+          <div class="meta">Heirloom · Vegetable · Roots & Shoots Farm</div>
+        </div>
+        <div class="seed-row-right">
+          <span class="price">$2.49</span>
+          <button class="add-btn" onclick="addToCart(this)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- LEARN SCREEN             -->
+  <!-- ======================== -->
+  <div class="screen" id="screen-learn">
+    <div class="top-bar">
+      <span class="top-logo">🌱 Learn to Grow</span>
+    </div>
+
+    <div class="learn-hero">
+      <h2>Anyone Can Grow Their Own Food</h2>
+      <p>Free guides, videos, and planting tools — designed for every skill level and every space.</p>
+      <button class="learn-hero-btn">Start Your First Garden →</button>
+    </div>
+
+    <div class="section-label" style="padding:0 1.2rem; margin-bottom:0.8rem;">
+      <h2>📚 Learning Tracks</h2>
+    </div>
+
+    <div class="learn-tracks">
+      <div class="track-card" onclick="showToast('📖 Opening Beginner Guide...')">
+        <div class="track-icon">🌱</div>
+        <div class="track-info">
+          <h4>Beginners: Start With Seeds</h4>
+          <p>Your first garden, step by step — no experience needed</p>
+        </div>
+        <div class="track-meta">
+          <span class="track-lessons">8 lessons</span>
+          <span class="track-free">FREE</span>
+        </div>
+      </div>
+      <div class="track-card" onclick="showToast('🏙️ Opening Urban Growing...')">
+        <div class="track-icon">🏙️</div>
+        <div class="track-info">
+          <h4>Urban & Apartment Growing</h4>
+          <p>Containers, windowsills, balconies, and rooftop gardens</p>
+        </div>
+        <div class="track-meta">
+          <span class="track-lessons">6 lessons</span>
+          <span class="track-free">FREE</span>
+        </div>
+      </div>
+      <div class="track-card" onclick="showToast('💧 Opening Water-Wise Guide...')">
+        <div class="track-icon">💧</div>
+        <div class="track-info">
+          <h4>Water-Wise Gardening</h4>
+          <p>Grow more with less — drought resilience and irrigation</p>
+        </div>
+        <div class="track-meta">
+          <span class="track-lessons">5 lessons</span>
+          <span class="track-free">FREE</span>
+        </div>
+      </div>
+      <div class="track-card" onclick="showToast('🏫 Opening School Programs...')">
+        <div class="track-icon">🏫</div>
+        <div class="track-info">
+          <h4>School Garden Programs</h4>
+          <p>Free curriculum and seed kits for K–12 educators</p>
+        </div>
+        <div class="track-meta">
+          <span class="track-lessons">10 lessons</span>
+          <span class="track-free">FREE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="planting-cal" >
+      <div class="cal-card">
+        <h3>📅 Planting Calendar</h3>
+        <div class="zip-row">
+          <input class="zip-input" type="number" placeholder="Enter your zip code" id="zip-input" maxlength="5">
+          <button class="zip-btn" onclick="showCalendar()">Look Up</button>
+        </div>
+        <div class="cal-results" id="cal-results">
+          <div class="cal-item">
+            <span class="cal-emoji">🍅</span>
+            <div class="cal-item-info">
+              <h5>Tomatoes</h5>
+              <span>Start indoors Feb–Mar, transplant May</span>
+            </div>
+            <span class="cal-status status-now">Plant Now</span>
+          </div>
+          <div class="cal-item">
+            <span class="cal-emoji">🥬</span>
+            <div class="cal-item-info">
+              <h5>Lettuce</h5>
+              <span>Direct sow Mar–Apr outdoors</span>
+            </div>
+            <span class="cal-status status-now">Plant Now</span>
+          </div>
+          <div class="cal-item">
+            <span class="cal-emoji">🌽</span>
+            <div class="cal-item-info">
+              <h5>Corn</h5>
+              <span>Direct sow May–Jun after frost</span>
+            </div>
+            <span class="cal-status status-soon">Coming Soon</span>
+          </div>
+          <div class="cal-item">
+            <span class="cal-emoji">🎃</span>
+            <div class="cal-item-info">
+              <h5>Pumpkins</h5>
+              <span>Plant Jun for fall harvest</span>
+            </div>
+            <span class="cal-status status-soon">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- IMPACT SCREEN            -->
+  <!-- ======================== -->
+  <div class="screen" id="screen-impact">
+    <div class="impact-header">
+      <h1>Our Impact</h1>
+      <p>Every seed purchased funds real change in food-insecure communities across America.</p>
+    </div>
+
+    <div class="impact-cards">
+      <div class="impact-card">
+        <span class="big-num">$84K</span>
+        <span class="card-label">Donated to hunger programs</span>
+      </div>
+      <div class="impact-card">
+        <span class="big-num">1.2M</span>
+        <span class="card-label">Meals enabled by seed donations</span>
+      </div>
+      <div class="impact-card">
+        <span class="big-num">312</span>
+        <span class="card-label">Community gardens funded</span>
+      </div>
+      <div class="impact-card">
+        <span class="big-num">48</span>
+        <span class="card-label">States with active programs</span>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <h3>🎯 2025 Goals</h3>
+      <div class="goal-item">
+        <div class="goal-header">
+          <span>Seed donations to food deserts</span>
+          <span>67%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill fill-green" style="width:67%"></div>
+        </div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-header">
+          <span>Community gardens launched</span>
+          <span>42%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill fill-orange" style="width:42%"></div>
+        </div>
+      </div>
+      <div class="goal-item">
+        <div class="goal-header">
+          <span>School programs enrolled</span>
+          <span>81%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill fill-blue" style="width:81%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-impact">
+      <h3>📣 Recent Impact</h3>
+      <div class="impact-feed">
+        <div class="feed-item">
+          <div class="feed-dot">🌱</div>
+          <div class="feed-text">
+            <h5>500 seed packets donated to Detroit, MI</h5>
+            <p>Community garden program · 3 days ago</p>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot">🏫</div>
+          <div class="feed-text">
+            <h5>New school garden launched in Houston, TX</h5>
+            <p>K–8 education program · 1 week ago</p>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot">🥗</div>
+          <div class="feed-text">
+            <h5>Food bank partnership expanded in Chicago</h5>
+            <p>Urban farming initiative · 2 weeks ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- COMMUNITY SCREEN         -->
+  <!-- ======================== -->
+  <div class="screen" id="screen-community">
+    <div class="top-bar">
+      <span class="top-logo">🌱 Community</span>
+      <div class="top-actions">
+        <div class="icon-btn" onclick="showToast('🔍 Search coming soon!')">🔍</div>
+      </div>
+    </div>
+
+    <div class="community-tabs">
+      <button class="com-tab active" onclick="setComTab(this)">Feed</button>
+      <button class="com-tab" onclick="setComTab(this)">Questions</button>
+      <button class="com-tab" onclick="setComTab(this)">Success Stories</button>
+    </div>
+
+    <div class="post-composer" style="margin:0 1.2rem 1rem;">
+      <div class="composer-row">
+        <div class="avatar">Y</div>
+        <input class="compose-input" type="text" placeholder="Share a tip, ask a question...">
+      </div>
+    </div>
+
+    <div class="posts-feed">
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar av1">MR</div>
+          <div class="post-meta">
+            <h5>Maria R. · Denver, CO</h5>
+            <span>2 hours ago · 🌱 Verified Grower</span>
+          </div>
+          <span class="post-tag tag-tip">Tip</span>
+        </div>
+        <div class="post-body">Just harvested my first Cherokee Purple tomatoes from seeds I got here! Pro tip: let them get really dark — almost purple-black — before picking. The flavor is incredible. Worth every penny from Appalachian Seeds 🍅</div>
+        <div class="post-img">🍅</div>
+        <div class="post-actions">
+          <span class="post-action" onclick="likePost(this)">❤️ 47</span>
+          <span class="post-action">💬 12</span>
+          <span class="post-action">🔗 Share</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar av2">JK</div>
+          <div class="post-meta">
+            <h5>James K. · Austin, TX</h5>
+            <span>5 hours ago</span>
+          </div>
+          <span class="post-tag tag-q">Question</span>
+        </div>
+        <div class="post-body">First time growing peppers from seed. They've been in my seed trays for 3 weeks and barely sprouted. Room temp is around 68°F — could that be the issue? Any tips appreciated!</div>
+        <div class="post-actions">
+          <span class="post-action" onclick="likePost(this)">❤️ 8</span>
+          <span class="post-action">💬 23</span>
+          <span class="post-action">🔗 Share</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar av3">SL</div>
+          <div class="post-meta">
+            <h5>Sarah L. · Brooklyn, NY</h5>
+            <span>Yesterday</span>
+          </div>
+          <span class="post-tag tag-share">Story</span>
+        </div>
+        <div class="post-body">Living in a 400 sq ft apartment, I thought growing my own food was impossible. Six months later I have herbs, cherry tomatoes, and lettuce all growing on my windowsill and fire escape. The urban growing guide on here changed everything for me. 🌿</div>
+        <div class="post-actions">
+          <span class="post-action" onclick="likePost(this)">❤️ 134</span>
+          <span class="post-action">💬 31</span>
+          <span class="post-action">🔗 Share</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar av4">TD</div>
+          <div class="post-meta">
+            <h5>Tom D. · rural Iowa</h5>
+            <span>2 days ago · 🌾 Seed Vendor</span>
+          </div>
+          <span class="post-tag tag-tip">Tip</span>
+        </div>
+        <div class="post-body">Reminder that it's time to start saving seeds from your best performers this season! Label everything with variety name, date, and where it grew. Proper drying is key — spread them single-layer on a screen for 2+ weeks before storing.</div>
+        <div class="post-actions">
+          <span class="post-action" onclick="likePost(this)">❤️ 89</span>
+          <span class="post-action">💬 14</span>
+          <span class="post-action">🔗 Share</span>
+        </div>
+      </div>
+    </div>
+    <div style="height:1.5rem"></div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- PROFILE SCREEN           -->
+  <!-- ======================== -->
+  <div class="screen" id="screen-profile">
+    <!-- Logged OUT: show auth splash -->
+    <div id="profile-logged-out">
+      <div class="auth-splash">
+        <div class="splash-logo">🌱 Leave a <span>Seed</span></div>
+        <div class="splash-tagline">Grow Food. Share Knowledge. End Hunger.</div>
+        <div class="splash-seed">🌱</div>
+        <h2 class="splash-headline">Join the <em>Movement</em></h2>
+        <p class="splash-sub">Create a free account to track your impact, save seeds, access all learning guides, and connect with growers across America.</p>
+        <div class="splash-btns">
+          <button class="btn-splash-primary" onclick="showAuth('signup')">Create Free Account</button>
+          <button class="btn-splash-outline" onclick="showAuth('login')">Sign In</button>
+        </div>
+        <div class="splash-guest" onclick="guestBrowse()">Continue browsing as guest →</div>
+      </div>
+    </div>
+
+    <!-- Logged IN: show profile dashboard -->
+    <div id="profile-logged-in" style="display:none;">
+      <div class="profile-header">
+        <div class="profile-top-bar">
+          <h2>My Profile</h2>
+          <button class="settings-btn" onclick="showToast('⚙️ Settings coming soon!')">⚙️</button>
+        </div>
+        <div class="profile-identity">
+          <div class="profile-avatar-lg">
+            <span id="profile-initials">J</span>
+            <div class="avatar-edit">✏️</div>
+          </div>
+          <div class="profile-name-block">
+            <h3 id="profile-display-name">Jane Grower</h3>
+            <span class="profile-role" id="profile-role-badge">🧑‍🌾 Home Grower</span>
+            <div class="profile-location">📍 United States</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-stats-bar">
+        <div class="pstat">
+          <span class="pstat-num">12</span>
+          <span class="pstat-label">Orders</span>
+        </div>
+        <div class="pstat">
+          <span class="pstat-num">$3.60</span>
+          <span class="pstat-label">Contributed</span>
+        </div>
+        <div class="pstat">
+          <span class="pstat-num">4</span>
+          <span class="pstat-label">Guides Done</span>
+        </div>
+      </div>
+
+      <div class="profile-impact-banner" style="margin-top:1.2rem;">
+        <div class="pib-icon">🌍</div>
+        <div class="pib-text">
+          <h4>Your purchases have enabled 43 meals</h4>
+          <p>Through the Leave a Seed hunger initiative. Thank you for being part of the mission.</p>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h3>🌾 Recently Purchased</h3>
+        <div class="recent-seeds">
+          <div class="mini-seed-card">
+            <span class="seed-em">🍅</span>
+            <span>Cherokee Purple</span>
+          </div>
+          <div class="mini-seed-card">
+            <span class="seed-em">🌿</span>
+            <span>Genovese Basil</span>
+          </div>
+          <div class="mini-seed-card">
+            <span class="seed-em">🥬</span>
+            <span>Butterhead Lettuce</span>
+          </div>
+          <div class="mini-seed-card">
+            <span class="seed-em">🌽</span>
+            <span>Glass Gem Corn</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h3>⚙️ Account</h3>
+        <div class="profile-menu">
+          <div class="menu-item" onclick="showToast('📦 Your orders loading...')">
+            <div class="menu-item-icon mi1">📦</div>
+            <div class="menu-item-text">
+              <h4>My Orders</h4>
+              <p>Track and view your seed purchases</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item" onclick="showToast('❤️ Saved seeds loading...')">
+            <div class="menu-item-icon mi2">❤️</div>
+            <div class="menu-item-text">
+              <h4>Saved Seeds</h4>
+              <p>Your wishlist and favorites</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item" onclick="showToast('📚 Your progress loading...')">
+            <div class="menu-item-icon mi3">📚</div>
+            <div class="menu-item-text">
+              <h4>Learning Progress</h4>
+              <p>4 of 8 beginner lessons complete</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item" onclick="showToast('🌍 Impact report loading...')">
+            <div class="menu-item-icon mi4">🌍</div>
+            <div class="menu-item-text">
+              <h4>My Impact Report</h4>
+              <p>See the full story of your contributions</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item" onclick="showToast('👤 Edit profile coming soon!')">
+            <div class="menu-item-icon mi5">👤</div>
+            <div class="menu-item-text">
+              <h4>Edit Profile</h4>
+              <p>Name, location, growing zone</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item" onclick="openVendorDash()">
+            <div class="menu-item-icon mi2">🏪</div>
+            <div class="menu-item-text">
+              <h4>Vendor Dashboard</h4>
+              <p>Manage listings, orders & earnings</p>
+            </div>
+            <span class="menu-arrow">›</span>
+          </div>
+        </div>
+        <button class="signout-btn" onclick="signOut()">Sign Out</button>
+      </div>
+      <div style="height:1.5rem"></div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- ======================== -->
+  <!-- SEED DETAIL OVERLAY      -->
+  <!-- ======================== -->
+  <div class="overlay-screen" id="overlay-seed-detail">
+    <div class="detail-hero" id="detail-hero-bg">
+      <button class="detail-back" onclick="closeOverlay('seed-detail')">←</button>
+      <span id="detail-emoji" style="filter:drop-shadow(0 8px 24px rgba(0,0,0,0.2))">🍅</span>
+      <button class="detail-fav" id="detail-fav-btn" onclick="toggleFav()">🤍</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-badges">
+        <span class="detail-badge badge-green" id="detail-badge1">✓ Verified</span>
+        <span class="detail-badge badge-gold" id="detail-badge2">Heirloom</span>
+        <span class="detail-badge badge-blue" id="detail-badge3">Open-Pollinated</span>
+      </div>
+      <h1 class="detail-title" id="detail-name">Cherokee Purple Tomato</h1>
+      <div class="detail-vendor" onclick="openVendorDash()">🏢 Appalachian Seeds Co. →</div>
+      <div class="detail-price-row">
+        <span class="detail-price" id="detail-price">$4.99</span>
+        <div class="detail-rating">
+          <span class="stars">★★★★★</span>
+          <span>4.9 (128 reviews)</span>
+        </div>
+      </div>
+
+      <div class="detail-qty-row">
+        <span class="qty-label">Quantity:</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty-display">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="font-size:0.78rem;color:rgba(30,18,8,0.4);">packet = ~30 seeds</span>
+      </div>
+
+      <div class="detail-section-title">About This Seed</div>
+      <p class="detail-desc" id="detail-desc">The Cherokee Purple is one of the most beloved heirloom tomatoes in America. Originating from the Cherokee people of Tennessee, this variety produces large, dusky rose-purple fruits with a rich, complex, almost smoky flavor. It's a true garden showstopper — and the taste is unmatched by any modern hybrid.</p>
+
+      <div class="detail-section-title">Seed Specs</div>
+      <div class="detail-specs">
+        <div class="spec-row"><span class="spec-key">Days to Germination</span><span class="spec-val">7–14 days</span></div>
+        <div class="spec-row"><span class="spec-key">Days to Maturity</span><span class="spec-val">80–90 days</span></div>
+        <div class="spec-row"><span class="spec-key">Plant Spacing</span><span class="spec-val">24–36 inches</span></div>
+        <div class="spec-row"><span class="spec-key">Sun Requirement</span><span class="spec-val">Full Sun</span></div>
+        <div class="spec-row"><span class="spec-key">Soil Type</span><span class="spec-val">Well-drained, fertile</span></div>
+        <div class="spec-row"><span class="spec-key">Seed Count</span><span class="spec-val">~30 seeds/packet</span></div>
+        <div class="spec-row"><span class="spec-key">Germination Rate</span><span class="spec-val">92%</span></div>
+        <div class="spec-row"><span class="spec-key">Certified</span><span class="spec-val">✓ Non-GMO, Heirloom</span></div>
+      </div>
+
+      <div class="detail-section-title">How to Grow</div>
+      <div class="growing-steps-mini">
+        <div class="gs-item"><div class="gs-num">1</div><div class="gs-text">Start seeds indoors 6–8 weeks before last frost in seed trays with moist potting mix</div></div>
+        <div class="gs-item"><div class="gs-num">2</div><div class="gs-text">Keep soil warm (70–80°F). Seeds germinate in 7–14 days. Use a heat mat for best results</div></div>
+        <div class="gs-item"><div class="gs-num">3</div><div class="gs-text">Transplant outdoors after last frost, spacing plants 24–36 inches apart in full sun</div></div>
+        <div class="gs-item"><div class="gs-num">4</div><div class="gs-text">Water deeply 1–2 times per week. Stake or cage plants as they grow</div></div>
+        <div class="gs-item"><div class="gs-num">5</div><div class="gs-text">Harvest when fruits are deeply colored and slightly soft. Save seeds from best fruits!</div></div>
+      </div>
+
+      <div class="detail-section-title">Grower Reviews</div>
+      <div class="reviews-list">
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar ra1">MR</div>
+            <div class="review-meta"><h5>Maria R. · Denver, CO</h5><span>Verified Purchase · 2 weeks ago</span></div>
+            <span class="review-stars">★★★★★</span>
+          </div>
+          <p class="review-text">Absolutely incredible flavor. These are the best tomatoes I've ever grown — rich, complex, slightly smoky. My whole family was blown away. Will order every year.</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar ra2">JK</div>
+            <div class="review-meta"><h5>James K. · Austin, TX</h5><span>Verified Purchase · 1 month ago</span></div>
+            <span class="review-stars">★★★★★</span>
+          </div>
+          <p class="review-text">Great germination rate — 28 out of 30 seeds sprouted. Plants are vigorous and healthy. Already have fruit setting and we're only in July.</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar ra3">SL</div>
+            <div class="review-meta"><h5>Sarah L. · Brooklyn, NY</h5><span>Verified Purchase · 3 months ago</span></div>
+            <span class="review-stars">★★★★☆</span>
+          </div>
+          <p class="review-text">Growing in containers on my rooftop — they're doing surprisingly well! Took a bit longer to fruit than expected but the flavor is worth the wait.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky CTA -->
+    <div class="detail-cta-bar">
+      <button class="btn-detail-cart" onclick="addFromDetail()">Add to Cart</button>
+      <button class="btn-detail-buy" onclick="showToast('💳 Checkout coming soon!')">Buy Now</button>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- VENDOR DASHBOARD OVERLAY -->
+  <!-- ======================== -->
+  <div class="overlay-screen" id="overlay-vendor-dash">
+    <div class="vendor-dash-header">
+      <div class="vendor-top-bar">
+        <h2>Vendor Dashboard</h2>
+        <button class="vendor-close" onclick="closeOverlay('vendor-dash')">✕</button>
+      </div>
+      <div class="vendor-identity">
+        <div class="vendor-logo">🌾</div>
+        <div class="vendor-name-block">
+          <h3>Appalachian Seeds Co.</h3>
+          <span class="vendor-badge">✓ Verified Partner · Since 2024</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vendor-kpi-grid">
+      <div class="vkpi">
+        <span class="vkpi-num">$12,840</span>
+        <span class="vkpi-label">Total Revenue</span>
+      </div>
+      <div class="vkpi">
+        <span class="vkpi-num">847</span>
+        <span class="vkpi-label">Orders</span>
+      </div>
+      <div class="vkpi">
+        <span class="vkpi-num">4.9★</span>
+        <span class="vkpi-label">Avg Rating</span>
+      </div>
+      <div class="vkpi">
+        <span class="vkpi-num">$642</span>
+        <span class="vkpi-label">Impact Fund</span>
+      </div>
+    </div>
+
+    <div class="vendor-section" style="margin-top:1.2rem;">
+      <h3>📈 Sales This Year</h3>
+      <div class="vendor-chart">
+        <div class="bar-chart" id="vendor-bar-chart">
+          <div class="bar-col"><div class="bar" style="height:35%"></div><span class="bar-val">$820</span></div>
+          <div class="bar-col"><div class="bar" style="height:42%"></div><span class="bar-val">$980</span></div>
+          <div class="bar-col"><div class="bar" style="height:55%"></div><span class="bar-val">$1.2K</span></div>
+          <div class="bar-col"><div class="bar" style="height:70%"></div><span class="bar-val">$1.6K</span></div>
+          <div class="bar-col"><div class="bar" style="height:90%"></div><span class="bar-val">$2.1K</span></div>
+          <div class="bar-col"><div class="bar" style="height:100%;background:linear-gradient(180deg,var(--straw),var(--terra))"></div><span class="bar-val">$2.4K</span></div>
+        </div>
+        <div class="chart-months">
+          <span class="chart-month">Jan</span>
+          <span class="chart-month">Feb</span>
+          <span class="chart-month">Mar</span>
+          <span class="chart-month">Apr</span>
+          <span class="chart-month">May</span>
+          <span class="chart-month">Jun</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vendor-section" style="margin-top:1.2rem;">
+      <h3>🌱 Your Listings</h3>
+      <div class="vendor-seed-list">
+        <div class="vseed-row">
+          <div class="vseed-emoji">🍅</div>
+          <div class="vseed-info">
+            <h4>Cherokee Purple Tomato</h4>
+            <p>Heirloom · 30 seeds/packet</p>
+            <span class="vseed-status status-live">● Live</span>
+          </div>
+          <div class="vseed-right">
+            <span class="vseed-sales">$1,840</span>
+            <span class="vseed-units">368 sold</span>
+          </div>
+        </div>
+        <div class="vseed-row">
+          <div class="vseed-emoji">🫑</div>
+          <div class="vseed-info">
+            <h4>Jimmy Nardello Pepper</h4>
+            <p>Heirloom · 25 seeds/packet</p>
+            <span class="vseed-status status-live">● Live</span>
+          </div>
+          <div class="vseed-right">
+            <span class="vseed-sales">$960</span>
+            <span class="vseed-units">275 sold</span>
+          </div>
+        </div>
+        <div class="vseed-row">
+          <div class="vseed-emoji">🥒</div>
+          <div class="vseed-info">
+            <h4>Marketmore Cucumber</h4>
+            <p>Organic · 20 seeds/packet</p>
+            <span class="vseed-status status-low">⚠ Low Stock</span>
+          </div>
+          <div class="vseed-right">
+            <span class="vseed-sales">$540</span>
+            <span class="vseed-units">180 sold</span>
+          </div>
+        </div>
+        <div class="vseed-row">
+          <div class="vseed-emoji">🌸</div>
+          <div class="vseed-info">
+            <h4>Brandywine Pink Tomato</h4>
+            <p>Heirloom · 30 seeds/packet</p>
+            <span class="vseed-status status-draft">✎ Draft</span>
+          </div>
+          <div class="vseed-right">
+            <span class="vseed-sales">—</span>
+            <span class="vseed-units">Not listed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vendor-actions">
+      <button class="btn-vendor-add" onclick="showToast('➕ Add New Seed Listing coming soon!')">+ Add Listing</button>
+      <button class="btn-vendor-payout" onclick="showToast('💸 Payout request submitted!')">Request Payout</button>
+    </div>
+
+    <div class="vendor-section">
+      <h3>📦 Recent Orders</h3>
+      <div class="order-feed">
+        <div class="order-item">
+          <div class="order-icon">📦</div>
+          <div class="order-info"><h5>Cherokee Purple × 3</h5><p>Maria R. · Denver, CO · 2 hrs ago</p></div>
+          <span class="order-amount">$14.97</span>
+        </div>
+        <div class="order-item">
+          <div class="order-icon">📦</div>
+          <div class="order-info"><h5>Marketmore Cucumber × 2</h5><p>Tom D. · Iowa City, IA · 5 hrs ago</p></div>
+          <span class="order-amount">$6.98</span>
+        </div>
+        <div class="order-item">
+          <div class="order-icon">📦</div>
+          <div class="order-info"><h5>Jimmy Nardello Pepper × 1</h5><p>Sarah L. · Brooklyn, NY · Yesterday</p></div>
+          <span class="order-amount">$3.49</span>
+        </div>
+        <div class="order-item">
+          <div class="order-icon">📦</div>
+          <div class="order-info"><h5>Cherokee Purple × 5</h5><p>James K. · Austin, TX · 2 days ago</p></div>
+          <span class="order-amount">$24.95</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vendor-section" style="margin-bottom:1rem;">
+      <h3>⚙️ Vendor Tools</h3>
+      <div class="vendor-menu-items">
+        <div class="menu-item" onclick="showToast('📊 Analytics report loading...')">
+          <div class="menu-item-icon mi1">📊</div>
+          <div class="menu-item-text"><h4>Full Analytics Report</h4><p>Sales trends, buyer demographics</p></div>
+          <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="showToast('⭐ Reviews panel loading...')">
+          <div class="menu-item-icon mi2">⭐</div>
+          <div class="menu-item-text"><h4>Manage Reviews</h4><p>128 reviews · 4.9 avg rating</p></div>
+          <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="showToast('🌍 Your impact story loading...')">
+          <div class="menu-item-icon mi4">🌍</div>
+          <div class="menu-item-text"><h4>Hunger Impact Report</h4><p>$642 contributed to the mission</p></div>
+          <span class="menu-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="showToast('🏪 Store settings loading...')">
+          <div class="menu-item-icon mi5">🏪</div>
+          <div class="menu-item-text"><h4>Store Settings</h4><p>Profile, shipping, payment details</p></div>
+          <span class="menu-arrow">›</span>
+        </div>
+      </div>
+    </div>
+    <div style="height:2rem;"></div>
+  </div>
+
+  <!-- AUTH SCREENS (overlays)  -->
+  <!-- ======================== -->
+
+  <!-- LOGIN -->
+  <div class="auth-screen" id="auth-login">
+    <div class="auth-form-wrap">
+      <div class="auth-form-top">
+        <button class="auth-back" onclick="hideAuth('login')">←</button>
+        <h1>Welcome back 🌱</h1>
+        <p>Sign in to your Leave a Seed account</p>
+      </div>
+      <div class="auth-form-body">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" id="login-email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Enter your password" id="login-password">
+        </div>
+        <div class="forgot-link"><a onclick="showToast('📧 Password reset email sent!')">Forgot password?</a></div>
+        <button class="btn-auth-submit" onclick="doLogin()">Sign In</button>
+        <div class="form-divider">or continue with</div>
+        <div class="social-btns">
+          <button class="social-btn" onclick="doSocialLogin('Google')">🌐 Continue with Google</button>
+          <button class="social-btn" onclick="doSocialLogin('Apple')">🍎 Continue with Apple</button>
+        </div>
+        <div class="auth-switch">Don't have an account? <a onclick="switchAuth('login','signup')">Sign up free</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGN UP -->
+  <div class="auth-screen" id="auth-signup">
+    <div class="auth-form-wrap">
+      <div class="auth-form-top">
+        <button class="auth-back" onclick="hideAuth('signup')">←</button>
+        <h1>Join the movement 🌾</h1>
+        <p>Create your free Leave a Seed account</p>
+      </div>
+      <div class="auth-form-body">
+        <div class="form-input-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="Jane" id="signup-first">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Grower" id="signup-last">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" id="signup-email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Create a password" id="signup-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">I am a...</label>
+          <div class="role-picker">
+            <div class="role-option selected" onclick="selectRole(this)">
+              <span class="role-option-icon">🧑‍🌾</span>
+              <span class="role-option-label">Home Grower</span>
+            </div>
+            <div class="role-option" onclick="selectRole(this)">
+              <span class="role-option-icon">🌾</span>
+              <span class="role-option-label">Farmer</span>
+            </div>
+            <div class="role-option" onclick="selectRole(this)">
+              <span class="role-option-icon">🏢</span>
+              <span class="role-option-label">Seed Vendor</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-auth-submit" onclick="doSignup()">Create Free Account</button>
+        <div class="form-divider">or continue with</div>
+        <div class="social-btns">
+          <button class="social-btn" onclick="doSocialLogin('Google')">🌐 Continue with Google</button>
+          <button class="social-btn" onclick="doSocialLogin('Apple')">🍎 Continue with Apple</button>
+        </div>
+        <div class="auth-switch">Already have an account? <a onclick="switchAuth('signup','login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchScreen('market', this)">
+      <div class="nav-dot"></div>
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label">Shop</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('learn', this)">
+      <div class="nav-dot"></div>
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Learn</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('impact', this)">
+      <div class="nav-dot"></div>
+      <span class="nav-icon">🌍</span>
+      <span class="nav-label">Impact</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('community', this)">
+      <div class="nav-dot"></div>
+      <span class="nav-icon">🤝</span>
+      <span class="nav-label">Community</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('profile', this)">
+      <div class="nav-dot"></div>
+      <span class="nav-icon">🌿</span>
+      <span class="nav-label">Profile</span>
+    </div>
+  </nav>
+
+</div>
+
+<script>
+  let cartCount = 0;
+  let isLoggedIn = false;
+  let currentUser = {};
+  let detailQty = 1;
+  let isFaved = false;
+
+  // Seed data for detail page
+  const seeds = {
+    tomato: {
+      emoji: '🍅', name: 'Cherokee Purple Tomato', vendor: 'Appalachian Seeds Co.',
+      price: '$4.99', badge1: '✓ Verified', badge2: 'Heirloom', badge3: 'Open-Pollinated',
+      bg: 'linear-gradient(160deg, #2D4A1E, #4E7240)',
+      desc: 'The Cherokee Purple is one of the most beloved heirloom tomatoes in America. Originating from the Cherokee people of Tennessee, this variety produces large, dusky rose-purple fruits with a rich, complex, almost smoky flavor. A true garden showstopper.'
+    },
+    pepper: {
+      emoji: '🌶️', name: 'Ancho Poblano Pepper', vendor: 'Southwest Seed Guild',
+      price: '$3.49', badge1: '✓ Verified', badge2: 'Heirloom', badge3: 'Non-GMO',
+      bg: 'linear-gradient(160deg, #7A3A10, #C4622A)',
+      desc: 'The classic Mexican pepper used in chiles rellenos and mole. Ancho Poblanos are mild, earthy, and incredibly productive. Dark green when fresh, these peppers dry to a rich, chocolate-red ancho chile beloved in kitchens worldwide.'
+    },
+    lettuce: {
+      emoji: '🥬', name: 'Butterhead Lettuce', vendor: 'Prairie Roots Organics',
+      price: '$2.99', badge1: '✓ Verified', badge2: 'Organic', badge3: 'Non-GMO',
+      bg: 'linear-gradient(160deg, #1A3A4A, #5A9BB5)',
+      desc: 'Soft, buttery leaves with a mild, sweet flavor — Butterhead lettuce is perfect for beginner gardeners. It grows quickly, tolerates partial shade, and can be harvested leaf-by-leaf for a continuous supply all season long.'
+    },
+    corn: {
+      emoji: '🌽', name: 'Glass Gem Corn', vendor: 'Heritage Seed Farm',
+      price: '$6.99', badge1: '✓ Verified', badge2: 'Heirloom', badge3: 'Open-Pollinated',
+      bg: 'linear-gradient(160deg, #4A3A10, #D4A843)',
+      desc: 'One of the most visually stunning plants you can grow. Glass Gem Corn produces ears that look like strands of translucent, jewel-toned beads. Each ear is completely unique — a true work of art from Native American breeding traditions.'
+    },
+    basil: {
+      emoji: '🌿', name: 'Genovese Basil', vendor: 'Golden Gate Growers',
+      price: '$2.99', badge1: '✓ Verified', badge2: 'Organic', badge3: 'Culinary',
+      bg: 'linear-gradient(160deg, #2D4A1E, #7AAF6A)',
+      desc: 'The gold standard of Italian cooking. Genovese Basil has large, intensely fragrant leaves with a classic sweet-spicy flavor that is the soul of pesto and Caprese salad. Easy to grow in containers or garden beds in full sun.'
+    }
+  };
+
+  function openSeedDetail(seedKey) {
+    const seed = seeds[seedKey] || seeds.tomato;
+    document.getElementById('detail-emoji').textContent = seed.emoji;
+    document.getElementById('detail-hero-bg').style.background = seed.bg;
+    document.getElementById('detail-name').textContent = seed.name;
+    document.getElementById('detail-price').textContent = seed.price;
+    document.getElementById('detail-desc').textContent = seed.desc;
+    document.getElementById('detail-badge1').textContent = seed.badge1;
+    document.getElementById('detail-badge2').textContent = seed.badge2;
+    document.getElementById('detail-badge3').textContent = seed.badge3;
+    detailQty = 1;
+    document.getElementById('qty-display').textContent = 1;
+    isFaved = false;
+    document.getElementById('detail-fav-btn').textContent = '🤍';
+    document.getElementById('overlay-seed-detail').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function closeOverlay(name) {
+    document.getElementById('overlay-' + name).classList.remove('active');
+  }
+
+  function openVendorDash() {
+    document.getElementById('overlay-vendor-dash').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function changeQty(delta) {
+    detailQty = Math.max(1, Math.min(10, detailQty + delta));
+    document.getElementById('qty-display').textContent = detailQty;
+  }
+
+  function toggleFav() {
+    isFaved = !isFaved;
+    document.getElementById('detail-fav-btn').textContent = isFaved ? '❤️' : '🤍';
+    showToast(isFaved ? '❤️ Saved to your wishlist!' : '🤍 Removed from wishlist');
+  }
+
+  function addFromDetail() {
+    cartCount += detailQty;
+    const badge = document.getElementById('cart-count');
+    badge.textContent = cartCount;
+    badge.style.display = 'flex';
+    showToast('🌱 Added ' + detailQty + ' packet' + (detailQty > 1 ? 's' : '') + ' to cart!');
+  }
+
+  function switchScreen(name, el) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function setChip(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function setComTab(el) {
+    document.querySelectorAll('.com-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function addToCart(btn) {
+    cartCount++;
+    const badge = document.getElementById('cart-count');
+    badge.textContent = cartCount;
+    badge.style.display = 'flex';
+    btn.textContent = '✓';
+    btn.style.background = '#4E7240';
+    setTimeout(() => { btn.textContent = '+'; btn.style.background = ''; }, 1200);
+    showToast('🌱 Added to cart! ' + cartCount + ' item' + (cartCount > 1 ? 's' : '') + ' total');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function showCalendar() {
+    const zip = document.getElementById('zip-input').value;
+    if (zip.length >= 4) {
+      document.getElementById('cal-results').classList.add('show');
+      showToast('📅 Showing calendar for ' + zip);
+    } else {
+      showToast('⚠️ Please enter a valid zip code');
+    }
+  }
+
+  function likePost(el) {
+    el.classList.toggle('liked');
+    const num = parseInt(el.textContent.replace(/[^0-9]/g,''));
+    if (el.classList.contains('liked')) {
+      el.textContent = '❤️ ' + (num + 1);
+    } else {
+      el.textContent = '❤️ ' + (num - 1);
+    }
+  }
+
+  // AUTH FUNCTIONS
+  function showAuth(type) {
+    document.getElementById('auth-' + type).classList.add('active');
+    document.querySelector('.app-shell').style.display = 'none';
+  }
+
+  function hideAuth(type) {
+    document.getElementById('auth-' + type).classList.remove('active');
+    document.querySelector('.app-shell').style.display = 'block';
+  }
+
+  function switchAuth(from, to) {
+    document.getElementById('auth-' + from).classList.remove('active');
+    document.getElementById('auth-' + to).classList.add('active');
+  }
+
+  function selectRole(el) {
+    document.querySelectorAll('.role-option').forEach(r => r.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function doLogin() {
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-password').value;
+    if (!email || !pass) { showToast('⚠️ Please fill in all fields'); return; }
+    if (!email.includes('@')) { showToast('⚠️ Please enter a valid email'); return; }
+    const name = email.split('@')[0];
+    const firstName = name.charAt(0).toUpperCase() + name.slice(1);
+    loginUser({ name: firstName + ' Grower', role: 'Home Grower', initials: firstName.charAt(0).toUpperCase() });
+    hideAuth('login');
+    showToast('👋 Welcome back, ' + firstName + '!');
+  }
+
+  function doSignup() {
+    const first = document.getElementById('signup-first').value;
+    const last = document.getElementById('signup-last').value;
+    const email = document.getElementById('signup-email').value;
+    const pass = document.getElementById('signup-password').value;
+    const roleEl = document.querySelector('.role-option.selected .role-option-label');
+    if (!first || !email || !pass) { showToast('⚠️ Please fill in required fields'); return; }
+    if (!email.includes('@')) { showToast('⚠️ Please enter a valid email'); return; }
+    const fullName = first + ' ' + (last || '');
+    const role = roleEl ? roleEl.textContent : 'Home Grower';
+    const roleEmoji = role === 'Farmer' ? '🌾' : role === 'Seed Vendor' ? '🏢' : '🧑‍🌾';
+    loginUser({ name: fullName.trim(), role: roleEmoji + ' ' + role, initials: first.charAt(0).toUpperCase() });
+    hideAuth('signup');
+    showToast('🌱 Welcome to Leave a Seed, ' + first + '!');
+    if (role === 'Seed Vendor') {
+      setTimeout(() => { openVendorDash(); }, 800);
+    }
+  }
+
+  function doSocialLogin(provider) {
+    loginUser({ name: 'Alex Grower', role: '🧑‍🌾 Home Grower', initials: 'A' });
+    hideAuth('login');
+    hideAuth('signup');
+    document.querySelector('.app-shell').style.display = 'block';
+    showToast('✅ Signed in with ' + provider + '!');
+  }
+
+  function loginUser(user) {
+    isLoggedIn = true;
+    currentUser = user;
+    document.getElementById('profile-logged-out').style.display = 'none';
+    document.getElementById('profile-logged-in').style.display = 'block';
+    document.getElementById('profile-display-name').textContent = user.name;
+    document.getElementById('profile-initials').textContent = user.initials;
+    document.getElementById('profile-role-badge').textContent = user.role;
+  }
+
+  function signOut() {
+    isLoggedIn = false;
+    currentUser = {};
+    document.getElementById('profile-logged-out').style.display = 'block';
+    document.getElementById('profile-logged-in').style.display = 'none';
+    showToast('👋 You\'ve been signed out');
+  }
+
+  function guestBrowse() {
+    const navItems = document.querySelectorAll('.nav-item');
+    switchScreen('market', navItems[0]);
+    showToast('🛒 Browsing as guest — sign up to track your impact!');
+  }
+</script>
+</body>
+</html>
