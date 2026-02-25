@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Leave a Seed App</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--soil:#1E1208;--bark:#3A2210;--moss:#2D4A1E;--sage:#4E7240;--fern:#7AAF6A;--straw:#D4A843;--wheat:#EDD080;--cream:#F7F0E0;--parch:#FBF6EC;--rust:#A84A20;--terra:#C4622A;--sky:#5A9BB5;--shadow:0 4px 24px rgba(30,18,8,.10);--r:1.2rem}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--parch);color:var(--soil);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+.app{min-height:100vh;padding-bottom:80px}
+.screen{display:none;min-height:calc(100vh - 80px);animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.overlay{display:none;position:fixed;inset:0;max-width:430px;margin:0 auto;background:var(--parch);z-index:500;overflow-y:auto;animation:slideUp .35s cubic-bezier(.32,.72,0,1)}
+.overlay.active{display:block}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+/* TOP BAR */
+.topbar{padding:1rem 1.2rem .8rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(251,246,236,.95);backdrop-filter:blur(10px);z-index:100;border-bottom:1px solid rgba(30,18,8,.06)}
+.logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;color:var(--moss)}
+.logo span{color:var(--straw)}
+.topbar-actions{display:flex;gap:.6rem}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:white;border:1.5px solid rgba(30,18,8,.1);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;position:relative}
+.cart-badge{position:absolute;top:-3px;right:-3px;background:var(--terra);color:white;border-radius:50%;width:16px;height:16px;font-size:.6rem;font-weight:700;display:none;align-items:center;justify-content:center}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid rgba(30,18,8,.08);display:flex;padding:.5rem 0 .7rem;z-index:200;box-shadow:0 -4px 20px rgba(30,18,8,.07)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.15rem;cursor:pointer;padding:.2rem 0}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--moss);opacity:0;transition:opacity .2s}
+.nav-item.active .nav-dot{opacity:1}
+.nav-icon{font-size:1.3rem;transition:transform .2s}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-label{font-size:.6rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(30,18,8,.35);transition:color .2s}
+.nav-item.active .nav-label{color:var(--moss)}
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--soil);color:white;padding:.65rem 1.4rem;border-radius:2rem;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* CHIPS */
+.chips{display:flex;gap:.5rem;padding:0 1.2rem;overflow-x:auto;scrollbar-width:none;margin-bottom:1rem}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:.4rem .9rem;border-radius:2rem;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(30,18,8,.12);background:white;color:var(--bark);transition:all .2s;flex-shrink:0}
+.chip.active{background:var(--moss);color:white;border-color:var(--moss)}
+/* SEARCH */
+.search-row{margin:.8rem 1.2rem;display:flex;gap:.6rem}
+.search-input{flex:1;background:white;border:1.5px solid rgba(30,18,8,.1);border-radius:2rem;padding:.7rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--soil);outline:none}
+.search-input:focus{border-color:var(--moss)}
+.search-input::placeholder{color:rgba(30,18,8,.3)}
+/* ADVANCED SEARCH PANEL */
+.search-overlay{display:none;position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:600;animation:slideUp .3s cubic-bezier(.32,.72,0,1)}
+.search-overlay.active{display:block}
+.search-backdrop{position:absolute;inset:0;background:rgba(30,18,8,.45);backdrop-filter:blur(3px)}
+.search-panel{position:absolute;bottom:0;left:0;right:0;background:var(--parch);border-radius:2rem 2rem 0 0;padding:1.5rem 1.4rem 2.5rem;max-height:88vh;overflow-y:auto}
+.search-panel-handle{width:40px;height:4px;background:rgba(30,18,8,.15);border-radius:2px;margin:0 auto 1.4rem}
+.search-panel h2{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;margin-bottom:1.2rem}
+.search-panel-top{display:flex;gap:.7rem;margin-bottom:1.4rem}
+.search-panel-input{flex:1;background:white;border:1.5px solid rgba(30,18,8,.12);border-radius:2rem;padding:.75rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--soil);outline:none}
+.search-panel-input:focus{border-color:var(--moss)}
+.search-panel-input::placeholder{color:rgba(30,18,8,.3)}
+.search-clear{background:var(--cream);border:1.5px solid rgba(30,18,8,.1);border-radius:50%;width:44px;height:44px;font-size:.82rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--bark)}
+.filter-section{margin-bottom:1.3rem}
+.filter-label{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(30,18,8,.45);margin-bottom:.7rem;display:block}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.cat-btn{padding:.6rem .4rem;border-radius:.9rem;border:1.5px solid rgba(30,18,8,.1);background:white;cursor:pointer;text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif}
+.cat-btn .cb-em{font-size:1.4rem;display:block;margin-bottom:.2rem}
+.cat-btn .cb-lbl{font-size:.7rem;font-weight:700;color:var(--bark)}
+.cat-btn.active{border-color:var(--moss);background:rgba(45,74,30,.08)}
+.cat-btn.active .cb-lbl{color:var(--moss)}
+.price-range{padding:0 .3rem}
+.price-labels{display:flex;justify-content:space-between;margin-bottom:.5rem}
+.price-labels span{font-size:.8rem;font-weight:600;color:var(--bark)}
+.price-labels span:first-child{color:var(--moss)}
+.price-labels span:last-child{color:var(--moss)}
+.range-wrap{position:relative;height:28px;display:flex;align-items:center}
+.range-track{position:absolute;left:0;right:0;height:4px;background:rgba(30,18,8,.1);border-radius:2px}
+.range-fill{position:absolute;height:4px;background:var(--moss);border-radius:2px}
+input[type=range]{position:absolute;width:100%;opacity:0;height:28px;cursor:pointer;margin:0}
+input[type=range]::-webkit-slider-thumb{width:22px;height:22px}
+.range-min,.range-max{position:absolute;width:100%;-webkit-appearance:none;appearance:none;background:transparent;pointer-events:none}
+.range-min{pointer-events:auto}
+.range-max{pointer-events:auto}
+.vendor-list{display:flex;flex-direction:column;gap:.45rem}
+.vendor-opt{display:flex;align-items:center;gap:.8rem;background:white;border-radius:.9rem;padding:.75rem .9rem;border:1.5px solid rgba(30,18,8,.08);cursor:pointer;transition:all .2s}
+.vendor-opt.active{border-color:var(--moss);background:rgba(45,74,30,.06)}
+.vendor-opt-em{font-size:1.2rem}
+.vendor-opt-name{flex:1;font-size:.85rem;font-weight:600;color:var(--bark)}
+.vendor-opt.active .vendor-opt-name{color:var(--moss)}
+.vendor-check{width:18px;height:18px;border-radius:50%;border:2px solid rgba(30,18,8,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;transition:all .2s;flex-shrink:0}
+.vendor-opt.active .vendor-check{background:var(--moss);border-color:var(--moss);color:white}
+.search-actions{display:flex;gap:.7rem;margin-top:1.5rem}
+.btn-apply{flex:2;background:var(--moss);color:white;border:none;border-radius:3rem;padding:.9rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 4px 14px rgba(45,74,30,.25)}
+.btn-reset{flex:1;background:white;color:var(--bark);border:1.5px solid rgba(30,18,8,.12);border-radius:3rem;padding:.9rem;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;cursor:pointer}
+/* RESULTS */
+.result-bar{padding:.5rem 1.2rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem}
+.result-count{font-size:.8rem;color:rgba(30,18,8,.5);font-weight:600}
+.active-filters{display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none}
+.active-filters::-webkit-scrollbar{display:none}
+.filter-tag{white-space:nowrap;background:rgba(45,74,30,.1);color:var(--moss);border-radius:2rem;padding:.25rem .7rem;font-size:.72rem;font-weight:700;display:flex;align-items:center;gap:.3rem;cursor:pointer}
+.filter-tag span{font-size:.8rem}
+/* SECTION LABEL */
+.sec-label{padding:0 1.2rem;margin-bottom:.7rem;display:flex;align-items:center;justify-content:space-between}
+.sec-label h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}
+.sec-label a{font-size:.78rem;color:var(--moss);font-weight:600;text-decoration:none}
+/* FEATURED SCROLL */
+.feat-scroll{display:flex;gap:.9rem;padding:0 1.2rem 1rem;overflow-x:auto;scrollbar-width:none;margin-bottom:1rem}
+.feat-scroll::-webkit-scrollbar{display:none}
+.feat-card{flex-shrink:0;width:152px;background:white;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.feat-card:hover{transform:translateY(-3px)}
+.feat-img{height:105px;display:flex;align-items:center;justify-content:center;font-size:3.2rem;position:relative;overflow:hidden;background:#2D4A1E}
+.feat-img img{width:100%;height:100%;object-fit:cover;display:block}
+.vbadge{position:absolute;top:7px;right:7px;background:var(--straw);color:var(--soil);font-size:.6rem;font-weight:700;padding:.2rem .4rem;border-radius:1rem;z-index:2}
+.feat-info{padding:.7rem}
+.feat-info h4{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;margin-bottom:.15rem;line-height:1.2}
+.feat-info .vnd{font-size:.68rem;color:rgba(30,18,8,.4);margin-bottom:.45rem}
+.price-row{display:flex;align-items:center;justify-content:space-between}
+.price{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--moss)}
+.add-btn{width:24px;height:24px;border-radius:50%;background:var(--moss);color:white;border:none;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.add-btn:active{transform:scale(.88)}
+/* SEED LIST */
+.seed-list{padding:0 1.2rem;display:flex;flex-direction:column;gap:.7rem;margin-bottom:1rem}
+.seed-row{background:white;border-radius:var(--r);padding:.9rem;display:flex;gap:.9rem;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.seed-row:hover{transform:translateX(3px)}
+.seed-em-box{width:50px;height:50px;border-radius:.8rem;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;background:rgba(45,74,30,.09);overflow:hidden}
+.seed-em-box img{width:100%;height:100%;object-fit:cover;border-radius:.8rem}
+.seed-row-info{flex:1}
+.seed-row-info h4{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;margin-bottom:.12rem}
+.seed-row-info .meta{font-size:.72rem;color:rgba(30,18,8,.45)}
+.seed-row-right{text-align:right}
+.seed-row-right .price{display:block;margin-bottom:.25rem}
+/* LEARN */
+.learn-hero{margin:1rem 1.2rem;border-radius:1.5rem;padding:1.6rem;color:white;position:relative;overflow:hidden;min-height:160px}
+.learn-hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80');background-size:cover;background-position:center}
+.learn-hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,74,30,.88),rgba(78,114,64,.75))}
+.learn-hero h2,.learn-hero p,.learn-hero-btn{position:relative;z-index:1}
+.learn-hero h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;margin-bottom:.4rem;line-height:1.2}
+.learn-hero p{font-size:.82rem;opacity:.9;line-height:1.6;margin-bottom:1rem;font-weight:300}
+.learn-hero-btn{background:var(--straw);color:var(--soil);border:none;padding:.55rem 1.2rem;border-radius:2rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer}
+.track-list{padding:0 1.2rem;display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.2rem}
+.track-card{background:white;border-radius:var(--r);padding:1rem;display:flex;gap:.9rem;align-items:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.track-card:hover{transform:translateX(3px)}
+.track-icon{width:48px;height:48px;border-radius:.9rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;background:rgba(45,74,30,.09)}
+.track-info{flex:1}
+.track-info h4{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;margin-bottom:.15rem}
+.track-info p{font-size:.75rem;color:rgba(30,18,8,.5);line-height:1.4}
+.track-free{font-size:.68rem;background:rgba(45,74,30,.1);color:var(--moss);padding:.18rem .5rem;border-radius:1rem;font-weight:700}
+.cal-wrap{padding:0 1.2rem;margin-bottom:1.2rem}
+.cal-card{background:var(--cream);border-radius:var(--r);padding:1.1rem;border:1.5px solid rgba(30,18,8,.07)}
+.cal-card h3{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.9rem}
+.zip-row{display:flex;gap:.6rem}
+.zip-input{flex:1;background:white;border:1.5px solid rgba(30,18,8,.12);border-radius:2rem;padding:.6rem 1rem;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none}
+.zip-btn{background:var(--moss);color:white;border:none;border-radius:2rem;padding:.6rem 1.1rem;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer}
+.cal-results{margin-top:.9rem;display:none}
+.cal-results.show{display:block}
+.cal-item{display:flex;align-items:center;gap:.7rem;padding:.5rem 0;border-bottom:1px solid rgba(30,18,8,.06)}
+.cal-item:last-child{border-bottom:none}
+.cal-item-info{flex:1}
+.cal-item-info h5{font-size:.82rem;font-weight:600}
+.cal-item-info span{font-size:.72rem;color:rgba(30,18,8,.45)}
+.cal-status{font-size:.68rem;padding:.18rem .55rem;border-radius:1rem;font-weight:700}
+.now{background:rgba(45,74,30,.12);color:var(--moss)}
+.soon{background:rgba(212,168,67,.2);color:#7A5A00}
+/* IMPACT */
+.impact-hdr{padding:1.5rem 1.2rem 3rem;position:relative;overflow:hidden;min-height:140px}
+.impact-hdr-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=70');background-size:cover;background-position:center}
+.impact-hdr-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(168,74,32,.9),rgba(196,98,42,.8))}
+.impact-hdr h1,.impact-hdr p{position:relative;z-index:1}
+.impact-hdr h1{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:white;margin-bottom:.4rem}
+.impact-hdr p{font-size:.85rem;color:rgba(255,255,255,.75);font-weight:300;line-height:1.6}
+.kpi-grid{padding:0 1.2rem;margin-top:-1.4rem;display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.2rem}
+.kpi{background:white;border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow)}
+.kpi .num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;display:block;margin-bottom:.15rem}
+.kpi:nth-child(1) .num{color:var(--moss)}
+.kpi:nth-child(2) .num{color:var(--terra)}
+.kpi:nth-child(3) .num{color:var(--sky)}
+.kpi:nth-child(4) .num{color:var(--straw)}
+.kpi .lbl{font-size:.72rem;color:rgba(30,18,8,.5);line-height:1.3}
+.prog-sec{padding:0 1.2rem;margin-bottom:1.2rem}
+.prog-sec h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.9rem}
+.goal{margin-bottom:1rem}
+.goal-hdr{display:flex;justify-content:space-between;margin-bottom:.45rem;font-size:.82rem}
+.goal-hdr span:last-child{color:rgba(30,18,8,.45)}
+.pbar{height:7px;background:rgba(30,18,8,.08);border-radius:4px;overflow:hidden}
+.pfill{height:100%;border-radius:4px}
+.pg{background:linear-gradient(90deg,var(--moss),var(--fern))}
+.po{background:linear-gradient(90deg,var(--rust),var(--terra))}
+.pb{background:linear-gradient(90deg,#1A3A4A,var(--sky))}
+.feed-sec{padding:0 1.2rem;margin-bottom:1rem}
+.feed-sec h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.9rem}
+.feed-list{display:flex;flex-direction:column;gap:.6rem}
+.feed-item{background:white;border-radius:1rem;padding:.9rem;display:flex;gap:.8rem;align-items:center;box-shadow:0 2px 12px rgba(30,18,8,.07)}
+.feed-dot{width:38px;height:38px;border-radius:50%;background:rgba(45,74,30,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.feed-text h5{font-size:.82rem;font-weight:700;margin-bottom:.1rem}
+.feed-text p{font-size:.72rem;color:rgba(30,18,8,.45)}
+/* COMMUNITY */
+.com-tabs{display:flex;padding:.7rem 1.2rem;gap:.5rem}
+.com-tab{flex:1;padding:.5rem;border-radius:.8rem;background:white;border:1.5px solid rgba(30,18,8,.1);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;text-align:center;color:var(--bark);transition:all .2s}
+.com-tab.active{background:var(--moss);color:white;border-color:var(--moss)}
+.composer{margin:0 1.2rem .9rem;background:white;border-radius:var(--r);padding:.9rem;box-shadow:var(--shadow)}
+.comp-row{display:flex;gap:.7rem;align-items:center}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--fern));display:flex;align-items:center;justify-content:center;color:white;font-size:.82rem;font-weight:700;flex-shrink:0}
+.comp-input{flex:1;border:1.5px solid rgba(30,18,8,.1);border-radius:2rem;padding:.55rem .9rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--soil);outline:none;background:var(--parch)}
+.comp-input::placeholder{color:rgba(30,18,8,.3)}
+.posts{padding:0 1.2rem;display:flex;flex-direction:column;gap:.9rem}
+.post{background:white;border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow)}
+.post-hdr{display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem}
+.post-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:white;flex-shrink:0}
+.pa1{background:linear-gradient(135deg,#2D4A1E,#7AAF6A)}
+.pa2{background:linear-gradient(135deg,#7A3A10,#C4622A)}
+.pa3{background:linear-gradient(135deg,#1A3A4A,#5A9BB5)}
+.pa4{background:linear-gradient(135deg,#4A2A7A,#8A6AB5)}
+.post-meta{flex:1}
+.post-meta h5{font-size:.85rem;font-weight:600}
+.post-meta span{font-size:.7rem;color:rgba(30,18,8,.4)}
+.ptag{font-size:.67rem;padding:.18rem .55rem;border-radius:1rem;font-weight:700}
+.ptip{background:rgba(45,74,30,.1);color:var(--moss)}
+.pq{background:rgba(212,168,67,.2);color:#8A6A00}
+.pstory{background:rgba(90,155,181,.15);color:#2A6A8A}
+.post-body{font-size:.85rem;line-height:1.65;color:var(--bark);margin-bottom:.9rem}
+.post-img{border-radius:.8rem;height:130px;display:flex;align-items:center;justify-content:center;font-size:4.5rem;background:linear-gradient(135deg,rgba(45,74,30,.08),rgba(122,175,106,.18));margin-bottom:.9rem}
+.post-acts{display:flex;gap:1.1rem}
+.post-act{font-size:.78rem;color:rgba(30,18,8,.4);cursor:pointer;transition:color .2s;padding:.25rem 0}
+.post-act:hover,.post-act.liked{color:var(--terra)}
+/* PROFILE */
+.prof-hdr{background:linear-gradient(160deg,var(--moss),#1a3010);padding:1rem 1.2rem 3rem;position:relative;overflow:hidden}
+.prof-hdr::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,.14),transparent 70%);top:-60px;right:-50px}
+.prof-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem}
+.prof-topbar h2{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:white}
+.settings-btn{background:rgba(255,255,255,.14);border:none;color:white;width:34px;height:34px;border-radius:50%;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.prof-id{display:flex;align-items:center;gap:1rem;position:relative;z-index:1}
+.prof-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--straw),var(--terra));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:white;flex-shrink:0;border:3px solid rgba(255,255,255,.25);position:relative}
+.av-edit{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;background:var(--straw);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.55rem;cursor:pointer;border:2px solid white}
+.prof-name h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:white;margin-bottom:.2rem}
+.prof-role{font-size:.72rem;background:rgba(212,168,67,.22);color:var(--wheat);padding:.18rem .65rem;border-radius:1rem;font-weight:700;display:inline-block;margin-bottom:.25rem}
+.prof-loc{font-size:.75rem;color:rgba(255,255,255,.5)}
+.prof-stats{background:white;border-radius:var(--r);margin:-1.4rem 1.2rem 0;padding:1.1rem;display:grid;grid-template-columns:1fr 1fr 1fr;box-shadow:var(--shadow);position:relative;z-index:2}
+.pstat{text-align:center;padding:.25rem 0}
+.pstat:not(:last-child){border-right:1px solid rgba(30,18,8,.08)}
+.pstat .snum{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--moss);display:block}
+.pstat .slbl{font-size:.65rem;color:rgba(30,18,8,.45);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.impact-banner{margin:1.1rem 1.2rem 0;background:linear-gradient(135deg,var(--rust),var(--terra));border-radius:var(--r);padding:1.1rem;display:flex;align-items:center;gap:.9rem}
+.ib-icon{font-size:2.2rem;flex-shrink:0}
+.ib-text h4{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:white;margin-bottom:.18rem}
+.ib-text p{font-size:.75rem;color:rgba(255,255,255,.72);line-height:1.4}
+.prof-sec{padding:1.1rem 1.2rem 0}
+.prof-sec h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.75rem}
+.mini-seeds{display:flex;gap:.7rem;overflow-x:auto;scrollbar-width:none;padding-bottom:.4rem}
+.mini-seeds::-webkit-scrollbar{display:none}
+.mini-seed{flex-shrink:0;background:white;border-radius:.9rem;padding:.7rem;width:82px;text-align:center;box-shadow:0 2px 10px rgba(30,18,8,.07)}
+.mini-seed .em{font-size:1.7rem;display:block;margin-bottom:.25rem}
+.mini-seed span{font-size:.65rem;color:var(--bark);line-height:1.3;display:block;font-weight:600}
+.menu-list{display:flex;flex-direction:column;gap:.45rem}
+.menu-item{background:white;border-radius:1rem;padding:.9rem 1rem;display:flex;align-items:center;gap:.9rem;cursor:pointer;transition:transform .15s;box-shadow:0 2px 10px rgba(30,18,8,.05)}
+.menu-item:hover{transform:translateX(3px)}
+.mi-icon{width:38px;height:38px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.c1{background:rgba(45,74,30,.1)}
+.c2{background:rgba(212,168,67,.14)}
+.c3{background:rgba(90,155,181,.14)}
+.c4{background:rgba(168,92,32,.1)}
+.c5{background:rgba(30,18,8,.06)}
+.mi-text{flex:1}
+.mi-text h4{font-size:.88rem;font-weight:600;margin-bottom:.08rem}
+.mi-text p{font-size:.72rem;color:rgba(30,18,8,.45)}
+.mi-arrow{color:rgba(30,18,8,.22);font-size:.88rem}
+.signout-btn{width:100%;border:1.5px solid rgba(168,92,32,.28);background:transparent;color:var(--rust);border-radius:3rem;padding:.82rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;margin-top:.9rem;transition:background .2s}
+.signout-btn:hover{background:rgba(168,92,32,.06)}
+/* AUTH SPLASH */
+.auth-splash{min-height:100vh;background:linear-gradient(160deg,var(--moss) 0%,#1a3010 60%,var(--bark) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+.splash-logo{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:white;margin-bottom:.25rem}
+.splash-logo span{color:var(--straw)}
+.splash-tag{font-family:'Caveat',cursive;font-size:1rem;color:rgba(255,255,255,.55);margin-bottom:2.5rem}
+.splash-seed{font-size:6.5rem;margin-bottom:2rem;animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.splash-h{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:white;line-height:1.2;margin-bottom:.9rem}
+.splash-h em{color:var(--wheat);font-style:italic}
+.splash-sub{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:2.5rem;font-weight:300;max-width:300px}
+.splash-btns{display:flex;flex-direction:column;gap:.7rem;width:100%;max-width:300px}
+.btn-sp{background:var(--straw);color:var(--soil);border:none;padding:.95rem;border-radius:3rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 18px rgba(212,168,67,.32)}
+.btn-sp-out{background:transparent;color:white;border:2px solid rgba(255,255,255,.32);padding:.95rem;border-radius:3rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer}
+.splash-guest{margin-top:1rem;font-size:.8rem;color:rgba(255,255,255,.38);cursor:pointer;text-decoration:underline}
+/* AUTH FORM */
+.auth-form-screen{display:none;position:fixed;inset:0;max-width:430px;margin:0 auto;background:var(--parch);z-index:600;overflow-y:auto;animation:slideUp .35s cubic-bezier(.32,.72,0,1)}
+.auth-form-screen.active{display:block}
+.auth-top{background:linear-gradient(160deg,var(--moss),#1a3010);padding:3rem 1.4rem 3.5rem;position:relative;overflow:hidden}
+.auth-top::after{content:'🌱';position:absolute;font-size:7rem;right:-1rem;bottom:-2rem;opacity:.07}
+.auth-back{background:rgba(255,255,255,.14);border:none;color:white;width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-bottom:1.4rem}
+.auth-top h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:white;margin-bottom:.3rem}
+.auth-top p{font-size:.85rem;color:rgba(255,255,255,.58);font-weight:300}
+.auth-body{background:var(--parch);flex:1;border-radius:2rem 2rem 0 0;margin-top:-1.4rem;padding:1.8rem 1.4rem 2rem;position:relative;z-index:1}
+.fg{margin-bottom:1.1rem}
+.flbl{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bark);display:block;margin-bottom:.45rem}
+.finput{width:100%;background:white;border:1.5px solid rgba(30,18,8,.11);border-radius:1rem;padding:.82rem 1rem;font-family:'DM Sans',sans-serif;font-size:.92rem;color:var(--soil);outline:none;transition:border-color .2s}
+.finput:focus{border-color:var(--moss)}
+.finput::placeholder{color:rgba(30,18,8,.28)}
+.row2{display:flex;gap:.6rem}
+.row2 .fg{flex:1}
+.role-pick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.55rem}
+.role-opt{border:1.5px solid rgba(30,18,8,.11);border-radius:.9rem;padding:.75rem .4rem;text-align:center;cursor:pointer;background:white;transition:all .2s}
+.role-opt.sel{border-color:var(--moss);background:rgba(45,74,30,.07)}
+.role-opt .ri{font-size:1.4rem;display:block;margin-bottom:.25rem}
+.role-opt .rl{font-size:.68rem;font-weight:700;color:var(--bark)}
+.role-opt.sel .rl{color:var(--moss)}
+.divider{display:flex;align-items:center;gap:.9rem;margin:1.1rem 0;color:rgba(30,18,8,.28);font-size:.78rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(30,18,8,.1)}
+.social-btns{display:flex;flex-direction:column;gap:.6rem}
+.social-btn{width:100%;border:1.5px solid rgba(30,18,8,.11);border-radius:.9rem;padding:.75rem;background:white;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;color:var(--soil);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.55rem;transition:background .2s}
+.social-btn:hover{background:var(--cream)}
+.btn-submit{width:100%;background:var(--moss);color:white;border:none;padding:.95rem;border-radius:3rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;margin-top:.4rem;box-shadow:0 4px 14px rgba(45,74,30,.28);transition:background .2s}
+.btn-submit:hover{background:var(--bark)}
+.auth-sw{text-align:center;margin-top:1.1rem;font-size:.82rem;color:rgba(30,18,8,.48)}
+.auth-sw a{color:var(--moss);font-weight:700;cursor:pointer}
+.forgot{text-align:right;margin-top:-.7rem;margin-bottom:.9rem}
+.forgot a{font-size:.78rem;color:var(--moss);font-weight:600;cursor:pointer}
+/* SEED DETAIL */
+.det-hero{height:240px;display:flex;align-items:center;justify-content:center;font-size:6.5rem;position:relative;overflow:hidden;background:#2D4A1E}
+.det-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.det-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.35))}
+.det-back{position:absolute;top:1rem;left:1rem;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.82);border:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.1);backdrop-filter:blur(6px);z-index:10}
+.det-fav{position:absolute;top:1rem;right:1rem;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.82);border:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.1);transition:transform .2s}
+.det-fav:active{transform:scale(1.3)}
+.det-body{background:white;border-radius:2rem 2rem 0 0;margin-top:-1.6rem;padding:1.6rem 1.3rem 6.5rem;position:relative}
+.det-badges{display:flex;gap:.45rem;margin-bottom:.75rem;flex-wrap:wrap}
+.det-badge{font-size:.68rem;font-weight:700;padding:.22rem .65rem;border-radius:2rem}
+.bg{background:rgba(45,74,30,.1);color:var(--moss)}
+.bo{background:rgba(212,168,67,.14);color:#7A5A00}
+.bb{background:rgba(90,155,181,.14);color:#1A5A7A}
+.det-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--soil);margin-bottom:.25rem;line-height:1.15}
+.det-vendor{font-size:.8rem;color:var(--moss);font-weight:600;margin-bottom:.9rem;cursor:pointer}
+.det-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.det-price{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--moss)}
+.det-rating{display:flex;align-items:center;gap:.25rem;font-size:.82rem;color:var(--bark)}
+.stars{color:var(--straw);font-size:.95rem}
+.qty-row{display:flex;align-items:center;gap:.9rem;margin-bottom:1.2rem}
+.qty-lbl{font-size:.8rem;font-weight:700;color:var(--bark)}
+.qty-ctrl{display:flex;align-items:center;background:var(--cream);border-radius:2rem;overflow:hidden}
+.qty-btn{width:34px;height:34px;border:none;background:transparent;font-size:1rem;cursor:pointer;font-weight:700;color:var(--moss);transition:background .15s}
+.qty-btn:hover{background:rgba(45,74,30,.1)}
+.qty-num{min-width:30px;text-align:center;font-weight:700;font-size:.92rem}
+.det-stitle{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.65rem;color:var(--soil)}
+.det-desc{font-size:.85rem;line-height:1.75;color:var(--bark);margin-bottom:1.2rem;font-weight:300}
+.specs{background:var(--parch);border-radius:.9rem;padding:.9rem;margin-bottom:1.2rem}
+.spec-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(30,18,8,.06);font-size:.8rem}
+.spec-row:last-child{border-bottom:none}
+.sk{color:rgba(30,18,8,.48);font-weight:500}
+.sv{font-weight:700;color:var(--soil)}
+.grow-steps{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.2rem}
+.gs{display:flex;gap:.75rem;align-items:flex-start}
+.gsn{width:24px;height:24px;border-radius:50%;background:var(--moss);color:white;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:.05rem}
+.gst{font-size:.82rem;line-height:1.5;color:var(--bark)}
+.reviews{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.2rem}
+.rev{background:var(--parch);border-radius:.9rem;padding:.9rem}
+.rev-hdr{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem}
+.rev-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:white;flex-shrink:0}
+.rv1{background:linear-gradient(135deg,var(--moss),var(--fern))}
+.rv2{background:linear-gradient(135deg,var(--rust),var(--terra))}
+.rv3{background:linear-gradient(135deg,#1A3A4A,var(--sky))}
+.rev-meta{flex:1}
+.rev-meta h5{font-size:.8rem;font-weight:700}
+.rev-meta span{font-size:.68rem;color:rgba(30,18,8,.4)}
+.rev-stars{margin-left:auto;color:var(--straw);font-size:.78rem}
+.rev-text{font-size:.8rem;line-height:1.6;color:var(--bark)}
+.det-cta{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid rgba(30,18,8,.08);padding:.9rem 1.3rem;display:flex;gap:.7rem;z-index:10;box-shadow:0 -4px 20px rgba(30,18,8,.08)}
+.btn-cart{flex:1;background:var(--moss);color:white;border:none;border-radius:3rem;padding:.88rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;transition:background .2s}
+.btn-cart:hover{background:var(--bark)}
+.btn-buy{flex:1;background:var(--straw);color:var(--soil);border:none;border-radius:3rem;padding:.88rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 4px 14px rgba(212,168,67,.32)}
+/* VENDOR DASH */
+.vd-hdr{background:linear-gradient(160deg,var(--bark),#1a0a04);padding:1rem 1.2rem 3rem;position:relative;overflow:hidden}
+.vd-hdr::before{content:'🌾';position:absolute;font-size:11rem;right:-2rem;top:-2rem;opacity:.055}
+.vd-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
+.vd-topbar h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:white}
+.vd-close{background:rgba(255,255,255,.11);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.vd-id{display:flex;align-items:center;gap:.9rem;position:relative;z-index:1}
+.vd-logo{width:54px;height:54px;border-radius:.9rem;background:linear-gradient(135deg,var(--straw),var(--terra));display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:2px solid rgba(255,255,255,.18)}
+.vd-name h3{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:white;margin-bottom:.18rem}
+.vd-badge{font-size:.68rem;background:rgba(212,168,67,.22);color:var(--wheat);padding:.18rem .65rem;border-radius:1rem;font-weight:700;border:1px solid rgba(212,168,67,.28)}
+.vd-kpis{background:white;border-radius:var(--r);margin:-1.4rem 1.2rem 0;padding:1.1rem;display:grid;grid-template-columns:1fr 1fr;gap:.8rem;box-shadow:var(--shadow);position:relative;z-index:2}
+.vkpi{background:var(--parch);border-radius:.75rem;padding:.9rem}
+.vkpi .vn{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;display:block;margin-bottom:.12rem}
+.vkpi:nth-child(1) .vn{color:var(--moss)}
+.vkpi:nth-child(2) .vn{color:var(--straw)}
+.vkpi:nth-child(3) .vn{color:var(--sky)}
+.vkpi:nth-child(4) .vn{color:var(--terra)}
+.vkpi .vl{font-size:.7rem;color:rgba(30,18,8,.48);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.vd-sec{padding:1.1rem 1.2rem 0}
+.vd-sec h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.8rem}
+.bar-chart{background:white;border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow)}
+.bars{display:flex;align-items:flex-end;gap:.35rem;height:75px;margin-bottom:.45rem}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:.18rem}
+.bar{width:100%;border-radius:.35rem .35rem 0 0;background:linear-gradient(180deg,var(--fern),var(--moss));min-height:4px}
+.bar-val{font-size:.6rem;color:rgba(30,18,8,.38);font-weight:600}
+.chart-months{display:flex;justify-content:space-around}
+.cm{font-size:.62rem;color:rgba(30,18,8,.33);font-weight:600}
+.vseed-list{display:flex;flex-direction:column;gap:.6rem}
+.vseed-row{background:white;border-radius:.9rem;padding:.85rem;display:flex;align-items:center;gap:.8rem;box-shadow:0 2px 10px rgba(30,18,8,.06)}
+.vseed-em{font-size:1.5rem;width:42px;height:42px;border-radius:.65rem;background:var(--parch);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vseed-info{flex:1}
+.vseed-info h4{font-size:.85rem;font-weight:700;margin-bottom:.12rem}
+.vseed-info p{font-size:.7rem;color:rgba(30,18,8,.45)}
+.vstatus{font-size:.65rem;padding:.16rem .5rem;border-radius:1rem;font-weight:700;margin-top:.22rem;display:inline-block}
+.slive{background:rgba(45,74,30,.1);color:var(--moss)}
+.slow{background:rgba(212,168,67,.18);color:#7A5A00}
+.sdraft{background:rgba(30,18,8,.07);color:rgba(30,18,8,.38)}
+.vseed-right{text-align:right}
+.vseed-sales{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--moss);display:block}
+.vseed-units{font-size:.68rem;color:rgba(30,18,8,.4)}
+.vd-actions{display:flex;gap:.7rem;padding:1.1rem 1.2rem}
+.btn-vadd{flex:1;background:var(--moss);color:white;border:none;border-radius:3rem;padding:.85rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer}
+.btn-vpay{flex:1;background:var(--straw);color:var(--soil);border:none;border-radius:3rem;padding:.85rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;box-shadow:0 4px 12px rgba(212,168,67,.28)}
+.order-list{display:flex;flex-direction:column;gap:.6rem}
+.order-item{background:white;border-radius:.9rem;padding:.85rem;display:flex;align-items:center;gap:.8rem;box-shadow:0 2px 10px rgba(30,18,8,.06)}
+.order-icon{width:38px;height:38px;border-radius:50%;background:rgba(45,74,30,.1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.order-info{flex:1}
+.order-info h5{font-size:.82rem;font-weight:700;margin-bottom:.1rem}
+.order-info p{font-size:.7rem;color:rgba(30,18,8,.45)}
+.order-amt{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--moss)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<div class="toast" id="toast"></div>
+
+<!-- SHOP SCREEN -->
+<div class="screen active" id="screen-market">
+  <div class="topbar">
+    <span class="logo">🌱 Leave a <span>Seed</span></span>
+    <div class="topbar-actions">
+      <div class="icon-btn" onclick="toast('🔔 Notifications coming soon!')">🔔</div>
+      <div class="icon-btn" id="cart-btn" onclick="toast('🛒 Cart: '+cartCount+' items')">
+        🛒<span class="cart-badge" id="cart-badge">0</span>
+      </div>
+    </div>
+  </div>
+  <div class="search-row">
+    <input class="search-input" type="text" id="quick-search" placeholder="Search 12,000+ seeds..." oninput="quickSearch()">
+    <div class="icon-btn" style="background:var(--moss);border-color:var(--moss);color:white;font-size:1.1rem" onclick="openSearch()">⚙️</div>
+  </div>
+  <div class="result-bar" id="result-bar" style="display:none">
+    <span class="result-count" id="result-count">12 results</span>
+    <div class="active-filters" id="active-filters"></div>
+  </div>
+  <div class="chips">
+    <div class="chip active" onclick="setChip(this)">All Seeds</div>
+    <div class="chip" onclick="setChip(this)">Heirloom</div>
+    <div class="chip" onclick="setChip(this)">Organic</div>
+    <div class="chip" onclick="setChip(this)">Vegetables</div>
+    <div class="chip" onclick="setChip(this)">Herbs</div>
+    <div class="chip" onclick="setChip(this)">Flowers</div>
+  </div>
+  <div class="sec-label"><h2>✨ Featured</h2><a onclick="toast('Showing all seeds...')">See all</a></div>
+  <div class="feat-scroll">
+    <div class="feat-card" onclick="openDetail('tomato')">
+      <div class="feat-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cherokee_Purple_tomato.jpg/640px-Cherokee_Purple_tomato.jpg" alt="Cherokee Purple Tomato"><span class="vbadge">✓</span></div>
+      <div class="feat-info"><h4>Cherokee Purple Tomato</h4><div class="vnd">Appalachian Seeds</div><div class="price-row"><span class="price">$4.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    </div>
+    <div class="feat-card" onclick="openDetail('pepper')">
+      <div class="feat-img"><img src="https://images.unsplash.com/photo-1534735777-B55EE10AD21E?w=300&q=80" alt="Ancho Poblano Pepper"><span class="vbadge">✓</span></div>
+      <div class="feat-info"><h4>Ancho Poblano Pepper</h4><div class="vnd">Southwest Seed Guild</div><div class="price-row"><span class="price">$3.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    </div>
+    <div class="feat-card" onclick="openDetail('lettuce')">
+      <div class="feat-img"><img src="https://images.unsplash.com/photo-1556801712-76c80c8a7b27?w=300&q=80" alt="Butterhead Lettuce"><span class="vbadge">✓</span></div>
+      <div class="feat-info"><h4>Butterhead Lettuce</h4><div class="vnd">Prairie Roots Organics</div><div class="price-row"><span class="price">$2.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    </div>
+    <div class="feat-card" onclick="openDetail('corn')">
+      <div class="feat-img"><img src="https://images.unsplash.com/photo-1567375698348-5d9d5ae99de0?w=300&q=80" alt="Glass Gem Corn"><span class="vbadge">✓</span></div>
+      <div class="feat-info"><h4>Glass Gem Corn</h4><div class="vnd">Heritage Seed Farm</div><div class="price-row"><span class="price">$6.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    </div>
+    <div class="feat-card" onclick="openDetail('basil')">
+      <div class="feat-img"><img src="https://images.unsplash.com/photo-1560155016-bd4879ae8f72?w=300&q=80" alt="Genovese Basil"><span class="vbadge">✓</span></div>
+      <div class="feat-info"><h4>Genovese Basil</h4><div class="vnd">Golden Gate Growers</div><div class="price-row"><span class="price">$2.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    </div>
+  </div>
+  <div class="sec-label"><h2>🌿 All Seeds</h2><a>Filter</a></div>
+  <div class="seed-list">
+    <div class="seed-row" onclick="openDetail('basil')"><div class="seed-em-box"><img src="https://images.unsplash.com/photo-1560155016-bd4879ae8f72?w=100&q=80" alt="Basil"></div><div class="seed-row-info"><h4>Genovese Basil</h4><div class="meta">Organic · Herb · Golden Gate Growers</div></div><div class="seed-row-right"><span class="price">$2.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    <div class="seed-row" onclick="openDetail('lettuce')"><div class="seed-em-box"><img src="https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=100&q=80" alt="Broccoli"></div><div class="seed-row-info"><h4>Calabrese Broccoli</h4><div class="meta">Heirloom · Vegetable · Midwest Seed Co.</div></div><div class="seed-row-right"><span class="price">$3.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    <div class="seed-row" onclick="openDetail('corn')"><div class="seed-em-box"><img src="https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=100&q=80" alt="Pumpkin"></div><div class="seed-row-info"><h4>Sugar Pie Pumpkin</h4><div class="meta">Organic · Vegetable · Harvest Moon Seeds</div></div><div class="seed-row-right"><span class="price">$4.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+    <div class="seed-row" onclick="openDetail('tomato')"><div class="seed-em-box"><img src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=100&q=80" alt="Carrot"></div><div class="seed-row-info"><h4>Danvers 126 Carrot</h4><div class="meta">Heirloom · Vegetable · Roots &amp; Shoots Farm</div></div><div class="seed-row-right"><span class="price">$2.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>
+  </div>
+</div>
+
+<!-- LEARN SCREEN -->
+<div class="screen" id="screen-learn">
+  <div class="topbar"><span class="logo">🌱 Learn to Grow</span></div>
+  <div class="learn-hero">
+    <div class="learn-hero-bg"></div>
+    <h2>Anyone Can Grow Their Own Food</h2>
+    <p>Free guides, videos &amp; planting tools for every skill level.</p>
+    <button class="learn-hero-btn" onclick="toast('📖 Opening beginner guide...')">Start Your First Garden →</button>
+  </div>
+  <div class="sec-label" style="padding:0 1.2rem;margin:.9rem 0 .7rem"><h2>📚 Learning Tracks</h2></div>
+  <div class="track-list">
+    <div class="track-card" onclick="toast('🌱 Opening Beginner Guide...')"><div class="track-icon">🌱</div><div class="track-info"><h4>Beginners: Start With Seeds</h4><p>Your first garden step by step — no experience needed</p></div><span class="track-free">FREE</span></div>
+    <div class="track-card" onclick="toast('🏙️ Opening Urban Growing...')"><div class="track-icon">🏙️</div><div class="track-info"><h4>Urban &amp; Apartment Growing</h4><p>Containers, windowsills and balcony gardens</p></div><span class="track-free">FREE</span></div>
+    <div class="track-card" onclick="toast('💧 Opening Water-Wise Guide...')"><div class="track-icon">💧</div><div class="track-info"><h4>Water-Wise Gardening</h4><p>Grow more with less — drought resilience tips</p></div><span class="track-free">FREE</span></div>
+    <div class="track-card" onclick="toast('🏫 Opening School Programs...')"><div class="track-icon">🏫</div><div class="track-info"><h4>School Garden Programs</h4><p>Free curriculum and seed kits for K–12 educators</p></div><span class="track-free">FREE</span></div>
+  </div>
+  <div class="cal-wrap">
+    <div class="cal-card">
+      <h3>📅 Planting Calendar</h3>
+      <div class="zip-row">
+        <input class="zip-input" type="number" id="zip" placeholder="Enter zip code">
+        <button class="zip-btn" onclick="showCal()">Look Up</button>
+      </div>
+      <div class="cal-results" id="cal-results">
+        <div class="cal-item"><span>🍅</span><div class="cal-item-info"><h5>Tomatoes</h5><span>Start indoors Feb–Mar, transplant May</span></div><span class="cal-status now">Plant Now</span></div>
+        <div class="cal-item"><span>🥬</span><div class="cal-item-info"><h5>Lettuce</h5><span>Direct sow Mar–Apr outdoors</span></div><span class="cal-status now">Plant Now</span></div>
+        <div class="cal-item"><span>🌽</span><div class="cal-item-info"><h5>Corn</h5><span>Direct sow May–Jun after frost</span></div><span class="cal-status soon">Coming Soon</span></div>
+        <div class="cal-item"><span>🎃</span><div class="cal-item-info"><h5>Pumpkins</h5><span>Plant Jun for fall harvest</span></div><span class="cal-status soon">Coming Soon</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPACT SCREEN -->
+<div class="screen" id="screen-impact">
+  <div class="impact-hdr"><div class="impact-hdr-bg"></div><h1>Our Impact</h1><p>Every seed purchased funds real change in food-insecure communities across America.</p></div>
+  <div class="kpi-grid">
+    <div class="kpi"><span class="num">$84K</span><span class="lbl">Donated to hunger programs</span></div>
+    <div class="kpi"><span class="num">1.2M</span><span class="lbl">Meals enabled by seed donations</span></div>
+    <div class="kpi"><span class="num">312</span><span class="lbl">Community gardens funded</span></div>
+    <div class="kpi"><span class="num">48</span><span class="lbl">States with active programs</span></div>
+  </div>
+  <div class="prog-sec">
+    <h3>🎯 2025 Goals</h3>
+    <div class="goal"><div class="goal-hdr"><span>Seed donations to food deserts</span><span>67%</span></div><div class="pbar"><div class="pfill pg" style="width:67%"></div></div></div>
+    <div class="goal"><div class="goal-hdr"><span>Community gardens launched</span><span>42%</span></div><div class="pbar"><div class="pfill po" style="width:42%"></div></div></div>
+    <div class="goal"><div class="goal-hdr"><span>School programs enrolled</span><span>81%</span></div><div class="pbar"><div class="pfill pb" style="width:81%"></div></div></div>
+  </div>
+  <div class="feed-sec">
+    <h3>📣 Recent Impact</h3>
+    <div class="feed-list">
+      <div class="feed-item"><div class="feed-dot">🌱</div><div class="feed-text"><h5>500 seed packets donated to Detroit, MI</h5><p>Community garden program · 3 days ago</p></div></div>
+      <div class="feed-item"><div class="feed-dot">🏫</div><div class="feed-text"><h5>New school garden launched in Houston, TX</h5><p>K–8 education program · 1 week ago</p></div></div>
+      <div class="feed-item"><div class="feed-dot">🥗</div><div class="feed-text"><h5>Food bank partnership expanded in Chicago</h5><p>Urban farming initiative · 2 weeks ago</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITY SCREEN -->
+<div class="screen" id="screen-community">
+  <div class="topbar"><span class="logo">🌱 Community</span><div class="topbar-actions"><div class="icon-btn" onclick="toast('🔍 Search coming soon!')">🔍</div></div></div>
+  <div class="com-tabs">
+    <button class="com-tab active" onclick="setComTab(this)">Feed</button>
+    <button class="com-tab" onclick="setComTab(this)">Questions</button>
+    <button class="com-tab" onclick="setComTab(this)">Stories</button>
+  </div>
+  <div class="composer"><div class="comp-row"><div class="av">Y</div><input class="comp-input" type="text" placeholder="Share a tip, ask a question..."></div></div>
+  <div class="posts">
+    <div class="post"><div class="post-hdr"><div class="post-av pa1">MR</div><div class="post-meta"><h5>Maria R. · Denver, CO</h5><span>2 hours ago · 🌱 Verified Grower</span></div><span class="ptag ptip">Tip</span></div><div class="post-body">Just harvested my first Cherokee Purple tomatoes! Pro tip: let them get really dark before picking. The flavor is incredible 🍅</div><div class="post-img">🍅</div><div class="post-acts"><span class="post-act" onclick="likePost(this)">❤️ 47</span><span class="post-act">💬 12</span><span class="post-act">🔗 Share</span></div></div>
+    <div class="post"><div class="post-hdr"><div class="post-av pa2">JK</div><div class="post-meta"><h5>James K. · Austin, TX</h5><span>5 hours ago</span></div><span class="ptag pq">Question</span></div><div class="post-body">First time growing peppers from seed — 3 weeks in and barely sprouted. Room temp is 68°F, could that be the issue?</div><div class="post-acts"><span class="post-act" onclick="likePost(this)">❤️ 8</span><span class="post-act">💬 23</span><span class="post-act">🔗 Share</span></div></div>
+    <div class="post"><div class="post-hdr"><div class="post-av pa3">SL</div><div class="post-meta"><h5>Sarah L. · Brooklyn, NY</h5><span>Yesterday</span></div><span class="ptag pstory">Story</span></div><div class="post-body">Living in a 400 sq ft apartment, I thought growing my own food was impossible. Six months later I have herbs, tomatoes and lettuce on my windowsill 🌿</div><div class="post-acts"><span class="post-act" onclick="likePost(this)">❤️ 134</span><span class="post-act">💬 31</span><span class="post-act">🔗 Share</span></div></div>
+    <div class="post"><div class="post-hdr"><div class="post-av pa4">TD</div><div class="post-meta"><h5>Tom D. · rural Iowa</h5><span>2 days ago · 🌾 Seed Vendor</span></div><span class="ptag ptip">Tip</span></div><div class="post-body">Time to save seeds from your best performers! Label with variety, date and location. Dry on a screen for 2+ weeks before storing.</div><div class="post-acts"><span class="post-act" onclick="likePost(this)">❤️ 89</span><span class="post-act">💬 14</span><span class="post-act">🔗 Share</span></div></div>
+  </div>
+  <div style="height:1.5rem"></div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div class="screen" id="screen-profile">
+  <div id="prof-out">
+    <div class="auth-splash">
+      <div class="splash-logo">🌱 Leave a <span>Seed</span></div>
+      <div class="splash-tag">Grow Food. Share Knowledge. End Hunger.</div>
+      <div class="splash-seed">🌱</div>
+      <h2 class="splash-h">Join the <em>Movement</em></h2>
+      <p class="splash-sub">Create a free account to track your impact, save seeds, and connect with growers across America.</p>
+      <div class="splash-btns">
+        <button class="btn-sp" onclick="showAuthForm('signup')">Create Free Account</button>
+        <button class="btn-sp-out" onclick="showAuthForm('login')">Sign In</button>
+      </div>
+      <div class="splash-guest" onclick="guestBrowse()">Continue browsing as guest →</div>
+    </div>
+  </div>
+  <div id="prof-in" style="display:none">
+    <div class="prof-hdr">
+      <div class="prof-topbar"><h2>My Profile</h2><button class="settings-btn" onclick="toast('⚙️ Settings coming soon!')">⚙️</button></div>
+      <div class="prof-id">
+        <div class="prof-av"><span id="prof-init">J</span><div class="av-edit">✏️</div></div>
+        <div class="prof-name"><h3 id="prof-name">Jane Grower</h3><span class="prof-role" id="prof-role">🧑‍🌾 Home Grower</span><div class="prof-loc">📍 United States</div></div>
+      </div>
+    </div>
+    <div class="prof-stats">
+      <div class="pstat"><span class="snum">12</span><span class="slbl">Orders</span></div>
+      <div class="pstat"><span class="snum">$3.60</span><span class="slbl">Contributed</span></div>
+      <div class="pstat"><span class="snum">4</span><span class="slbl">Guides</span></div>
+    </div>
+    <div class="impact-banner" style="margin-top:1.1rem"><div class="ib-icon">🌍</div><div class="ib-text"><h4>Your purchases enabled 43 meals</h4><p>Through the Leave a Seed hunger initiative. Thank you!</p></div></div>
+    <div class="prof-sec"><h3>🌾 Recently Purchased</h3>
+      <div class="mini-seeds">
+        <div class="mini-seed"><span class="em">🍅</span><span>Cherokee Purple</span></div>
+        <div class="mini-seed"><span class="em">🌿</span><span>Genovese Basil</span></div>
+        <div class="mini-seed"><span class="em">🥬</span><span>Butterhead Lettuce</span></div>
+        <div class="mini-seed"><span class="em">🌽</span><span>Glass Gem Corn</span></div>
+      </div>
+    </div>
+    <div class="prof-sec"><h3>⚙️ Account</h3>
+      <div class="menu-list">
+        <div class="menu-item" onclick="toast('📦 Orders loading...')"><div class="mi-icon c1">📦</div><div class="mi-text"><h4>My Orders</h4><p>Track your seed purchases</p></div><span class="mi-arrow">›</span></div>
+        <div class="menu-item" onclick="toast('❤️ Saved seeds loading...')"><div class="mi-icon c2">❤️</div><div class="mi-text"><h4>Saved Seeds</h4><p>Your wishlist and favorites</p></div><span class="mi-arrow">›</span></div>
+        <div class="menu-item" onclick="toast('📚 Progress loading...')"><div class="mi-icon c3">📚</div><div class="mi-text"><h4>Learning Progress</h4><p>4 of 8 beginner lessons complete</p></div><span class="mi-arrow">›</span></div>
+        <div class="menu-item" onclick="openVendor()"><div class="mi-icon c2">🏪</div><div class="mi-text"><h4>Vendor Dashboard</h4><p>Manage listings, orders &amp; earnings</p></div><span class="mi-arrow">›</span></div>
+        <div class="menu-item" onclick="toast('🌍 Impact report loading...')"><div class="mi-icon c4">🌍</div><div class="mi-text"><h4>My Impact Report</h4><p>See your full contribution story</p></div><span class="mi-arrow">›</span></div>
+      </div>
+      <button class="signout-btn" onclick="signOut()">Sign Out</button>
+    </div>
+    <div style="height:1.5rem"></div>
+  </div>
+</div>
+
+<!-- SEED DETAIL OVERLAY -->
+<div class="overlay" id="ov-detail">
+  <div class="det-hero" id="det-hero-bg">
+    <img class="det-hero-img" id="det-hero-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cherokee_Purple_tomato.jpg/640px-Cherokee_Purple_tomato.jpg" alt="">
+    <div class="det-hero-overlay"></div>
+    <button class="det-back" onclick="closeOv('detail')">←</button>
+    <span id="det-em" style="display:none">🍅</span>
+    <button class="det-fav" id="det-fav" onclick="toggleFav()">🤍</button>
+  </div>
+  <div class="det-body">
+    <div class="det-badges"><span class="det-badge bg" id="det-b1">✓ Verified</span><span class="det-badge bo" id="det-b2">Heirloom</span><span class="det-badge bb" id="det-b3">Open-Pollinated</span></div>
+    <h1 class="det-title" id="det-name">Cherokee Purple Tomato</h1>
+    <div class="det-vendor" onclick="openVendor()">🏢 Appalachian Seeds Co. →</div>
+    <div class="det-price-row"><span class="det-price" id="det-price">$4.99</span><div class="det-rating"><span class="stars">★★★★★</span><span>4.9 (128 reviews)</span></div></div>
+    <div class="qty-row"><span class="qty-lbl">Quantity:</span><div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(-1)">−</button><span class="qty-num" id="qty-num">1</span><button class="qty-btn" onclick="changeQty(1)">+</button></div><span style="font-size:.75rem;color:rgba(30,18,8,.38)">~30 seeds/packet</span></div>
+    <div class="det-stitle">About This Seed</div>
+    <p class="det-desc" id="det-desc">A beloved heirloom tomato originating from the Cherokee people of Tennessee. Produces large, dusky rose-purple fruits with a rich, complex, smoky flavor. A true garden showstopper with unmatched taste.</p>
+    <div class="det-stitle">Seed Specs</div>
+    <div class="specs">
+      <div class="spec-row"><span class="sk">Days to Germination</span><span class="sv">7–14 days</span></div>
+      <div class="spec-row"><span class="sk">Days to Maturity</span><span class="sv">80–90 days</span></div>
+      <div class="spec-row"><span class="sk">Sun Requirement</span><span class="sv">Full Sun</span></div>
+      <div class="spec-row"><span class="sk">Germination Rate</span><span class="sv">92%</span></div>
+      <div class="spec-row"><span class="sk">Certified</span><span class="sv">✓ Non-GMO, Heirloom</span></div>
+    </div>
+    <div class="det-stitle">How to Grow</div>
+    <div class="grow-steps">
+      <div class="gs"><div class="gsn">1</div><div class="gst">Start seeds indoors 6–8 weeks before last frost in moist potting mix</div></div>
+      <div class="gs"><div class="gsn">2</div><div class="gst">Keep soil warm at 70–80°F. Seeds germinate in 7–14 days</div></div>
+      <div class="gs"><div class="gsn">3</div><div class="gst">Transplant outdoors after last frost, spacing 24–36 inches apart in full sun</div></div>
+      <div class="gs"><div class="gsn">4</div><div class="gst">Water deeply 1–2 times per week. Stake or cage plants as they grow</div></div>
+      <div class="gs"><div class="gsn">5</div><div class="gst">Harvest when deeply colored and slightly soft. Save seeds from best fruits!</div></div>
+    </div>
+    <div class="det-stitle">Grower Reviews</div>
+    <div class="reviews">
+      <div class="rev"><div class="rev-hdr"><div class="rev-av rv1">MR</div><div class="rev-meta"><h5>Maria R. · Denver, CO</h5><span>Verified Purchase · 2 weeks ago</span></div><span class="rev-stars">★★★★★</span></div><p class="rev-text">Absolutely incredible flavor — rich, complex, slightly smoky. The best tomatoes I've ever grown. Will order every year.</p></div>
+      <div class="rev"><div class="rev-hdr"><div class="rev-av rv2">JK</div><div class="rev-meta"><h5>James K. · Austin, TX</h5><span>Verified Purchase · 1 month ago</span></div><span class="rev-stars">★★★★★</span></div><p class="rev-text">Great germination rate — 28 out of 30 seeds sprouted. Plants are vigorous and already setting fruit.</p></div>
+      <div class="rev"><div class="rev-hdr"><div class="rev-av rv3">SL</div><div class="rev-meta"><h5>Sarah L. · Brooklyn, NY</h5><span>Verified Purchase · 3 months ago</span></div><span class="rev-stars">★★★★☆</span></div><p class="rev-text">Growing in containers on my rooftop — doing surprisingly well! Flavor is absolutely worth the wait.</p></div>
+    </div>
+  </div>
+  <div class="det-cta"><button class="btn-cart" onclick="addFromDetail()">Add to Cart</button><button class="btn-buy" onclick="toast('💳 Checkout coming soon!')">Buy Now</button></div>
+</div>
+
+<!-- VENDOR DASHBOARD OVERLAY -->
+<div class="overlay" id="ov-vendor">
+  <div class="vd-hdr">
+    <div class="vd-topbar"><h2>Vendor Dashboard</h2><button class="vd-close" onclick="closeOv('vendor')">✕</button></div>
+    <div class="vd-id"><div class="vd-logo">🌾</div><div class="vd-name"><h3>Appalachian Seeds Co.</h3><span class="vd-badge">✓ Verified Partner · Since 2024</span></div></div>
+  </div>
+  <div class="vd-kpis">
+    <div class="vkpi"><span class="vn">$12,840</span><span class="vl">Total Revenue</span></div>
+    <div class="vkpi"><span class="vn">847</span><span class="vl">Orders</span></div>
+    <div class="vkpi"><span class="vn">4.9★</span><span class="vl">Avg Rating</span></div>
+    <div class="vkpi"><span class="vn">$642</span><span class="vl">Impact Fund</span></div>
+  </div>
+  <div class="vd-sec" style="margin-top:1.1rem"><h3>📈 Sales This Year</h3>
+    <div class="bar-chart">
+      <div class="bars">
+        <div class="bar-col"><div class="bar" style="height:35%"></div><span class="bar-val">$820</span></div>
+        <div class="bar-col"><div class="bar" style="height:42%"></div><span class="bar-val">$980</span></div>
+        <div class="bar-col"><div class="bar" style="height:55%"></div><span class="bar-val">$1.2K</span></div>
+        <div class="bar-col"><div class="bar" style="height:70%"></div><span class="bar-val">$1.6K</span></div>
+        <div class="bar-col"><div class="bar" style="height:90%"></div><span class="bar-val">$2.1K</span></div>
+        <div class="bar-col"><div class="bar" style="height:100%;background:linear-gradient(180deg,var(--straw),var(--terra))"></div><span class="bar-val">$2.4K</span></div>
+      </div>
+      <div class="chart-months"><span class="cm">Jan</span><span class="cm">Feb</span><span class="cm">Mar</span><span class="cm">Apr</span><span class="cm">May</span><span class="cm">Jun</span></div>
+    </div>
+  </div>
+  <div class="vd-sec" style="margin-top:1.1rem"><h3>🌱 Your Listings</h3>
+    <div class="vseed-list">
+      <div class="vseed-row"><div class="vseed-em">🍅</div><div class="vseed-info"><h4>Cherokee Purple Tomato</h4><p>Heirloom · 30 seeds/packet</p><span class="vstatus slive">● Live</span></div><div class="vseed-right"><span class="vseed-sales">$1,840</span><span class="vseed-units">368 sold</span></div></div>
+      <div class="vseed-row"><div class="vseed-em">🫑</div><div class="vseed-info"><h4>Jimmy Nardello Pepper</h4><p>Heirloom · 25 seeds/packet</p><span class="vstatus slive">● Live</span></div><div class="vseed-right"><span class="vseed-sales">$960</span><span class="vseed-units">275 sold</span></div></div>
+      <div class="vseed-row"><div class="vseed-em">🥒</div><div class="vseed-info"><h4>Marketmore Cucumber</h4><p>Organic · 20 seeds/packet</p><span class="vstatus slow">⚠ Low Stock</span></div><div class="vseed-right"><span class="vseed-sales">$540</span><span class="vseed-units">180 sold</span></div></div>
+      <div class="vseed-row"><div class="vseed-em">🌸</div><div class="vseed-info"><h4>Brandywine Pink Tomato</h4><p>Heirloom · 30 seeds/packet</p><span class="vstatus sdraft">✎ Draft</span></div><div class="vseed-right"><span class="vseed-sales">—</span><span class="vseed-units">Not listed</span></div></div>
+    </div>
+  </div>
+  <div class="vd-actions"><button class="btn-vadd" onclick="toast('➕ Add listing coming soon!')">+ Add Listing</button><button class="btn-vpay" onclick="toast('💸 Payout request submitted!')">Request Payout</button></div>
+  <div class="vd-sec"><h3>📦 Recent Orders</h3>
+    <div class="order-list">
+      <div class="order-item"><div class="order-icon">📦</div><div class="order-info"><h5>Cherokee Purple × 3</h5><p>Maria R. · Denver, CO · 2 hrs ago</p></div><span class="order-amt">$14.97</span></div>
+      <div class="order-item"><div class="order-icon">📦</div><div class="order-info"><h5>Marketmore Cucumber × 2</h5><p>Tom D. · Iowa City, IA · 5 hrs ago</p></div><span class="order-amt">$6.98</span></div>
+      <div class="order-item"><div class="order-icon">📦</div><div class="order-info"><h5>Jimmy Nardello Pepper × 1</h5><p>Sarah L. · Brooklyn, NY · Yesterday</p></div><span class="order-amt">$3.49</span></div>
+    </div>
+  </div>
+  <div style="height:2rem"></div>
+</div>
+
+<!-- AUTH FORMS -->
+<div class="auth-form-screen" id="auth-login">
+  <div class="auth-top"><button class="auth-back" onclick="hideAuthForm('login')">←</button><h1>Welcome back 🌱</h1><p>Sign in to your Leave a Seed account</p></div>
+  <div class="auth-body">
+    <div class="fg"><label class="flbl">Email Address</label><input class="finput" type="email" id="li-email" placeholder="you@example.com"></div>
+    <div class="fg"><label class="flbl">Password</label><input class="finput" type="password" id="li-pass" placeholder="Enter your password"></div>
+    <div class="forgot"><a onclick="toast('📧 Password reset email sent!')">Forgot password?</a></div>
+    <button class="btn-submit" onclick="doLogin()">Sign In</button>
+    <div class="divider">or continue with</div>
+    <div class="social-btns"><button class="social-btn" onclick="doSocial('Google')">🌐 Continue with Google</button><button class="social-btn" onclick="doSocial('Apple')">🍎 Continue with Apple</button></div>
+    <div class="auth-sw">Don't have an account? <a onclick="switchAuth('login','signup')">Sign up free</a></div>
+  </div>
+</div>
+<div class="auth-form-screen" id="auth-signup">
+  <div class="auth-top"><button class="auth-back" onclick="hideAuthForm('signup')">←</button><h1>Join the movement 🌾</h1><p>Create your free Leave a Seed account</p></div>
+  <div class="auth-body">
+    <div class="row2"><div class="fg"><label class="flbl">First Name</label><input class="finput" type="text" id="su-first" placeholder="Jane"></div><div class="fg"><label class="flbl">Last Name</label><input class="finput" type="text" id="su-last" placeholder="Grower"></div></div>
+    <div class="fg"><label class="flbl">Email Address</label><input class="finput" type="email" id="su-email" placeholder="you@example.com"></div>
+    <div class="fg"><label class="flbl">Password</label><input class="finput" type="password" id="su-pass" placeholder="Create a password"></div>
+    <div class="fg"><label class="flbl">I am a...</label>
+      <div class="role-pick">
+        <div class="role-opt sel" onclick="selRole(this)"><span class="ri">🧑‍🌾</span><span class="rl">Home Grower</span></div>
+        <div class="role-opt" onclick="selRole(this)"><span class="ri">🌾</span><span class="rl">Farmer</span></div>
+        <div class="role-opt" onclick="selRole(this)"><span class="ri">🏢</span><span class="rl">Seed Vendor</span></div>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="doSignup()">Create Free Account</button>
+    <div class="divider">or continue with</div>
+    <div class="social-btns"><button class="social-btn" onclick="doSocial('Google')">🌐 Continue with Google</button><button class="social-btn" onclick="doSocial('Apple')">🍎 Continue with Apple</button></div>
+    <div class="auth-sw">Already have an account? <a onclick="switchAuth('signup','login')">Sign in</a></div>
+  </div>
+</div>
+
+<!-- ADVANCED SEARCH PANEL -->
+<div class="search-overlay" id="search-overlay">
+  <div class="search-backdrop" onclick="closeSearch()"></div>
+  <div class="search-panel">
+    <div class="search-panel-handle"></div>
+    <h2>🔍 Advanced Search</h2>
+    <div class="search-panel-top">
+      <input class="search-panel-input" type="text" id="adv-search-input" placeholder="Search seed name, variety...">
+      <button class="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Category</span>
+      <div class="cat-grid">
+        <div class="cat-btn" onclick="toggleCat(this,'vegetables')"><span class="cb-em">🥬</span><span class="cb-lbl">Vegetables</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'herbs')"><span class="cb-em">🌿</span><span class="cb-lbl">Herbs</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'flowers')"><span class="cb-em">🌸</span><span class="cb-lbl">Flowers</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'fruit')"><span class="cb-em">🍅</span><span class="cb-lbl">Fruit</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'grains')"><span class="cb-em">🌾</span><span class="cb-lbl">Grains</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'heirloom')"><span class="cb-em">🏺</span><span class="cb-lbl">Heirloom</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'organic')"><span class="cb-em">🌱</span><span class="cb-lbl">Organic</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'nongmo')"><span class="cb-em">✓</span><span class="cb-lbl">Non-GMO</span></div>
+        <div class="cat-btn" onclick="toggleCat(this,'beginner')"><span class="cb-em">⭐</span><span class="cb-lbl">Beginner</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Price Range</span>
+      <div class="price-range">
+        <div class="price-labels">
+          <span id="price-min-lbl">$0</span>
+          <span id="price-max-lbl">$20</span>
+        </div>
+        <div class="range-wrap">
+          <div class="range-track"></div>
+          <div class="range-fill" id="range-fill"></div>
+          <input type="range" class="range-min" id="price-min" min="0" max="20" value="0" step="1" oninput="updateRange()">
+          <input type="range" class="range-max" id="price-max" min="0" max="20" value="20" step="1" oninput="updateRange()">
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Vendor</span>
+      <div class="vendor-list">
+        <div class="vendor-opt" onclick="toggleVendor(this,'appalachian')"><span class="vendor-opt-em">🌾</span><span class="vendor-opt-name">Appalachian Seeds Co.</span><span class="vendor-check">✓</span></div>
+        <div class="vendor-opt" onclick="toggleVendor(this,'southwest')"><span class="vendor-opt-em">🌵</span><span class="vendor-opt-name">Southwest Seed Guild</span><span class="vendor-check">✓</span></div>
+        <div class="vendor-opt" onclick="toggleVendor(this,'prairie')"><span class="vendor-opt-em">🌻</span><span class="vendor-opt-name">Prairie Roots Organics</span><span class="vendor-check">✓</span></div>
+        <div class="vendor-opt" onclick="toggleVendor(this,'heritage')"><span class="vendor-opt-em">🏺</span><span class="vendor-opt-name">Heritage Seed Farm</span><span class="vendor-check">✓</span></div>
+        <div class="vendor-opt" onclick="toggleVendor(this,'golden')"><span class="vendor-opt-em">🌉</span><span class="vendor-opt-name">Golden Gate Growers</span><span class="vendor-check">✓</span></div>
+        <div class="vendor-opt" onclick="toggleVendor(this,'midwest')"><span class="vendor-opt-em">🌽</span><span class="vendor-opt-name">Midwest Seed Co.</span><span class="vendor-check">✓</span></div>
+      </div>
+    </div>
+
+    <div class="search-actions">
+      <button class="btn-reset" onclick="resetFilters()">Reset All</button>
+      <button class="btn-apply" onclick="applySearch()">Show Results</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="goTo('market',this)"><div class="nav-dot"></div><span class="nav-icon">🛒</span><span class="nav-label">Shop</span></div>
+  <div class="nav-item" onclick="goTo('learn',this)"><div class="nav-dot"></div><span class="nav-icon">📚</span><span class="nav-label">Learn</span></div>
+  <div class="nav-item" onclick="goTo('impact',this)"><div class="nav-dot"></div><span class="nav-icon">🌍</span><span class="nav-label">Impact</span></div>
+  <div class="nav-item" onclick="goTo('community',this)"><div class="nav-dot"></div><span class="nav-icon">🤝</span><span class="nav-label">Community</span></div>
+  <div class="nav-item" onclick="goTo('profile',this)"><div class="nav-dot"></div><span class="nav-icon">🌿</span><span class="nav-label">Profile</span></div>
+</nav>
+</div>
+
+<script>
+var cartCount=0,qty=1,faved=false;
+var seeds={
+  tomato:{em:'🍅',name:'Cherokee Purple Tomato',price:'$4.99',b1:'✓ Verified',b2:'Heirloom',b3:'Open-Pollinated',bg:'linear-gradient(160deg,#2D4A1E,#4E7240)',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cherokee_Purple_tomato.jpg/640px-Cherokee_Purple_tomato.jpg',desc:'A beloved heirloom tomato from the Cherokee people of Tennessee. Rich, complex, smoky flavor — a true garden showstopper.'},
+  pepper:{em:'🌶️',name:'Ancho Poblano Pepper',price:'$3.49',b1:'✓ Verified',b2:'Heirloom',b3:'Non-GMO',bg:'linear-gradient(160deg,#7A3A10,#C4622A)',img:'https://images.unsplash.com/photo-1534735777-B55EE10AD21E?w=600&q=80',desc:'The classic Mexican pepper used in chiles rellenos and mole. Mild, earthy, and incredibly productive.'},
+  lettuce:{em:'🥬',name:'Butterhead Lettuce',price:'$2.99',b1:'✓ Verified',b2:'Organic',b3:'Non-GMO',bg:'linear-gradient(160deg,#1A3A4A,#5A9BB5)',img:'https://images.unsplash.com/photo-1556801712-76c80c8a7b27?w=600&q=80',desc:'Soft, buttery leaves with a mild sweet flavor. Quick growing and perfect for beginner gardeners.'},
+  corn:{em:'🌽',name:'Glass Gem Corn',price:'$6.99',b1:'✓ Verified',b2:'Heirloom',b3:'Open-Pollinated',bg:'linear-gradient(160deg,#4A3A10,#D4A843)',img:'https://images.unsplash.com/photo-1567375698348-5d9d5ae99de0?w=600&q=80',desc:'One of the most visually stunning plants you can grow. Each ear is a completely unique jewel-toned masterpiece.'},
+  basil:{em:'🌿',name:'Genovese Basil',price:'$2.99',b1:'✓ Verified',b2:'Organic',b3:'Culinary',bg:'linear-gradient(160deg,#2D4A1E,#7AAF6A)',img:'https://images.unsplash.com/photo-1560155016-bd4879ae8f72?w=600&q=80',desc:'The gold standard of Italian cooking. Large, intensely fragrant leaves — the soul of pesto and Caprese salad.'}
+};
+function goTo(name,el){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2500);
+}
+function setChip(el){document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});el.classList.add('active')}
+function setComTab(el){document.querySelectorAll('.com-tab').forEach(function(c){c.classList.remove('active')});el.classList.add('active')}
+function addCart(btn){
+  cartCount++;
+  var b=document.getElementById('cart-badge');
+  b.textContent=cartCount;b.style.display='flex';
+  btn.textContent='✓';btn.style.background='#4E7240';
+  setTimeout(function(){btn.textContent='+';btn.style.background=''},1200);
+  toast('🌱 Added to cart! '+cartCount+' item'+(cartCount>1?'s':'')+' total');
+}
+function openDetail(key){
+  var s=seeds[key]||seeds.tomato;
+  document.getElementById('det-em').textContent=s.em;
+  document.getElementById('det-hero-bg').style.background=s.bg;
+  document.getElementById('det-hero-img').src=s.img;
+  document.getElementById('det-name').textContent=s.name;
+  document.getElementById('det-price').textContent=s.price;
+  document.getElementById('det-desc').textContent=s.desc;
+  document.getElementById('det-b1').textContent=s.b1;
+  document.getElementById('det-b2').textContent=s.b2;
+  document.getElementById('det-b3').textContent=s.b3;
+  qty=1;document.getElementById('qty-num').textContent=1;
+  faved=false;document.getElementById('det-fav').textContent='🤍';
+  document.getElementById('ov-detail').classList.add('active');
+  window.scrollTo(0,0);
+}
+function openVendor(){document.getElementById('ov-vendor').classList.add('active');window.scrollTo(0,0)}
+function closeOv(name){document.getElementById('ov-'+name).classList.remove('active')}
+function changeQty(d){qty=Math.max(1,Math.min(10,qty+d));document.getElementById('qty-num').textContent=qty}
+function toggleFav(){faved=!faved;document.getElementById('det-fav').textContent=faved?'❤️':'🤍';toast(faved?'❤️ Saved to wishlist!':'🤍 Removed from wishlist')}
+function addFromDetail(){cartCount+=qty;var b=document.getElementById('cart-badge');b.textContent=cartCount;b.style.display='flex';toast('🌱 Added '+qty+' packet'+(qty>1?'s':'')+' to cart!')}
+function showCal(){var z=document.getElementById('zip').value;if(z.length>=4){document.getElementById('cal-results').classList.add('show');toast('📅 Calendar for '+z)}else{toast('⚠️ Please enter a valid zip code')}}
+function likePost(el){el.classList.toggle('liked');var n=parseInt(el.textContent.replace(/[^0-9]/g,''));el.textContent='❤️ '+(el.classList.contains('liked')?n+1:n-1)}
+function showAuthForm(t){document.getElementById('auth-'+t).classList.add('active')}
+function hideAuthForm(t){document.getElementById('auth-'+t).classList.remove('active')}
+function switchAuth(f,t){hideAuthForm(f);showAuthForm(t)}
+function selRole(el){document.querySelectorAll('.role-opt').forEach(function(r){r.classList.remove('sel')});el.classList.add('sel')}
+function doLogin(){
+  var e=document.getElementById('li-email').value,p=document.getElementById('li-pass').value;
+  if(!e||!p){toast('⚠️ Please fill in all fields');return}
+  if(!e.includes('@')){toast('⚠️ Please enter a valid email');return}
+  var n=e.split('@')[0];n=n.charAt(0).toUpperCase()+n.slice(1);
+  loginUser({name:n+' Grower',role:'🧑‍🌾 Home Grower',init:n.charAt(0)});
+  hideAuthForm('login');toast('👋 Welcome back, '+n+'!');
+}
+function doSignup(){
+  var f=document.getElementById('su-first').value,e=document.getElementById('su-email').value,p=document.getElementById('su-pass').value;
+  var rEl=document.querySelector('.role-opt.sel .rl');
+  if(!f||!e||!p){toast('⚠️ Please fill in required fields');return}
+  if(!e.includes('@')){toast('⚠️ Please enter a valid email');return}
+  var role=rEl?rEl.textContent:'Home Grower';
+  var em=role==='Farmer'?'🌾':role==='Seed Vendor'?'🏢':'🧑‍🌾';
+  loginUser({name:f,role:em+' '+role,init:f.charAt(0).toUpperCase()});
+  hideAuthForm('signup');toast('🌱 Welcome to Leave a Seed, '+f+'!');
+  if(role==='Seed Vendor'){setTimeout(openVendor,800)}
+}
+function doSocial(p){loginUser({name:'Alex Grower',role:'🧑‍🌾 Home Grower',init:'A'});hideAuthForm('login');hideAuthForm('signup');toast('✅ Signed in with '+p+'!')}
+function loginUser(u){
+  document.getElementById('prof-out').style.display='none';
+  document.getElementById('prof-in').style.display='block';
+  document.getElementById('prof-name').textContent=u.name;
+  document.getElementById('prof-init').textContent=u.init;
+  document.getElementById('prof-role').textContent=u.role;
+}
+function signOut(){document.getElementById('prof-out').style.display='block';document.getElementById('prof-in').style.display='none';toast('👋 You\'ve been signed out')}
+function guestBrowse(){goTo('market',document.querySelector('.nav-item'));toast('🛒 Browsing as guest!')}
+
+// ADVANCED SEARCH
+var activeCats=[],activeVendors=[],priceMin=0,priceMax=20;
+var allSeeds=[
+  {id:'tomato',name:'Cherokee Purple Tomato',vendor:'appalachian',vendorName:'Appalachian Seeds',price:4.99,cats:['fruit','heirloom'],em:'🍅'},
+  {id:'pepper',name:'Ancho Poblano Pepper',vendor:'southwest',vendorName:'Southwest Seed Guild',price:3.49,cats:['vegetables','heirloom'],em:'🌶️'},
+  {id:'lettuce',name:'Butterhead Lettuce',vendor:'prairie',vendorName:'Prairie Roots Organics',price:2.99,cats:['vegetables','organic','beginner'],em:'🥬'},
+  {id:'corn',name:'Glass Gem Corn',vendor:'heritage',vendorName:'Heritage Seed Farm',price:6.99,cats:['grains','heirloom'],em:'🌽'},
+  {id:'basil',name:'Genovese Basil',vendor:'golden',vendorName:'Golden Gate Growers',price:2.99,cats:['herbs','organic','beginner'],em:'🌿'},
+  {id:'lettuce',name:'Calabrese Broccoli',vendor:'midwest',vendorName:'Midwest Seed Co.',price:3.49,cats:['vegetables','heirloom'],em:'🥦'},
+  {id:'corn',name:'Sugar Pie Pumpkin',vendor:'heritage',vendorName:'Heritage Seed Farm',price:4.49,cats:['vegetables','organic'],em:'🎃'},
+  {id:'tomato',name:'Danvers 126 Carrot',vendor:'prairie',vendorName:'Prairie Roots Organics',price:2.49,cats:['vegetables','heirloom','beginner'],em:'🥕'},
+  {id:'pepper',name:'Sunflower Giant',vendor:'golden',vendorName:'Golden Gate Growers',price:3.99,cats:['flowers','nongmo'],em:'🌻'},
+  {id:'basil',name:'Lavender Vera',vendor:'southwest',vendorName:'Southwest Seed Guild',price:4.99,cats:['flowers','herbs','organic'],em:'💜'},
+  {id:'lettuce',name:'Romanesco Zucchini',vendor:'midwest',vendorName:'Midwest Seed Co.',price:3.99,cats:['vegetables','nongmo'],em:'🥒'},
+  {id:'corn',name:'Painted Mountain Corn',vendor:'heritage',vendorName:'Heritage Seed Farm',price:5.99,cats:['grains','heirloom'],em:'🌈'}
+];
+function openSearch(){document.getElementById('search-overlay').classList.add('active');document.getElementById('adv-search-input').value=document.getElementById('quick-search').value;updateRange()}
+function closeSearch(){document.getElementById('search-overlay').classList.remove('active')}
+function toggleCat(el,cat){el.classList.toggle('active');var i=activeCats.indexOf(cat);if(i>-1){activeCats.splice(i,1)}else{activeCats.push(cat)}}
+function toggleVendor(el,vendor){el.classList.toggle('active');var i=activeVendors.indexOf(vendor);if(i>-1){activeVendors.splice(i,1)}else{activeVendors.push(vendor)}}
+function updateRange(){var mn=parseInt(document.getElementById('price-min').value);var mx=parseInt(document.getElementById('price-max').value);if(mn>mx){var t=mn;mn=mx;mx=t;}priceMin=mn;priceMax=mx;document.getElementById('price-min-lbl').textContent='$'+mn;document.getElementById('price-max-lbl').textContent=mx===20?'$20+':'$'+mx;var p1=mn/20*100,p2=mx/20*100;document.getElementById('range-fill').style.left=p1+'%';document.getElementById('range-fill').style.width=(p2-p1)+'%'}
+function applySearch(){var q=document.getElementById('adv-search-input').value.toLowerCase();var results=allSeeds.filter(function(s){var mQ=!q||s.name.toLowerCase().includes(q);var mC=activeCats.length===0||activeCats.some(function(c){return s.cats.includes(c)});var mV=activeVendors.length===0||activeVendors.includes(s.vendor);var mP=s.price>=priceMin&&(priceMax===20||s.price<=priceMax);return mQ&&mC&&mV&&mP});closeSearch();renderResults(results,q);document.getElementById('quick-search').value=document.getElementById('adv-search-input').value}
+function quickSearch(){var q=document.getElementById('quick-search').value.toLowerCase();if(!q){hideResults();return;}var results=allSeeds.filter(function(s){return s.name.toLowerCase().includes(q)});renderResults(results,q)}
+function renderResults(results,q){var list=document.querySelector('.seed-list');document.querySelector('.feat-scroll').style.display='none';list.innerHTML='';if(results.length===0){list.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:rgba(30,18,8,.4)"><div style="font-size:3.5rem;margin-bottom:.8rem">🌱</div><div style="font-size:.95rem;font-weight:700">No seeds found</div><div style="font-size:.82rem;margin-top:.4rem">Try different filters or keywords</div></div>';}else{results.forEach(function(s){list.innerHTML+='<div class="seed-row" onclick="openDetail(\''+s.id+'\')"><div class="seed-em-box">'+s.em+'</div><div class="seed-row-info"><h4>'+s.name+'</h4><div class="meta">'+s.cats.map(function(c){return c.charAt(0).toUpperCase()+c.slice(1)}).join(' · ')+' · '+s.vendorName+'</div></div><div class="seed-row-right"><span class="price">$'+s.price.toFixed(2)+'</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>'});}var rb=document.getElementById('result-bar');rb.style.display='flex';document.getElementById('result-count').textContent=results.length+' result'+(results.length!==1?'s':'');renderFilterTags(q)}
+function renderFilterTags(q){var af=document.getElementById('active-filters');af.innerHTML='';if(q){af.innerHTML+='<div class="filter-tag">"'+q+'" <span>✕</span></div>'}activeCats.forEach(function(c){af.innerHTML+='<div class="filter-tag">'+c+' <span>✕</span></div>'});activeVendors.forEach(function(v){af.innerHTML+='<div class="filter-tag">'+v+' <span>✕</span></div>'});if(priceMin>0||priceMax<20){af.innerHTML+='<div class="filter-tag">$'+priceMin+'–'+(priceMax===20?'20+':'$'+priceMax)+' <span>✕</span></div>'}}
+function hideResults(){document.getElementById('result-bar').style.display='none';document.querySelector('.feat-scroll').style.display='flex';var list=document.querySelector('.seed-list');list.innerHTML='<div class="seed-row" onclick="openDetail(\'basil\')"><div class="seed-em-box">🌿</div><div class="seed-row-info"><h4>Genovese Basil</h4><div class="meta">Organic · Herb · Golden Gate Growers</div></div><div class="seed-row-right"><span class="price">$2.99</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div><div class="seed-row" onclick="openDetail(\'lettuce\')"><div class="seed-em-box">🥦</div><div class="seed-row-info"><h4>Calabrese Broccoli</h4><div class="meta">Heirloom · Vegetable · Midwest Seed Co.</div></div><div class="seed-row-right"><span class="price">$3.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div><div class="seed-row" onclick="openDetail(\'corn\')"><div class="seed-em-box">🎃</div><div class="seed-row-info"><h4>Sugar Pie Pumpkin</h4><div class="meta">Organic · Vegetable · Heritage Seed Farm</div></div><div class="seed-row-right"><span class="price">$4.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div><div class="seed-row" onclick="openDetail(\'tomato\')"><div class="seed-em-box">🥕</div><div class="seed-row-info"><h4>Danvers 126 Carrot</h4><div class="meta">Heirloom · Vegetable · Prairie Roots Organics</div></div><div class="seed-row-right"><span class="price">$2.49</span><button class="add-btn" onclick="event.stopPropagation();addCart(this)">+</button></div></div>'}
+function clearSearch(){document.getElementById('adv-search-input').value=''}
+function resetFilters(){activeCats=[];activeVendors=[];priceMin=0;priceMax=20;document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active')});document.querySelectorAll('.vendor-opt').forEach(function(b){b.classList.remove('active')});document.getElementById('price-min').value=0;document.getElementById('price-max').value=20;document.getElementById('adv-search-input').value='';updateRange();toast('🔄 All filters reset!')}
+updateRange();
+</script>
+</body>
+</html>
