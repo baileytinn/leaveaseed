@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop Seeds — Leave a Seed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-15PQCNRKX1');
+</script>
+<style>
+  :root {
+    --soil: #2C1A0E;
+    --bark: #4A2C17;
+    --moss: #3D5A2A;
+    --sage: #6B8F5E;
+    --fern: #8FAF7A;
+    --straw: #D4A843;
+    --wheat: #E8C97A;
+    --cream: #F5EDD8;
+    --parchment: #FAF3E6;
+    --rust: #B85C2A;
+    --terracotta: #C4703F;
+    --sky: #7BA7BC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Lato', sans-serif; background: var(--parchment); color: var(--soil); overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; align-items: center; justify-content: space-between; background: rgba(245,237,216,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(44,26,14,0.1); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo span { color: var(--straw); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--bark); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--moss); }
+  .nav-cta { background: var(--moss); color: var(--cream) !important; padding: 0.6rem 1.5rem; border-radius: 2rem; transition: background 0.3s !important; }
+  .nav-cta:hover { background: var(--bark) !important; }
+  .nav-cart { position: relative; background: white; border: 1.5px solid rgba(44,26,14,0.12); border-radius: 2rem; padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 700; color: var(--bark); cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; font-family: 'Lato', sans-serif; }
+  .nav-cart:hover { border-color: var(--moss); color: var(--moss); }
+  .cart-count { background: var(--terracotta); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; font-weight: 700; display: none; align-items: center; justify-content: center; }
+  .cart-count.show { display: flex; }
+
+  /* HERO */
+  .page-hero { background: var(--soil); padding: 9rem 3rem 5rem; position: relative; overflow: hidden; }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&q=60'); background-size: cover; background-position: center; opacity: 0.08; }
+  .page-hero::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 80px; background: var(--parchment); clip-path: ellipse(55% 100% at 50% 100%); }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; flex-wrap: wrap; }
+  .page-eyebrow { font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--wheat); margin-bottom: 1rem; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.1; margin-bottom: 1rem; }
+  .page-title em { color: var(--wheat); font-style: italic; }
+  .page-subtitle { font-size: 1.05rem; color: rgba(245,237,216,0.75); font-weight: 300; line-height: 1.7; max-width: 500px; }
+  .hero-search { display: flex; gap: 0.7rem; align-items: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 3rem; padding: 0.6rem 0.6rem 0.6rem 1.4rem; min-width: 340px; backdrop-filter: blur(8px); }
+  .hero-search input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Lato', sans-serif; font-size: 0.95rem; color: var(--cream); }
+  .hero-search input::placeholder { color: rgba(245,237,216,0.45); }
+  .hero-search-btn { background: var(--straw); color: var(--soil); border: none; border-radius: 2rem; padding: 0.6rem 1.4rem; font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: transform 0.2s; white-space: nowrap; }
+  .hero-search-btn:hover { transform: scale(1.03); }
+
+  /* FILTER BAR */
+  .filter-bar { background: white; border-bottom: 1px solid rgba(44,26,14,0.08); padding: 1rem 3rem; position: sticky; top: 72px; z-index: 900; box-shadow: 0 2px 20px rgba(44,26,14,0.06); }
+  .filter-inner { max-width: 1300px; margin: 0 auto; display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap; }
+  .filter-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bark); margin-right: 0.3rem; flex-shrink: 0; }
+  .filter-btn { border: 1.5px solid rgba(44,26,14,0.15); background: transparent; padding: 0.38rem 1rem; border-radius: 2rem; font-family: 'Lato', sans-serif; font-size: 0.82rem; font-weight: 700; color: var(--bark); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .filter-btn:hover, .filter-btn.active { background: var(--moss); color: white; border-color: var(--moss); }
+  .filter-divider { width: 1px; height: 24px; background: rgba(44,26,14,0.1); margin: 0 0.3rem; flex-shrink: 0; }
+  .sort-select { margin-left: auto; border: 1.5px solid rgba(44,26,14,0.15); background: var(--parchment); padding: 0.38rem 1rem; border-radius: 0.6rem; font-family: 'Lato', sans-serif; font-size: 0.82rem; color: var(--bark); cursor: pointer; outline: none; }
+
+  /* MAIN LAYOUT */
+  .shop-main { max-width: 1300px; margin: 0 auto; padding: 3rem 3rem 6rem; display: grid; grid-template-columns: 260px 1fr; gap: 3rem; align-items: start; }
+
+  /* SIDEBAR */
+  .sidebar { position: sticky; top: 140px; }
+  .sidebar-section { background: white; border-radius: 1.2rem; padding: 1.6rem; margin-bottom: 1.2rem; box-shadow: 0 2px 15px rgba(44,26,14,0.06); }
+  .sidebar-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--soil); margin-bottom: 1rem; padding-bottom: 0.7rem; border-bottom: 1px solid rgba(44,26,14,0.07); }
+  .sidebar-option { display: flex; align-items: center; gap: 0.7rem; padding: 0.4rem 0; cursor: pointer; }
+  .sidebar-option input[type="checkbox"] { accent-color: var(--moss); width: 15px; height: 15px; cursor: pointer; }
+  .sidebar-option label { font-size: 0.87rem; color: var(--bark); cursor: pointer; flex: 1; }
+  .sidebar-option .count { font-size: 0.72rem; color: rgba(44,26,14,0.38); background: var(--parchment); padding: 0.1rem 0.45rem; border-radius: 1rem; }
+  .price-inputs { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+  .price-input { border: 1.5px solid rgba(44,26,14,0.13); border-radius: 0.5rem; padding: 0.4rem 0.6rem; font-family: 'Lato', sans-serif; font-size: 0.85rem; color: var(--soil); width: 80px; background: var(--parchment); }
+  .sidebar-clear { width: 100%; border: 1.5px solid rgba(44,26,14,0.12); background: transparent; border-radius: 2rem; padding: 0.6rem; font-family: 'Lato', sans-serif; font-size: 0.82rem; font-weight: 700; color: var(--bark); cursor: pointer; margin-top: 0.5rem; transition: all 0.2s; }
+  .sidebar-clear:hover { background: var(--parchment); }
+
+  /* PRODUCTS */
+  .products-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.8rem; }
+  .products-count { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--soil); }
+  .products-count span { color: var(--terracotta); }
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  .product-card { background: white; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 2px 20px rgba(44,26,14,0.07); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(44,26,14,0.13); }
+  .product-img-wrap { position: relative; height: 190px; overflow: hidden; }
+  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; display: block; }
+  .product-card:hover .product-img-wrap img { transform: scale(1.06); }
+  .product-badge { position: absolute; top: 0.8rem; left: 0.8rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 2rem; }
+  .badge-organic { background: var(--moss); color: white; }
+  .badge-heirloom { background: var(--terracotta); color: white; }
+  .badge-bestseller { background: var(--straw); color: var(--soil); }
+  .badge-new { background: var(--sky); color: white; }
+  .product-wishlist { position: absolute; top: 0.8rem; right: 0.8rem; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer; transition: transform 0.2s; }
+  .product-wishlist:hover { transform: scale(1.2); }
+  .product-info { padding: 1.2rem 1.4rem 1.4rem; }
+  .product-category { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--terracotta); font-weight: 700; margin-bottom: 0.35rem; }
+  .product-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--soil); margin-bottom: 0.25rem; line-height: 1.3; }
+  .product-vendor { font-size: 0.78rem; color: rgba(44,26,14,0.45); margin-bottom: 0.7rem; }
+  .product-stars { color: var(--straw); font-size: 0.78rem; margin-bottom: 0.7rem; }
+  .product-stars span { color: rgba(44,26,14,0.4); font-size: 0.72rem; }
+  .product-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .product-tag { font-size: 0.7rem; color: var(--moss); background: rgba(61,90,42,0.08); border: 1px solid rgba(61,90,42,0.15); padding: 0.18rem 0.55rem; border-radius: 1rem; font-weight: 700; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0.9rem; border-top: 1px solid rgba(44,26,14,0.07); }
+  .product-price { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 900; color: var(--soil); }
+  .product-price-sub { font-size: 0.7rem; color: rgba(44,26,14,0.4); font-family: 'Lato', sans-serif; font-weight: 400; display: block; }
+  .add-to-cart { background: var(--moss); color: white; border: none; padding: 0.55rem 1.2rem; border-radius: 2rem; font-family: 'Lato', sans-serif; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s; letter-spacing: 0.03em; }
+  .add-to-cart:hover { background: var(--bark); transform: scale(1.03); }
+  .add-to-cart.added { background: var(--straw); color: var(--soil); }
+
+  /* MODAL */
+  .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(44,26,14,0.55); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 2rem; }
+  .modal-backdrop.open { display: flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal { background: var(--parchment); border-radius: 2rem; max-width: 780px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; animation: slideUp 0.3s cubic-bezier(0.32,0.72,0,1); box-shadow: 0 30px 80px rgba(44,26,14,0.3); }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-close { position: absolute; top: 1.2rem; right: 1.2rem; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; font-size: 1rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(44,26,14,0.1); transition: background 0.2s; }
+  .modal-close:hover { background: white; }
+  .modal-img { width: 100%; height: 300px; object-fit: cover; display: block; border-radius: 2rem 2rem 0 0; }
+  .modal-body { padding: 2rem 2.5rem 2.5rem; }
+  .modal-badges { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .modal-badge { font-size: 0.7rem; font-weight: 700; padding: 0.22rem 0.7rem; border-radius: 2rem; }
+  .mb-green { background: rgba(61,90,42,0.1); color: var(--moss); }
+  .mb-gold { background: rgba(212,168,67,0.15); color: #7A5A00; }
+  .mb-blue { background: rgba(123,167,188,0.15); color: #1A5A7A; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; color: var(--soil); margin-bottom: 0.3rem; line-height: 1.15; }
+  .modal-vendor { font-size: 0.85rem; color: var(--moss); font-weight: 700; margin-bottom: 1.2rem; }
+  .modal-price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .modal-price { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: var(--moss); }
+  .modal-rating { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--bark); }
+  .modal-stars { color: var(--straw); }
+  .modal-desc { font-size: 0.95rem; line-height: 1.8; color: var(--bark); font-weight: 300; margin-bottom: 1.5rem; }
+  .modal-specs { background: white; border-radius: 1rem; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
+  .spec-row { display: flex; justify-content: space-between; padding: 0.45rem 0; border-bottom: 1px solid rgba(44,26,14,0.06); font-size: 0.83rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-key { color: rgba(44,26,14,0.5); }
+  .spec-val { font-weight: 700; color: var(--soil); }
+  .modal-qty-row { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.5rem; }
+  .qty-label { font-size: 0.85rem; font-weight: 700; color: var(--bark); }
+  .qty-ctrl { display: flex; align-items: center; background: white; border-radius: 2rem; overflow: hidden; border: 1.5px solid rgba(44,26,14,0.1); }
+  .qty-btn { width: 36px; height: 36px; border: none; background: transparent; font-size: 1rem; cursor: pointer; font-weight: 700; color: var(--moss); transition: background 0.15s; }
+  .qty-btn:hover { background: rgba(61,90,42,0.08); }
+  .qty-num { min-width: 32px; text-align: center; font-weight: 700; font-size: 0.95rem; }
+  .modal-actions { display: flex; gap: 1rem; }
+  .btn-add-cart { flex: 1; background: var(--moss); color: white; border: none; border-radius: 3rem; padding: 1rem; font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
+  .btn-add-cart:hover { background: var(--bark); }
+  .btn-buy-now { flex: 1; background: var(--straw); color: var(--soil); border: none; border-radius: 3rem; padding: 1rem; font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 16px rgba(212,168,67,0.35); transition: transform 0.2s; }
+  .btn-buy-now:hover { transform: translateY(-2px); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--soil); color: white; padding: 0.75rem 1.6rem; border-radius: 3rem; font-size: 0.88rem; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 9000; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* PAGINATION */
+  .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; }
+  .page-btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid rgba(44,26,14,0.12); background: white; font-family: 'Lato', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--bark); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover, .page-btn.active { background: var(--moss); color: white; border-color: var(--moss); }
+
+  /* VENDOR STRIP */
+  .vendor-strip { background: var(--soil); padding: 4rem 3rem; }
+  .vendor-strip-inner { max-width: 1300px; margin: 0 auto; }
+  .vendor-strip .eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--wheat); margin-bottom: 0.6rem; }
+  .vendor-strip h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 900; color: var(--cream); margin-bottom: 2.5rem; }
+  .vendors-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+  .vendor-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.2rem; padding: 1.8rem 1.4rem; text-align: center; transition: background 0.3s, transform 0.3s; cursor: pointer; }
+  .vendor-card:hover { background: rgba(255,255,255,0.11); transform: translateY(-3px); }
+  .vendor-avatar { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 2px solid rgba(212,168,67,0.35); }
+  .vendor-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--cream); margin-bottom: 0.25rem; }
+  .vendor-loc { font-size: 0.72rem; color: rgba(245,237,216,0.45); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.6rem; }
+  .vendor-count { font-size: 0.8rem; color: var(--fern); font-weight: 700; }
+
+  /* FOOTER */
+  footer { background: var(--bark); padding: 4rem 3rem 2rem; color: var(--cream); }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem; }
+  .footer-brand p { font-size: 0.9rem; color: rgba(245,237,216,0.6); line-height: 1.7; font-weight: 300; margin-top: 1rem; max-width: 300px; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--wheat); margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a { color: rgba(245,237,216,0.6); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--cream); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: rgba(245,237,216,0.4); }
+  .footer-mission { color: var(--fern); font-weight: 700; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1100px) {
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .vendors-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .shop-main { grid-template-columns: 1fr; padding: 2rem 1.5rem 4rem; }
+    .sidebar { position: static; }
+    .page-hero { padding: 8rem 1.5rem 4rem; }
+    .hero-search { min-width: unset; }
+    .filter-bar { padding: 1rem 1.5rem; overflow-x: auto; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  }
+  @media (max-width: 600px) {
+    .products-grid { grid-template-columns: 1fr; }
+    .modal-backdrop { padding: 0; align-items: flex-end; }
+    .modal { border-radius: 1.5rem 1.5rem 0 0; max-height: 92vh; }
+    .modal-img { height: 220px; border-radius: 1.5rem 1.5rem 0 0; }
+    .modal-body { padding: 1.5rem; }
+    .footer-top { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+  <ul class="nav-links">
+    <li><a href="app.html" class="active">Shop</a></li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="mission.html">Mission</a></li>
+    <li><a href="index.html#join">Join Us</a></li>
+    <li><button class="nav-cart" onclick="openCart()">🛒 Cart <span class="cart-count" id="cart-count">0</span></button></li>
+    <li><a href="index.html#join" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <p class="page-eyebrow">✦ 12,000+ verified varieties</p>
+      <h1 class="page-title">Find Your<br><em>Perfect Seed</em></h1>
+      <p class="page-subtitle">Browse thousands of heirloom, organic, and open-pollinated seeds from 500+ verified American vendors.</p>
+    </div>
+    <div class="hero-search">
+      <input type="text" id="hero-search-input" placeholder="Search seeds, varieties, vendors..." oninput="filterProducts()">
+      <button class="hero-search-btn" onclick="filterProducts()">Search</button>
+    </div>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">Type:</span>
+    <button class="filter-btn active" onclick="setFilter(this,'all')">All Seeds</button>
+    <button class="filter-btn" onclick="setFilter(this,'heirloom')">Heirloom</button>
+    <button class="filter-btn" onclick="setFilter(this,'organic')">Organic</button>
+    <button class="filter-btn" onclick="setFilter(this,'nongmo')">Non-GMO</button>
+    <div class="filter-divider"></div>
+    <button class="filter-btn" onclick="setFilter(this,'vegetables')">Vegetables</button>
+    <button class="filter-btn" onclick="setFilter(this,'herbs')">Herbs</button>
+    <button class="filter-btn" onclick="setFilter(this,'flowers')">Flowers</button>
+    <button class="filter-btn" onclick="setFilter(this,'grains')">Grains</button>
+    <select class="sort-select" onchange="sortProducts(this.value)">
+      <option value="featured">Sort: Featured</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+    </select>
+  </div>
+</div>
+
+<div class="shop-main">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Seed Type</h3>
+      <div class="sidebar-option"><input type="checkbox" id="s-organic" checked onchange="filterProducts()"><label for="s-organic">Organic</label><span class="count">4,210</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="s-heirloom" checked onchange="filterProducts()"><label for="s-heirloom">Heirloom</label><span class="count">3,890</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="s-openpol" onchange="filterProducts()"><label for="s-openpol">Open-Pollinated</label><span class="count">5,100</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="s-nongmo" onchange="filterProducts()"><label for="s-nongmo">Non-GMO</label><span class="count">11,200</span></div>
+    </div>
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Category</h3>
+      <div class="sidebar-option"><input type="checkbox" id="c-veg" checked onchange="filterProducts()"><label for="c-veg">Vegetables</label><span class="count">5,840</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="c-herbs" checked onchange="filterProducts()"><label for="c-herbs">Herbs</label><span class="count">1,920</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="c-flowers" onchange="filterProducts()"><label for="c-flowers">Flowers</label><span class="count">2,340</span></div>
+      <div class="sidebar-option"><input type="checkbox" id="c-grains" onchange="filterProducts()"><label for="c-grains">Grains</label><span class="count">890</span></div>
+    </div>
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Price Range</h3>
+      <div class="price-inputs">
+        <input type="text" class="price-input" id="price-min" value="$1" placeholder="Min">
+        <span style="color:var(--bark);font-size:0.85rem">—</span>
+        <input type="text" class="price-input" id="price-max" value="$50" placeholder="Max">
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Growing Zone</h3>
+      <div class="sidebar-option"><input type="checkbox" id="z-cold" checked><label for="z-cold">Zones 3–4 (Cold)</label></div>
+      <div class="sidebar-option"><input type="checkbox" id="z-mod" checked><label for="z-mod">Zones 5–6 (Moderate)</label></div>
+      <div class="sidebar-option"><input type="checkbox" id="z-warm" checked><label for="z-warm">Zones 7–8 (Warm)</label></div>
+      <div class="sidebar-option"><input type="checkbox" id="z-hot"><label for="z-hot">Zones 9–10 (Hot)</label></div>
+      <button class="sidebar-clear" onclick="clearFilters()">Clear All Filters</button>
+    </div>
+  </aside>
+
+  <div>
+    <div class="products-header">
+      <div class="products-count">Showing <span id="product-count">12</span> seeds</div>
+    </div>
+    <div class="products-grid" id="products-grid">
+
+      <div class="product-card reveal" data-tags="heirloom,fruit,vegetables" data-price="4.99">
+        <div class="product-img-wrap">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Cherokee_Purple_tomato.jpg" alt="Cherokee Purple Tomato">
+          <span class="product-badge badge-heirloom">Heirloom</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Tomato · Indeterminate</p>
+          <h3 class="product-name">Cherokee Purple Tomato</h3>
+          <p class="product-vendor">Appalachian Seeds Co. · Asheville, NC</p>
+          <div class="product-stars">★★★★★ <span>(204)</span></div>
+          <div class="product-tags"><span class="product-tag">Non-GMO</span><span class="product-tag">80–90 days</span><span class="product-tag">Zones 5–9</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$4.99</span><span class="product-price-sub">~30 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Cherokee Purple Tomato','$4.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="heirloom,vegetables" data-price="3.49">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&q=80" alt="Ancho Poblano Pepper">
+          <span class="product-badge badge-heirloom">Heirloom</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Pepper · Sweet-Hot</p>
+          <h3 class="product-name">Ancho Poblano Pepper</h3>
+          <p class="product-vendor">Southwest Seed Guild · Santa Fe, NM</p>
+          <div class="product-stars">★★★★★ <span>(138)</span></div>
+          <div class="product-tags"><span class="product-tag">Heirloom</span><span class="product-tag">70–80 days</span><span class="product-tag">Zones 5–10</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$3.49</span><span class="product-price-sub">~25 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Ancho Poblano Pepper','$3.49')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="organic,vegetables,nongmo" data-price="2.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&q=80" alt="Butterhead Lettuce">
+          <span class="product-badge badge-bestseller">Bestseller</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Lettuce · Butterhead</p>
+          <h3 class="product-name">Butterhead Lettuce</h3>
+          <p class="product-vendor">Prairie Roots Organics · Lawrence, KS</p>
+          <div class="product-stars">★★★★★ <span>(331)</span></div>
+          <div class="product-tags"><span class="product-tag">Organic</span><span class="product-tag">50–60 days</span><span class="product-tag">All Zones</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$2.99</span><span class="product-price-sub">~200 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Butterhead Lettuce','$2.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="heirloom,grains" data-price="6.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1601593768908-d8b283b02de1?w=400&q=80" alt="Glass Gem Corn">
+          <span class="product-badge badge-heirloom">Heirloom</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Corn · Flint</p>
+          <h3 class="product-name">Glass Gem Corn</h3>
+          <p class="product-vendor">Heritage Seed Farm · Taos, NM</p>
+          <div class="product-stars">★★★★★ <span>(512)</span></div>
+          <div class="product-tags"><span class="product-tag">Heirloom</span><span class="product-tag">110 days</span><span class="product-tag">Zones 4–10</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$6.99</span><span class="product-price-sub">~50 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Glass Gem Corn','$6.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="organic,herbs,nongmo" data-price="2.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1618375569909-3c8616cf7733?w=400&q=80" alt="Genovese Basil">
+          <span class="product-badge badge-organic">Organic</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Herb · Basil</p>
+          <h3 class="product-name">Genovese Basil</h3>
+          <p class="product-vendor">Golden Gate Growers · Eugene, OR</p>
+          <div class="product-stars">★★★★★ <span>(289)</span></div>
+          <div class="product-tags"><span class="product-tag">Organic</span><span class="product-tag">Container OK</span><span class="product-tag">All Zones</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$2.99</span><span class="product-price-sub">~200 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Genovese Basil','$2.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="heirloom,vegetables" data-price="3.49">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?w=400&q=80" alt="Calabrese Broccoli">
+          <span class="product-badge badge-new">New</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Brassica · Broccoli</p>
+          <h3 class="product-name">Calabrese Broccoli</h3>
+          <p class="product-vendor">Midwest Seed Co. · Columbus, OH</p>
+          <div class="product-stars">★★★★☆ <span>(94)</span></div>
+          <div class="product-tags"><span class="product-tag">Heirloom</span><span class="product-tag">60–80 days</span><span class="product-tag">Zones 3–9</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$3.49</span><span class="product-price-sub">~100 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Calabrese Broccoli','$3.49')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="organic,vegetables" data-price="4.49">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=400&q=80" alt="Sugar Pie Pumpkin">
+          <span class="product-badge badge-organic">Organic</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Squash · Pumpkin</p>
+          <h3 class="product-name">Sugar Pie Pumpkin</h3>
+          <p class="product-vendor">Heritage Seed Farm · Taos, NM</p>
+          <div class="product-stars">★★★★★ <span>(176)</span></div>
+          <div class="product-tags"><span class="product-tag">Organic</span><span class="product-tag">100 days</span><span class="product-tag">Zones 3–9</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$4.49</span><span class="product-price-sub">~20 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Sugar Pie Pumpkin','$4.49')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="heirloom,vegetables,nongmo" data-price="2.49">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1447175008436-054170c2e979?w=400&q=80" alt="Danvers 126 Carrot">
+          <span class="product-badge badge-heirloom">Heirloom</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Root Vegetable · Carrot</p>
+          <h3 class="product-name">Danvers 126 Carrot</h3>
+          <p class="product-vendor">Prairie Roots Organics · Lawrence, KS</p>
+          <div class="product-stars">★★★★★ <span>(221)</span></div>
+          <div class="product-tags"><span class="product-tag">Heirloom</span><span class="product-tag">70–80 days</span><span class="product-tag">Zones 3–10</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$2.49</span><span class="product-price-sub">~400 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Danvers 126 Carrot','$2.49')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="flowers,nongmo" data-price="3.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=400&q=80" alt="Giant Sunflower">
+          <span class="product-badge badge-new">New</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Flower · Sunflower</p>
+          <h3 class="product-name">Giant Sunflower</h3>
+          <p class="product-vendor">Golden Gate Growers · Eugene, OR</p>
+          <div class="product-stars">★★★★★ <span>(143)</span></div>
+          <div class="product-tags"><span class="product-tag">Non-GMO</span><span class="product-tag">70–80 days</span><span class="product-tag">Zones 4–10</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$3.99</span><span class="product-price-sub">~30 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Giant Sunflower','$3.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="organic,herbs,flowers" data-price="4.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=400&q=80" alt="Lavender Vera">
+          <span class="product-badge badge-organic">Organic</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Herb · Lavender</p>
+          <h3 class="product-name">Lavender Vera</h3>
+          <p class="product-vendor">Southwest Seed Guild · Santa Fe, NM</p>
+          <div class="product-stars">★★★★★ <span>(198)</span></div>
+          <div class="product-tags"><span class="product-tag">Organic</span><span class="product-tag">Perennial</span><span class="product-tag">Zones 5–9</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$4.99</span><span class="product-price-sub">~50 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Lavender Vera','$4.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="nongmo,vegetables" data-price="3.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=400&q=80" alt="Romanesco Zucchini">
+          <span class="product-badge badge-new">New</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Squash · Zucchini</p>
+          <h3 class="product-name">Romanesco Zucchini</h3>
+          <p class="product-vendor">Midwest Seed Co. · Columbus, OH</p>
+          <div class="product-stars">★★★★☆ <span>(67)</span></div>
+          <div class="product-tags"><span class="product-tag">Non-GMO</span><span class="product-tag">50–60 days</span><span class="product-tag">Zones 3–10</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$3.99</span><span class="product-price-sub">~15 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Romanesco Zucchini','$3.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal" data-tags="heirloom,grains" data-price="5.99">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80" alt="Painted Mountain Corn">
+          <span class="product-badge badge-heirloom">Heirloom</span>
+          <button class="product-wishlist" onclick="toggleWish(this)">🤍</button>
+        </div>
+        <div class="product-info">
+          <p class="product-category">Corn · Flour</p>
+          <h3 class="product-name">Painted Mountain Corn</h3>
+          <p class="product-vendor">Heritage Seed Farm · Taos, NM</p>
+          <div class="product-stars">★★★★★ <span>(88)</span></div>
+          <div class="product-tags"><span class="product-tag">Heirloom</span><span class="product-tag">85–90 days</span><span class="product-tag">Zones 3–9</span></div>
+          <div class="product-footer">
+            <div><span class="product-price">$5.99</span><span class="product-price-sub">~50 seeds/pkt</span></div>
+            <button class="add-to-cart" onclick="addToCart(event,this,'Painted Mountain Corn','$5.99')">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="pagination reveal">
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">›</button>
+    </div>
+  </div>
+</div>
+
+<section class="vendor-strip">
+  <div class="vendor-strip-inner reveal">
+    <p class="eyebrow">✦ Trusted Growers</p>
+    <h2>Featured Vendors</h2>
+    <div class="vendors-row">
+      <div class="vendor-card"><div class="vendor-avatar" style="background:rgba(61,90,42,0.2)">🌾</div><div class="vendor-name">Appalachian Seeds</div><div class="vendor-loc">Asheville, NC · Est. 1987</div><div class="vendor-count">214 varieties</div></div>
+      <div class="vendor-card"><div class="vendor-avatar" style="background:rgba(212,168,67,0.15)">🌻</div><div class="vendor-name">Prairie Roots Organics</div><div class="vendor-loc">Lawrence, KS · Est. 2003</div><div class="vendor-count">189 varieties</div></div>
+      <div class="vendor-card"><div class="vendor-avatar" style="background:rgba(123,167,188,0.2)">🌿</div><div class="vendor-name">Golden Gate Growers</div><div class="vendor-loc">Eugene, OR · Est. 1995</div><div class="vendor-count">302 varieties</div></div>
+      <div class="vendor-card"><div class="vendor-avatar" style="background:rgba(184,92,42,0.15)">🌵</div><div class="vendor-name">Southwest Seed Guild</div><div class="vendor-loc">Santa Fe, NM · Est. 2011</div><div class="vendor-count">127 varieties</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
+      </div>
+      <div class="footer-col"><h4>Marketplace</h4><ul><li><a href="app.html">Browse All Seeds</a></li><li><a href="app.html">Heirloom Seeds</a></li><li><a href="app.html">Organic Seeds</a></li><li><a href="app.html">Become a Vendor</a></li></ul></div>
+      <div class="footer-col"><h4>Learn</h4><ul><li><a href="learn.html">Beginner Guides</a></li><li><a href="learn.html">Planting Calendars</a></li><li><a href="learn.html">Urban Growing</a></li><li><a href="learn.html">School Programs</a></li></ul></div>
+      <div class="footer-col"><h4>Mission</h4><ul><li><a href="mission.html">Our Story</a></li><li><a href="mission.html">Hunger Initiative</a></li><li><a href="mission.html">Impact Reports</a></li><li><a href="mission.html">Partnerships</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
+    </div>
+  </div>
+</footer>
+
+<!-- DETAIL MODAL -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-body">
+      <div class="modal-badges">
+        <span class="modal-badge mb-green" id="modal-b1">✓ Verified</span>
+        <span class="modal-badge mb-gold" id="modal-b2">Heirloom</span>
+        <span class="modal-badge mb-blue" id="modal-b3">Open-Pollinated</span>
+      </div>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <p class="modal-vendor" id="modal-vendor"></p>
+      <div class="modal-price-row">
+        <span class="modal-price" id="modal-price"></span>
+        <div class="modal-rating"><span class="modal-stars">★★★★★</span><span id="modal-rating-text"></span></div>
+      </div>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-specs" id="modal-specs"></div>
+      <div class="modal-qty-row">
+        <span class="qty-label">Quantity:</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty-num">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="font-size:0.78rem;color:rgba(44,26,14,0.4)" id="modal-seeds-note"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-add-cart" onclick="addFromModal()">Add to Cart</button>
+        <button class="btn-buy-now" onclick="showToast('💳 Checkout coming soon!')">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var cartTotal = 0, modalQty = 1, currentModalName = '', currentModalPrice = 0;
+
+var seedData = {
+  'Cherokee Purple Tomato': { img: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cherokee_Purple_tomato.jpg', vendor: '🏢 Appalachian Seeds Co. · Asheville, NC', price: '$4.99', priceNum: 4.99, b1: '✓ Verified', b2: 'Heirloom', b3: 'Open-Pollinated', rating: '4.9 (204 reviews)', desc: 'A beloved heirloom tomato originating from the Cherokee people of Tennessee. Produces large, dusky rose-purple fruits with a rich, complex, smoky flavor — a true garden showstopper.', specs: [['Days to Germination','7–14 days'],['Days to Maturity','80–90 days'],['Sun','Full Sun'],['Germination Rate','92%'],['Certified','✓ Non-GMO, Heirloom']], seeds: '~30 seeds/packet' },
+  'Ancho Poblano Pepper': { img: 'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=800&q=80', vendor: '🏢 Southwest Seed Guild · Santa Fe, NM', price: '$3.49', priceNum: 3.49, b1: '✓ Verified', b2: 'Heirloom', b3: 'Non-GMO', rating: '4.8 (138 reviews)', desc: 'The classic Mexican pepper used in chiles rellenos and mole sauce. Wide, heart-shaped fruits with mild earthy heat. Incredibly productive and easy to grow in warm climates.', specs: [['Days to Germination','10–14 days'],['Days to Maturity','70–80 days'],['Sun','Full Sun'],['Germination Rate','88%'],['Certified','✓ Heirloom, Non-GMO']], seeds: '~25 seeds/packet' },
+  'Butterhead Lettuce': { img: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=800&q=80', vendor: '🏢 Prairie Roots Organics · Lawrence, KS', price: '$2.99', priceNum: 2.99, b1: '✓ Verified', b2: 'Organic', b3: 'Non-GMO', rating: '4.9 (331 reviews)', desc: 'Soft, buttery leaves with a wonderfully mild sweet flavor. One of the easiest vegetables to grow — perfect for beginners. Direct sow in spring and fall for two harvests per year.', specs: [['Days to Germination','4–7 days'],['Days to Maturity','50–60 days'],['Sun','Full/Partial Sun'],['Germination Rate','95%'],['Certified','✓ USDA Organic']], seeds: '~200 seeds/packet' },
+  'Glass Gem Corn': { img: 'https://images.unsplash.com/photo-1601593768908-d8b283b02de1?w=800&q=80', vendor: '🏢 Heritage Seed Farm · Taos, NM', price: '$6.99', priceNum: 6.99, b1: '✓ Verified', b2: 'Heirloom', b3: 'Open-Pollinated', rating: '5.0 (512 reviews)', desc: 'One of the most visually stunning plants you can grow. Each ear is a completely unique jewel-toned masterpiece — translucent kernels in red, blue, purple, gold and green.', specs: [['Days to Germination','7–10 days'],['Days to Maturity','110 days'],['Sun','Full Sun'],['Germination Rate','90%'],['Certified','✓ Heirloom, Open-Pollinated']], seeds: '~50 seeds/packet' },
+  'Genovese Basil': { img: 'https://images.unsplash.com/photo-1618375569909-3c8616cf7733?w=800&q=80', vendor: '🏢 Golden Gate Growers · Eugene, OR', price: '$2.99', priceNum: 2.99, b1: '✓ Verified', b2: 'Organic', b3: 'Culinary', rating: '4.9 (289 reviews)', desc: 'The gold standard of Italian cooking. Large, intensely fragrant leaves with a classic sweet basil aroma — the soul of homemade pesto and Caprese salad.', specs: [['Days to Germination','5–10 days'],['Days to Maturity','60–90 days'],['Sun','Full Sun'],['Germination Rate','93%'],['Certified','✓ USDA Organic']], seeds: '~200 seeds/packet' },
+  'Calabrese Broccoli': { img: 'https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?w=800&q=80', vendor: '🏢 Midwest Seed Co. · Columbus, OH', price: '$3.49', priceNum: 3.49, b1: '✓ Verified', b2: 'Heirloom', b3: 'Non-GMO', rating: '4.7 (94 reviews)', desc: 'The classic Italian broccoli variety producing a large central head followed by abundant side shoots. Cold tolerant and perfect for spring and fall growing seasons.', specs: [['Days to Germination','4–7 days'],['Days to Maturity','60–80 days'],['Sun','Full Sun'],['Germination Rate','89%'],['Certified','✓ Heirloom']], seeds: '~100 seeds/packet' },
+  'Sugar Pie Pumpkin': { img: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80', vendor: '🏢 Heritage Seed Farm · Taos, NM', price: '$4.49', priceNum: 4.49, b1: '✓ Verified', b2: 'Organic', b3: 'Non-GMO', rating: '4.9 (176 reviews)', desc: 'The ultimate pie pumpkin — small, sweet, and densely fleshed. Perfect for homemade pumpkin pie, soups, and roasting. Stores well through winter and far tastier than carving pumpkins.', specs: [['Days to Germination','7–10 days'],['Days to Maturity','100 days'],['Sun','Full Sun'],['Germination Rate','91%'],['Certified','✓ USDA Organic']], seeds: '~20 seeds/packet' },
+  'Danvers 126 Carrot': { img: 'https://images.unsplash.com/photo-1447175008436-054170c2e979?w=800&q=80', vendor: '🏢 Prairie Roots Organics · Lawrence, KS', price: '$2.49', priceNum: 2.49, b1: '✓ Verified', b2: 'Heirloom', b3: 'Non-GMO', rating: '4.9 (221 reviews)', desc: 'A classic American heirloom carrot developed in Danvers, MA in 1871. Uniform, deep orange, slightly tapered roots with excellent flavor. Tolerates heavy soils better than most varieties.', specs: [['Days to Germination','10–17 days'],['Days to Maturity','70–80 days'],['Sun','Full Sun'],['Germination Rate','85%'],['Certified','✓ Heirloom, Non-GMO']], seeds: '~400 seeds/packet' },
+  'Giant Sunflower': { img: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=800&q=80', vendor: '🏢 Golden Gate Growers · Eugene, OR', price: '$3.99', priceNum: 3.99, b1: '✓ Verified', b2: 'Non-GMO', b3: 'Pollinator', rating: '4.9 (143 reviews)', desc: 'Towering sunflowers reaching 10–12 feet with massive seed heads. A favorite for kids, pollinators, and birds. Seeds are excellent for roasting and the plants make a stunning garden backdrop.', specs: [['Days to Germination','7–10 days'],['Days to Maturity','70–80 days'],['Sun','Full Sun'],['Germination Rate','94%'],['Certified','✓ Non-GMO']], seeds: '~30 seeds/packet' },
+  'Lavender Vera': { img: 'https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=800&q=80', vendor: '🏢 Southwest Seed Guild · Santa Fe, NM', price: '$4.99', priceNum: 4.99, b1: '✓ Verified', b2: 'Organic', b3: 'Perennial', rating: '4.9 (198 reviews)', desc: 'True English lavender — the most fragrant and versatile variety. Once established it blooms for years, attracting pollinators and filling the garden with fragrance. Excellent for drying and culinary use.', specs: [['Days to Germination','14–21 days'],['Days to Maturity','90–200 days'],['Sun','Full Sun'],['Germination Rate','75%'],['Certified','✓ USDA Organic']], seeds: '~50 seeds/packet' },
+  'Romanesco Zucchini': { img: 'https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=800&q=80', vendor: '🏢 Midwest Seed Co. · Columbus, OH', price: '$3.99', priceNum: 3.99, b1: '✓ Verified', b2: 'Non-GMO', b3: 'Italian Heirloom', rating: '4.7 (67 reviews)', desc: 'A stunning Italian heirloom zucchini with distinctive ribbed, light green fruits. Firmer and more flavorful than standard zucchini — excellent grilled, sautéed, or raw. Very productive.', specs: [['Days to Germination','7–10 days'],['Days to Maturity','50–60 days'],['Sun','Full Sun'],['Germination Rate','90%'],['Certified','✓ Non-GMO']], seeds: '~15 seeds/packet' },
+  'Painted Mountain Corn': { img: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&q=80', vendor: '🏢 Heritage Seed Farm · Taos, NM', price: '$5.99', priceNum: 5.99, b1: '✓ Verified', b2: 'Heirloom', b3: 'Open-Pollinated', rating: '4.9 (88 reviews)', desc: 'A spectacular flour corn bred over 30 years from ancient Native American varieties. Every ear shows a different combination of red, blue, gold, and purple. Nutritious, beautiful, and historically significant.', specs: [['Days to Germination','7–10 days'],['Days to Maturity','85–90 days'],['Sun','Full Sun'],['Germination Rate','88%'],['Certified','✓ Heirloom, Open-Pollinated']], seeds: '~50 seeds/packet' }
+};
+
+document.querySelectorAll('.product-card').forEach(function(card) {
+  card.addEventListener('click', function(e) {
+    if (e.target.closest('.add-to-cart') || e.target.closest('.product-wishlist')) return;
+    openModal(card.querySelector('.product-name').textContent);
+  });
+});
+
+function openModal(name) {
+  var d = seedData[name]; if (!d) return;
+  currentModalName = name; currentModalPrice = d.priceNum; modalQty = 1;
+  document.getElementById('modal-img').src = d.img;
+  document.getElementById('modal-img').alt = name;
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-vendor').textContent = d.vendor;
+  document.getElementById('modal-price').textContent = d.price;
+  document.getElementById('modal-b1').textContent = d.b1;
+  document.getElementById('modal-b2').textContent = d.b2;
+  document.getElementById('modal-b3').textContent = d.b3;
+  document.getElementById('modal-rating-text').textContent = d.rating;
+  document.getElementById('modal-desc').textContent = d.desc;
+  document.getElementById('modal-seeds-note').textContent = d.seeds;
+  document.getElementById('qty-num').textContent = 1;
+  document.getElementById('modal-specs').innerHTML = d.specs.map(function(s) { return '<div class="spec-row"><span class="spec-key">'+s[0]+'</span><span class="spec-val">'+s[1]+'</span></div>'; }).join('');
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) { if (e && e.target !== document.getElementById('modal-backdrop')) return; closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modal-backdrop').classList.remove('open'); document.body.style.overflow = ''; }
+function changeQty(d) { modalQty = Math.max(1, Math.min(10, modalQty + d)); document.getElementById('qty-num').textContent = modalQty; }
+function addFromModal() { cartTotal += modalQty; updateCartUI(); showToast('🌱 Added ' + modalQty + ' packet' + (modalQty > 1 ? 's' : '') + ' of ' + currentModalName + ' to cart!'); closeModalDirect(); }
+
+function addToCart(e, btn, name, price) {
+  e.stopPropagation();
+  cartTotal++; updateCartUI();
+  btn.textContent = '✓ Added'; btn.classList.add('added');
+  setTimeout(function() { btn.textContent = '+ Add'; btn.classList.remove('added'); }, 1400);
+  showToast('🌱 ' + name + ' added to cart!');
+}
+
+function openCart() { showToast('🛒 Cart: ' + cartTotal + ' item' + (cartTotal !== 1 ? 's' : '') + ' — Checkout coming soon!'); }
+function updateCartUI() { var el = document.getElementById('cart-count'); el.textContent = cartTotal; el.classList.toggle('show', cartTotal > 0); }
+function toggleWish(btn) { btn.textContent = btn.textContent === '🤍' ? '❤️' : '🤍'; showToast(btn.textContent === '❤️' ? '❤️ Saved to wishlist!' : '🤍 Removed from wishlist'); }
+
+function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2500); }
+
+var activeFilter = 'all';
+function setFilter(btn, filter) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active'); activeFilter = filter; filterProducts();
+}
+
+function filterProducts() {
+  var q = document.getElementById('hero-search-input').value.toLowerCase();
+  var cards = document.querySelectorAll('.product-card');
+  var count = 0;
+  cards.forEach(function(card) {
+    var tags = card.dataset.tags || '';
+    var name = card.querySelector('.product-name').textContent.toLowerCase();
+    var show = (activeFilter === 'all' || tags.includes(activeFilter)) && (!q || name.includes(q));
+    card.style.display = show ? '' : 'none';
+    if (show) count++;
+  });
+  document.getElementById('product-count').textContent = count;
+}
+
+function sortProducts(val) {
+  var grid = document.getElementById('products-grid');
+  var cards = Array.from(grid.querySelectorAll('.product-card'));
+  cards.sort(function(a, b) {
+    if (val === 'price-low') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+    if (val === 'price-high') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+    return 0;
+  });
+  cards.forEach(function(c) { grid.appendChild(c); });
+}
+
+function clearFilters() {
+  document.querySelectorAll('.sidebar-option input').forEach(function(i) { i.checked = true; });
+  document.getElementById('hero-search-input').value = '';
+  setFilter(document.querySelector('.filter-btn'), 'all');
+  showToast('🔄 Filters cleared!');
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModalDirect(); });
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry, i) {
+    if (entry.isIntersecting) { setTimeout(function() { entry.target.classList.add('visible'); }, i * 80); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+</script>
+</body>
+</html>
