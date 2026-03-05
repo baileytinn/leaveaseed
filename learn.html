@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn to Grow — Leave a Seed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil: #2C1A0E;
+    --bark: #4A2C17;
+    --moss: #3D5A2A;
+    --sage: #6B8F5E;
+    --fern: #8FAF7A;
+    --straw: #D4A843;
+    --wheat: #E8C97A;
+    --cream: #F5EDD8;
+    --parchment: #FAF3E6;
+    --rust: #B85C2A;
+    --terracotta: #C4703F;
+    --sky: #7BA7BC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Lato', sans-serif; background: var(--parchment); color: var(--soil); overflow-x: hidden; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1.2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(245, 237, 216, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(44, 26, 14, 0.1);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo span { color: var(--straw); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--bark); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--moss); }
+  .nav-cta { background: var(--moss); color: var(--cream) !important; padding: 0.6rem 1.5rem; border-radius: 2rem; transition: background 0.3s !important; }
+  .nav-cta:hover { background: var(--bark) !important; }
+
+  /* HERO */
+  .page-hero {
+    background: linear-gradient(135deg, var(--moss) 0%, #2a4a1e 100%);
+    padding: 9rem 3rem 6rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1400&q=60');
+    background-size: cover; background-position: center;
+    opacity: 0.1;
+  }
+  .page-hero::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 80px;
+    background: var(--parchment);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .page-eyebrow { font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--wheat); margin-bottom: 1rem; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.1; margin-bottom: 1.2rem; }
+  .page-title em { color: var(--wheat); font-style: italic; }
+  .page-subtitle { font-size: 1.1rem; color: rgba(245,237,216,0.8); font-weight: 300; line-height: 1.7; margin-bottom: 2rem; }
+
+  .hero-resource-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .hero-resource {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 1rem;
+    padding: 1.3rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+  .hero-resource:hover { background: rgba(255,255,255,0.18); }
+  .hero-resource-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; }
+  .hero-resource-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--cream); margin-bottom: 0.2rem; }
+  .hero-resource-desc { font-size: 0.78rem; color: rgba(245,237,216,0.65); font-weight: 300; }
+
+  /* LEARNING PATHS */
+  .learning-paths {
+    padding: 6rem 3rem;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .section-eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--terracotta); margin-bottom: 0.8rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; color: var(--soil); line-height: 1.15; margin-bottom: 1rem; }
+  .section-header { margin-bottom: 4rem; }
+  .section-subtitle { font-size: 1rem; color: var(--bark); font-weight: 300; line-height: 1.7; max-width: 560px; }
+
+  .paths-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .path-card {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(44,26,14,0.09);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .path-card:hover { transform: translateY(-6px); box-shadow: 0 16px 50px rgba(44,26,14,0.15); }
+
+  .path-card-top {
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .path-card:nth-child(1) .path-card-top { background: linear-gradient(160deg, #2a4a1e, var(--fern)); }
+  .path-card:nth-child(2) .path-card-top { background: linear-gradient(160deg, var(--bark), var(--terracotta)); }
+  .path-card:nth-child(3) .path-card-top { background: linear-gradient(160deg, #1a3a4a, var(--sky)); }
+
+  .path-bg-img {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0.15;
+  }
+  .path-level {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.2);
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 1rem;
+    margin-bottom: 0.8rem;
+    position: relative; z-index: 1;
+    width: fit-content;
+  }
+  .path-icon { font-size: 2.5rem; margin-bottom: 0.6rem; display: block; position: relative; z-index: 1; }
+  .path-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: white; position: relative; z-index: 1; }
+
+  .path-body { background: white; padding: 1.8rem 2rem 2rem; }
+  .path-desc { font-size: 0.9rem; color: var(--bark); line-height: 1.7; font-weight: 300; margin-bottom: 1.5rem; }
+  .path-lessons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .path-lesson {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.83rem;
+    color: var(--soil);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(44,26,14,0.06);
+  }
+  .path-lesson:last-child { border-bottom: none; }
+  .lesson-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--parchment);
+    border: 1px solid rgba(44,26,14,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--bark);
+    flex-shrink: 0;
+  }
+  .lesson-num.done { background: var(--moss); border-color: var(--moss); color: white; }
+  .path-cta {
+    display: inline-block;
+    background: var(--moss);
+    color: white;
+    padding: 0.7rem 1.8rem;
+    border-radius: 2rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: background 0.2s;
+  }
+  .path-cta:hover { background: var(--bark); }
+
+  /* PLANTING CALENDAR SECTION */
+  .calendar-section {
+    background: var(--soil);
+    padding: 6rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .calendar-section::before {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(107,143,94,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .calendar-inner { max-width: 1300px; margin: 0 auto; }
+  .calendar-section .section-eyebrow { color: var(--wheat); }
+  .calendar-section .section-title { color: var(--cream); margin-bottom: 3rem; }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .cal-month {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.8rem;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .cal-month:hover { background: rgba(255,255,255,0.12); }
+  .cal-month.current { border-color: var(--straw); background: rgba(212,168,67,0.15); }
+  .cal-month-name { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(245,237,216,0.6); margin-bottom: 0.5rem; }
+  .cal-month.current .cal-month-name { color: var(--wheat); }
+  .cal-dot {
+    width: 8px; height: 8px; border-radius: 50%; margin: 2px auto;
+  }
+  .dot-tomato { background: #e05d44; }
+  .dot-beans { background: var(--fern); }
+  .dot-squash { background: var(--straw); }
+  .dot-herbs { background: var(--sky); }
+
+  .calendar-legend {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: rgba(245,237,216,0.7); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .calendar-cta-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .btn-straw {
+    background: var(--straw); color: var(--soil);
+    padding: 0.9rem 2.2rem; border-radius: 3rem;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    display: inline-block; transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(212,168,67,0.3);
+  }
+  .btn-straw:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,168,67,0.5); }
+  .btn-outline-light {
+    border: 2px solid rgba(245,237,216,0.4);
+    color: var(--cream); padding: 0.9rem 2.2rem; border-radius: 3rem;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    display: inline-block; transition: all 0.2s;
+  }
+  .btn-outline-light:hover { background: rgba(245,237,216,0.1); border-color: var(--cream); }
+
+  /* GUIDES SECTION */
+  .guides-section { padding: 6rem 3rem; max-width: 1300px; margin: 0 auto; }
+
+  .guides-masonry {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .guide-card {
+    background: white;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(44,26,14,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .guide-card:hover { transform: translateY(-4px); box-shadow: 0 10px 35px rgba(44,26,14,0.12); }
+  .guide-card.tall { grid-row: span 2; }
+
+  .guide-img {
+    width: 100%; height: 160px; object-fit: cover;
+    display: block; transition: transform 0.4s;
+  }
+  .guide-card.tall .guide-img { height: 240px; }
+  .guide-card:hover .guide-img { transform: scale(1.04); }
+
+  .guide-body { padding: 1.4rem 1.5rem; }
+  .guide-tag {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--moss); background: rgba(61,90,42,0.08);
+    padding: 0.2rem 0.6rem; border-radius: 1rem;
+    display: inline-block; margin-bottom: 0.7rem;
+  }
+  .guide-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--soil); line-height: 1.35; margin-bottom: 0.5rem; }
+  .guide-card.tall .guide-title { font-size: 1.25rem; }
+  .guide-meta { font-size: 0.75rem; color: rgba(44,26,14,0.45); }
+
+  /* VIDEO SECTION */
+  .video-section {
+    background: var(--cream);
+    padding: 6rem 3rem;
+  }
+  .video-inner { max-width: 1300px; margin: 0 auto; }
+  .video-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .video-featured {
+    background: var(--soil);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    min-height: 360px;
+    display: flex;
+    align-items: flex-end;
+    cursor: pointer;
+    z-index: 0;
+    isolation: isolate;
+  }
+  .video-featured-bg {
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=900&q=80');
+    background-size: cover; background-position: center;
+    opacity: 0.5;
+  }
+  .video-featured-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(44,26,14,0.8) 0%, transparent 60%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-featured-overlay::before {
+    content: none;
+  }
+  .video-featured:hover .video-featured-overlay::before { background: var(--straw); }
+  .video-featured-info { position: relative; z-index: 1; padding: 2rem; }
+  .video-duration { font-size: 0.75rem; color: var(--wheat); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.07em; }
+  .video-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: white; margin-bottom: 0.3rem; }
+  .video-by { font-size: 0.82rem; color: rgba(245,237,216,0.6); }
+
+  .video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .video-item {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    gap: 0;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(44,26,14,0.06);
+    text-decoration: none;
+    color: inherit;
+  }
+  .video-item:hover { transform: translateX(4px); box-shadow: 0 6px 25px rgba(44,26,14,0.1); }
+  .video-thumb {
+    width: 110px; flex-shrink: 0;
+    position: relative; overflow: hidden;
+  }
+  .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .video-play-sm {
+    display: none;
+  }
+  .video-thumb { position: relative; overflow: hidden; }
+  .reveal:not(.visible) .video-play-sm { opacity: 0; }
+  .video-item-info { padding: 1rem; flex: 1; }
+  .video-item-tag { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .video-item-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; color: var(--soil); line-height: 1.3; margin-bottom: 0.3rem; }
+  .video-item-meta { font-size: 0.73rem; color: rgba(44,26,14,0.45); }
+
+  /* COMMUNITY CTA */
+  .community-cta {
+    background: linear-gradient(135deg, var(--terracotta), var(--rust));
+    padding: 5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .community-cta::before {
+    content: '🌱';
+    position: absolute;
+    font-size: 25rem;
+    left: -4rem; top: 50%; transform: translateY(-50%);
+    opacity: 0.05;
+  }
+  .community-cta-inner { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+  .community-cta h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; color: white; line-height: 1.15; margin-bottom: 1.2rem; }
+  .community-cta h2 em { color: var(--wheat); font-style: italic; }
+  .community-cta p { font-size: 1rem; color: rgba(255,255,255,0.8); font-weight: 300; line-height: 1.7; margin-bottom: 2.5rem; }
+  .cta-stats { display: flex; gap: 3rem; justify-content: center; margin-bottom: 2.5rem; }
+  .cta-stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--wheat); display: block; }
+  .cta-stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* FOOTER */
+  footer { background: var(--bark); padding: 4rem 3rem 2rem; color: var(--cream); }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem; }
+  .footer-brand p { font-size: 0.9rem; color: rgba(245,237,216,0.6); line-height: 1.7; font-weight: 300; margin-top: 1rem; max-width: 300px; }
+  .footer-brand .nav-logo { white-space: nowrap; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--wheat); margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a { color: rgba(245,237,216,0.6); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--cream); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: rgba(245,237,216,0.4); }
+  .footer-mission { color: var(--fern); font-weight: 700; }
+
+  @keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; transition: opacity 0.7s ease; }
+  .reveal.visible { opacity: 1; }
+
+  @media (max-width: 1100px) {
+    .paths-grid { grid-template-columns: 1fr 1fr; }
+    .guides-masonry { grid-template-columns: repeat(2, 1fr); }
+    .guide-card.tall { grid-row: span 1; }
+    .guide-card.tall .guide-img { height: 160px; }
+    .video-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .calendar-grid { grid-template-columns: repeat(6, 1fr); }
+  }
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .paths-grid { grid-template-columns: 1fr; }
+    .page-hero-inner { grid-template-columns: 1fr; }
+    .vendors-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .cta-stats { gap: 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .guides-masonry { grid-template-columns: 1fr; }
+    .calendar-grid { grid-template-columns: repeat(4, 1fr); }
+    .video-featured { min-height: 220px; }
+  }
+</style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-15PQCNRKX1');
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+  <ul class="nav-links">
+    <li><a href="marketplace.html">Marketplace</a></li>
+    <li><a href="learn.html" class="active">Learn</a></li>
+    <li><a href="mission.html">Mission</a></li>
+    <li><a href="index.html#join">Join Us</a></li>
+    <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <p class="page-eyebrow">✦ Free for every grower</p>
+      <h1 class="page-title">Grow With <em>Confidence</em></h1>
+      <p class="page-subtitle">From your first seed packet to a thriving backyard farm — guides, videos, calendars, and a community ready to help you every step of the way.</p>
+    </div>
+    <div class="hero-resource-cards">
+      <a href="#guides" class="hero-resource">
+        <span class="hero-resource-icon">📖</span>
+        <div class="hero-resource-name">Written Guides</div>
+        <div class="hero-resource-desc">Step-by-step articles for every skill level</div>
+      </a>
+      <a href="#videos" class="hero-resource">
+        <span class="hero-resource-icon">📹</span>
+        <div class="hero-resource-name">Video Library</div>
+        <div class="hero-resource-desc">Watch real farmers show you how</div>
+      </a>
+      <a href="#calendar" class="hero-resource">
+        <span class="hero-resource-icon">🗓️</span>
+        <div class="hero-resource-name">Planting Calendar</div>
+        <div class="hero-resource-desc">Exactly when to plant in your zone</div>
+      </a>
+      <a href="#paths" class="hero-resource">
+        <span class="hero-resource-icon">🌿</span>
+        <div class="hero-resource-name">Learning Paths</div>
+        <div class="hero-resource-desc">Structured courses from beginner to expert</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- LEARNING PATHS -->
+<section class="learning-paths" id="paths">
+  <div class="section-header reveal">
+    <p class="section-eyebrow">✦ Structured Learning</p>
+    <h2 class="section-title">Choose Your<br>Growing Path</h2>
+    <p class="section-subtitle">Whether you've never held a trowel or you're expanding to an acre, we have a path built for where you are right now.</p>
+  </div>
+  <div class="paths-grid">
+    <a href="beginner-grower.html" class="path-card reveal">
+      <div class="path-card-top">
+        <div class="path-bg-img" style="background-image:url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=70')"></div>
+        <span class="path-level">🌱 Beginner</span>
+        <span class="path-icon">🪴</span>
+        <h3 class="path-name">First-Time Grower</h3>
+      </div>
+      <div class="path-body">
+        <p class="path-desc">Start your journey with simple, forgiving crops and build confidence from your very first harvest.</p>
+        <div class="path-lessons">
+          <div class="path-lesson"><div class="lesson-num">1</div> Understanding your growing zone</div>
+          <div class="path-lesson"><div class="lesson-num">2</div> Choosing beginner-friendly seeds</div>
+          <div class="path-lesson"><div class="lesson-num">3</div> Preparing soil for success</div>
+          <div class="path-lesson"><div class="lesson-num">4</div> Watering — the #1 mistake to avoid</div>
+          <div class="path-lesson"><div class="lesson-num">5</div> Your first harvest</div>
+        </div>
+        <a href="beginner-grower.html" class="path-cta">Start Learning →</a>
+      </div>
+    </a>
+
+    <a href="intermediate-grower.html" class="path-card reveal">
+      <div class="path-card-top">
+        <div class="path-bg-img" style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=70')"></div>
+        <span class="path-level">🌿 Intermediate</span>
+        <span class="path-icon">🥕</span>
+        <h3 class="path-name">Home Garden Builder</h3>
+      </div>
+      <div class="path-body">
+        <p class="path-desc">Expand beyond the basics — plan a full season garden, extend your harvest, and grow a wider variety of crops.</p>
+        <div class="path-lessons">
+          <div class="path-lesson"><div class="lesson-num">1</div> Seasonal planning & crop rotation</div>
+          <div class="path-lesson"><div class="lesson-num">2</div> Companion planting strategies</div>
+          <div class="path-lesson"><div class="lesson-num">3</div> Natural pest & disease control</div>
+          <div class="path-lesson"><div class="lesson-num">4</div> Building compost at home</div>
+          <div class="path-lesson"><div class="lesson-num">5</div> Seed saving & preservation</div>
+        </div>
+        <a href="intermediate-grower.html" class="path-cta">Start Learning →</a>
+      </div>
+    </a>
+
+    <a href="#" class="path-card reveal">
+      <div class="path-card-top">
+        <div class="path-bg-img" style="background-image:url('https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=70')"></div>
+        <span class="path-level">🌳 Advanced</span>
+        <span class="path-icon">🚜</span>
+        <h3 class="path-name">Small Farm Operator</h3>
+      </div>
+      <div class="path-body">
+        <p class="path-desc">Scale up your operation, start selling at markets, or feed your whole community through a productive small farm.</p>
+        <div class="path-lessons">
+          <div class="path-lesson"><div class="lesson-num">1</div> Market garden bed layout & spacing</div>
+          <div class="path-lesson"><div class="lesson-num">2</div> Irrigation systems on a budget</div>
+          <div class="path-lesson"><div class="lesson-num">3</div> Succession planting for continuous yields</div>
+          <div class="path-lesson"><div class="lesson-num">4</div> Selling at farmers' markets</div>
+          <div class="path-lesson"><div class="lesson-num">5</div> Applying for USDA grants</div>
+        </div>
+        <a href="#" class="path-cta">Start Learning →</a>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- PLANTING CALENDAR -->
+<section class="calendar-section" id="calendar">
+  <div class="calendar-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">✦ Know When to Plant</p>
+      <h2 class="section-title">2026 Planting Calendar</h2>
+    </div>
+    <div class="calendar-grid reveal">
+      <div class="cal-month"><div class="cal-month-name">Jan</div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Feb</div><div class="cal-dot dot-tomato"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month current"><div class="cal-month-name">Mar ★</div><div class="cal-dot dot-tomato"></div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Apr</div><div class="cal-dot dot-tomato"></div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-squash"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">May</div><div class="cal-dot dot-tomato"></div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-squash"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Jun</div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-squash"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Jul</div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Aug</div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Sep</div><div class="cal-dot dot-beans"></div><div class="cal-dot dot-squash"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Oct</div><div class="cal-dot dot-squash"></div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Nov</div><div class="cal-dot dot-herbs"></div></div>
+      <div class="cal-month"><div class="cal-month-name">Dec</div><div class="cal-dot dot-herbs"></div></div>
+    </div>
+    <div class="calendar-legend reveal">
+      <div class="legend-item"><div class="legend-dot dot-tomato"></div> Tomatoes & Peppers</div>
+      <div class="legend-item"><div class="legend-dot dot-beans"></div> Beans & Peas</div>
+      <div class="legend-item"><div class="legend-dot dot-squash"></div> Squash & Cucumbers</div>
+      <div class="legend-item"><div class="legend-dot dot-herbs"></div> Herbs & Greens</div>
+    </div>
+    <div class="calendar-cta-row reveal">
+      <a href="https://www.almanac.com/gardening/planting-calendar" target="_blank" class="btn-straw">Get My Personalized Calendar</a>
+      <a href="https://garden.org/apps/calendar/" target="_blank" class="btn-outline-light">National Gardening Assoc. →</a>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDES -->
+<section class="guides-section" id="guides">
+  <div class="section-header reveal">
+    <p class="section-eyebrow">✦ Free Resources</p>
+    <h2 class="section-title">Guides for Every Grower</h2>
+  </div>
+  <div class="guides-masonry">
+    <a href="https://www.almanac.com/vegetable-gardening-for-beginners" target="_blank" class="guide-card tall reveal">
+      <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&q=80" alt="Beginner Guide" class="guide-img">
+      <div class="guide-body">
+        <span class="guide-tag">Beginner</span>
+        <h3 class="guide-title">The Complete Beginner's Guide to Growing Your First Vegetable Garden</h3>
+        <p class="guide-meta">12 min read · Old Farmer's Almanac</p>
+      </div>
+    </a>
+    <a href="https://www.almanac.com/content/container-gardening-vegetables" target="_blank" class="guide-card reveal">
+      <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=500&q=80" alt="Container Gardening" class="guide-img">
+      <div class="guide-body">
+        <span class="guide-tag">Urban Growing</span>
+        <h3 class="guide-title">Container Vegetable Gardening for Apartments & Small Spaces</h3>
+        <p class="guide-meta">8 min read · The Spruce</p>
+      </div>
+    </a>
+    <a href="https://extension.umn.edu/managing-soil-and-nutrients/composting-home-gardens" target="_blank" class="guide-card reveal">
+      <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=500&q=80" alt="Soil Health" class="guide-img">
+      <div class="guide-body">
+        <span class="guide-tag">Soil & Compost</span>
+        <h3 class="guide-title">Understanding Soil Health: The Foundation of a Great Garden</h3>
+        <p class="guide-meta">10 min read · UMN Extension</p>
+      </div>
+    </a>
+    <a href="https://kidsgardening.org" target="_blank" class="guide-card reveal">
+      <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=500&q=80" alt="School Gardens" class="guide-img">
+      <div class="guide-body">
+        <span class="guide-tag">Schools & Kids</span>
+        <h3 class="guide-title">Free Curriculum & Seed Kits for K–12 Educators</h3>
+        <p class="guide-meta">KidsGardening.org</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- VIDEO SECTION -->
+<section class="video-section" id="videos">
+  <div class="video-inner">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">✦ Watch & Learn</p>
+      <h2 class="section-title">Video Library</h2>
+    </div>
+    <div class="video-grid">
+      <a href="https://youtu.be/Cte9ojM7O3k?si=2tPJ-jg8x2f_EwBl" target="_blank" class="video-featured" style="text-decoration:none; cursor:pointer;">
+        <div class="video-featured-bg"></div>
+        <div class="video-featured-overlay"></div>
+        <div class="video-featured-info">
+          <p class="video-duration">22 min · Beginner Series Ep. 1</p>
+          <h3 class="video-title">How to Start Seeds Indoors: Everything You Need to Know</h3>
+          <p class="video-by">with Maria Chen, Pacific Roots Seeds</p>
+        </div>
+      </a>
+      <div class="video-list">
+        <a href="https://youtu.be/l698hczXpMM?si=q49ZA4f22wndjSO5" target="_blank" class="video-item">
+            <div class="video-play-sm">▶</div>
+          </div>
+          <div class="video-item-info">
+            <p class="video-item-tag">Soil & Compost</p>
+            <h4 class="video-item-title">Making Compost at Home in 30 Days</h4>
+            <p class="video-item-meta">14 min · Intermediate</p>
+          </div>
+        </a>
+        <a href="https://youtu.be/YnCTNF_s4vY?si=TG3-QFzkXgODzWJC" target="_blank" class="video-item">
+            <div class="video-play-sm">▶</div>
+          </div>
+          <div class="video-item-info">
+            <p class="video-item-tag">Urban Growing</p>
+            <h4 class="video-item-title">Vertical Garden Setup for Balconies</h4>
+            <p class="video-item-meta">11 min · Beginner</p>
+          </div>
+        </a>
+        <a href="https://youtu.be/qbVcHLpHxKg?si=OwhczrH_RaBTlokf" target="_blank" class="video-item">
+            <div class="video-play-sm">▶</div>
+          </div>
+          <div class="video-item-info">
+            <p class="video-item-tag">Seed Saving</p>
+            <h4 class="video-item-title">Saving Tomato Seeds: Step by Step</h4>
+            <p class="video-item-meta">9 min · Intermediate</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY CTA -->
+<section class="community-cta">
+  <div class="community-cta-inner reveal">
+    <h2>Learn Together,<br><em>Grow Together</em></h2>
+    <p>Join our community forum where 40,000+ growers share tips, troubleshoot problems, and celebrate harvests. Every question is welcome.</p>
+    <div class="cta-stats">
+      <div><span class="cta-stat-num">40K+</span><span class="cta-stat-label">Community Members</span></div>
+      <div><span class="cta-stat-num">120K+</span><span class="cta-stat-label">Questions Answered</span></div>
+      <div><span class="cta-stat-num">Free</span><span class="cta-stat-label">Always & Forever</span></div>
+    </div>
+    <a href="index.html#join" class="btn-straw">Join the Community</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Marketplace</h4>
+        <ul>
+          <li><a href="marketplace.html">Browse All Seeds</a></li>
+          <li><a href="marketplace.html">Heirloom Seeds</a></li>
+          <li><a href="marketplace.html">Organic Seeds</a></li>
+          <li><a href="marketplace.html">Become a Vendor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="learn.html">Beginner Guides</a></li>
+          <li><a href="learn.html">Planting Calendars</a></li>
+          <li><a href="learn.html">Urban Growing</a></li>
+          <li><a href="learn.html">School Programs</a></li>
+          <li><a href="learn.html">Community Forum</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Mission</h4>
+        <ul>
+          <li><a href="mission.html">Our Story</a></li>
+          <li><a href="mission.html">Hunger Initiative</a></li>
+          <li><a href="mission.html">Impact Reports</a></li>
+          <li><a href="mission.html">Partnerships</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
