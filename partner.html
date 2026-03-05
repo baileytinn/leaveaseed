@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm a Partner — Leave a Seed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-15PQCNRKX1');
+</script>
+<style>
+  :root {
+    --soil: #2C1A0E; --bark: #4A2C17; --moss: #3D5A2A; --sage: #6B8F5E;
+    --fern: #8FAF7A; --straw: #D4A843; --wheat: #E8C97A; --cream: #F5EDD8;
+    --parchment: #FAF3E6; --rust: #B85C2A; --terracotta: #C4703F; --sky: #7BA7BC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Lato', sans-serif; background: var(--parchment); color: var(--soil); overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; align-items: center; justify-content: space-between; background: rgba(245,237,216,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(44,26,14,0.1); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo span { color: var(--straw); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--bark); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover { color: var(--moss); }
+  .nav-cta { background: var(--moss); color: var(--cream) !important; padding: 0.6rem 1.5rem; border-radius: 2rem; transition: background 0.3s !important; }
+  .nav-cta:hover { background: var(--bark) !important; }
+
+  /* HERO */
+  .hero { background: #1a3a4a; padding: 9rem 3rem 6rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&q=60'); background-size: cover; background-position: center; opacity: 0.07; }
+  .hero::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 80px; background: var(--parchment); clip-path: ellipse(55% 100% at 50% 100%); }
+  .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; position: relative; z-index: 1; }
+  .hero-eyebrow { font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--wheat); margin-bottom: 1rem; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 4.5vw, 3.8rem); font-weight: 900; color: var(--cream); line-height: 1.1; margin-bottom: 1.2rem; }
+  .hero-title em { color: #9dd4e8; font-style: italic; }
+  .hero-desc { font-size: 1rem; color: rgba(245,237,216,0.78); font-weight: 300; line-height: 1.8; margin-bottom: 2rem; }
+  .hero-perks { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+  .hero-perks li { display: flex; align-items: center; gap: 0.7rem; font-size: 0.9rem; color: rgba(245,237,216,0.85); }
+  .hero-perks li::before { content: '✓'; background: var(--sky); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; flex-shrink: 0; }
+
+  /* SIGNUP CARD */
+  .signup-card { background: white; border-radius: 2rem; padding: 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .signup-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--soil); margin-bottom: 0.4rem; }
+  .signup-card .sub { font-size: 0.88rem; color: rgba(44,26,14,0.5); margin-bottom: 1.8rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--bark); margin-bottom: 0.4rem; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; border: 1.5px solid rgba(44,26,14,0.13); border-radius: 0.7rem; padding: 0.75rem 1rem; font-family: 'Lato', sans-serif; font-size: 0.92rem; color: var(--soil); background: var(--parchment); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(123,167,188,0.15); }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(44,26,14,0.3); }
+  .form-group textarea { resize: vertical; min-height: 85px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+  /* PARTNER TYPES */
+  .partner-types { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
+  .partner-type { border: 1.5px solid rgba(44,26,14,0.13); border-radius: 0.8rem; padding: 0.7rem 0.8rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; font-weight: 700; color: var(--bark); background: var(--parchment); }
+  .partner-type:hover { border-color: var(--sky); color: #1a3a4a; }
+  .partner-type.selected { border-color: var(--sky); background: rgba(123,167,188,0.1); color: #1a3a4a; }
+  .partner-type-icon { font-size: 1.2rem; }
+
+  .btn-signup { width: 100%; background: #1a3a4a; color: white; border: none; border-radius: 3rem; padding: 1rem; font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; box-shadow: 0 4px 20px rgba(26,58,74,0.3); letter-spacing: 0.03em; }
+  .btn-signup:hover { background: var(--soil); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(26,58,74,0.4); }
+  .fine-print { font-size: 0.72rem; color: rgba(44,26,14,0.38); text-align: center; margin-top: 0.8rem; line-height: 1.5; }
+
+  /* PARTNER TYPES SECTION */
+  .partner-section { max-width: 1100px; margin: 0 auto; padding: 6rem 3rem; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header .eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--sky); margin-bottom: 0.6rem; }
+  .section-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--soil); }
+  .section-header p { font-size: 0.95rem; color: var(--bark); font-weight: 300; max-width: 580px; margin: 1rem auto 0; line-height: 1.8; }
+  .partner-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .partner-card { background: white; border-radius: 1.5rem; padding: 2.2rem; box-shadow: 0 4px 25px rgba(44,26,14,0.07); border-top: 4px solid transparent; }
+  .partner-card:nth-child(1) { border-top-color: var(--terracotta); }
+  .partner-card:nth-child(2) { border-top-color: var(--moss); }
+  .partner-card:nth-child(3) { border-top-color: var(--sky); }
+  .partner-card:nth-child(4) { border-top-color: var(--straw); }
+  .partner-card:nth-child(5) { border-top-color: var(--sage); }
+  .partner-card:nth-child(6) { border-top-color: var(--rust); }
+  .partner-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+  .partner-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--soil); margin-bottom: 0.6rem; }
+  .partner-card p { font-size: 0.88rem; color: var(--bark); line-height: 1.75; font-weight: 300; }
+
+  /* WHAT WE OFFER */
+  .offer { background: var(--soil); padding: 6rem 3rem; }
+  .offer-inner { max-width: 1100px; margin: 0 auto; }
+  .offer-header { text-align: center; margin-bottom: 4rem; }
+  .offer-header .eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--wheat); margin-bottom: 0.6rem; }
+  .offer-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--cream); margin-bottom: 1rem; }
+  .offer-header p { font-size: 0.95rem; color: rgba(245,237,216,0.6); max-width: 560px; margin: 0 auto; line-height: 1.8; font-weight: 300; }
+  .offer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .offer-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.2rem; padding: 2rem; display: flex; gap: 1.2rem; align-items: flex-start; }
+  .offer-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .offer-item h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--cream); margin-bottom: 0.4rem; }
+  .offer-item p { font-size: 0.85rem; color: rgba(245,237,216,0.55); line-height: 1.7; font-weight: 300; }
+  .offer-disclaimer { text-align: center; margin-top: 2.5rem; font-size: 0.82rem; color: rgba(245,237,216,0.35); font-style: italic; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+  /* HOW IT WORKS */
+  .how { max-width: 1100px; margin: 0 auto; padding: 6rem 3rem; }
+  .how-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 3rem; }
+  .how-step { text-align: center; }
+  .how-step-num { width: 52px; height: 52px; border-radius: 50%; background: rgba(123,167,188,0.12); border: 2px solid rgba(123,167,188,0.4); color: var(--sky); font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; }
+  .how-step h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--soil); margin-bottom: 0.5rem; }
+  .how-step p { font-size: 0.83rem; color: var(--bark); line-height: 1.6; font-weight: 300; opacity: 0.75; }
+
+  /* IMPACT */
+  .impact { background: linear-gradient(135deg, #1a3a4a, var(--moss)); padding: 5.5rem 3rem; text-align: center; }
+  .impact-inner { max-width: 900px; margin: 0 auto; }
+  .impact .eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--wheat); margin-bottom: 0.8rem; }
+  .impact h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--cream); margin-bottom: 1rem; }
+  .impact p { font-size: 0.95rem; color: rgba(245,237,216,0.75); font-weight: 300; line-height: 1.8; max-width: 580px; margin: 0 auto 3rem; }
+  .impact-stats { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; }
+  .impact-stat { text-align: center; }
+  .impact-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--wheat); display: block; }
+  .impact-label { font-size: 0.8rem; color: rgba(245,237,216,0.6); }
+
+  /* CTA BOTTOM */
+  .cta-bottom { background: var(--cream); padding: 6rem 3rem; text-align: center; border-top: 1px solid rgba(44,26,14,0.08); }
+  .cta-bottom h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; color: var(--soil); margin-bottom: 1rem; }
+  .cta-bottom h2 em { color: #1a3a4a; font-style: italic; }
+  .cta-bottom p { font-size: 1rem; color: var(--bark); font-weight: 300; max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.8; }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: #1a3a4a; color: white; padding: 0.9rem 2.2rem; border-radius: 3rem; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 20px rgba(26,58,74,0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(26,58,74,0.4); }
+  .btn-outline { border: 2px solid rgba(44,26,14,0.2); color: var(--bark); padding: 0.9rem 2.2rem; border-radius: 3rem; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: all 0.2s; }
+  .btn-outline:hover { border-color: #1a3a4a; color: #1a3a4a; }
+
+  /* FOOTER */
+  footer { background: var(--bark); padding: 4rem 3rem 2rem; color: var(--cream); }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem; }
+  .footer-brand p { font-size: 0.9rem; color: rgba(245,237,216,0.6); line-height: 1.7; font-weight: 300; margin-top: 1rem; max-width: 300px; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--wheat); margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a { color: rgba(245,237,216,0.6); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--cream); }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: rgba(245,237,216,0.4); }
+  .footer-mission { color: var(--fern); font-weight: 700; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--soil); color: white; padding: 0.75rem 1.6rem; border-radius: 3rem; font-size: 0.88rem; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 9000; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .partner-cards { grid-template-columns: 1fr; }
+    .offer-grid { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: 1fr 1fr; }
+    .partner-types { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .hero { padding: 8rem 1.5rem 5rem; }
+    .partner-section, .how { padding: 4rem 1.5rem; }
+    .offer { padding: 4rem 1.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .how-steps { grid-template-columns: 1fr; }
+    .impact-stats { gap: 1.5rem; }
+    .footer-top { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+  <ul class="nav-links">
+    <li><a href="app.html">Shop</a></li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="mission.html">Mission</a></li>
+    <li><a href="index.html#join">Join Us</a></li>
+    <li><a href="app.html" class="nav-cta">Browse Seeds</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="hero-eyebrow">✦ For Partners</p>
+      <h1 class="hero-title">Let's Work<br><em>Together</em><br>to End Hunger.</h1>
+      <p class="hero-desc">Leave a Seed partners with food banks, schools, nonprofits, community gardens, and civic organizations to get seeds and growing knowledge into the hands of the people who need them most.</p>
+      <ul class="hero-perks">
+        <li>Donated seed packets for qualifying organizations</li>
+        <li>Free growing curriculum for schools and educators</li>
+        <li>Direct partnership with our community garden network</li>
+        <li>No cost to apply — we review every inquiry</li>
+      </ul>
+    </div>
+
+    <!-- SIGNUP CARD -->
+    <div class="signup-card">
+      <h2>Start a Partnership Inquiry</h2>
+      <p class="sub">We respond to all inquiries within 7 business days.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">Your First Name</label>
+          <input type="text" id="first-name" placeholder="Jane" autocomplete="given-name">
+        </div>
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" placeholder="Smith" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="org">Organization Name</label>
+        <input type="text" id="org" placeholder="Springfield Community Garden">
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="jane@yourorg.org" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label>Type of Organization</label>
+        <div class="partner-types" id="partner-types">
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">🏦</span> Food Bank</div>
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">🏫</span> School</div>
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">🌿</span> Community Garden</div>
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">💛</span> Nonprofit</div>
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">🏛️</span> Civic / Gov</div>
+          <div class="partner-type" onclick="selectType(this)"><span class="partner-type-icon">🔷</span> Other</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="need">How can we help? <span style="font-weight:300;text-transform:none;letter-spacing:0">(briefly)</span></label>
+        <textarea id="need" placeholder="Tell us about your organization, your community, and what kind of support you're looking for..."></textarea>
+      </div>
+
+      <button class="btn-signup" onclick="handleSignup()">Send Inquiry 🤝</button>
+      <p class="fine-print">Submitting this form starts a conversation — it is not a guarantee of a partnership or seed donation. We'll follow up personally.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE PARTNER WITH -->
+<section class="partner-section">
+  <div class="section-header reveal">
+    <p class="eyebrow">✦ Who We Work With</p>
+    <h2>Organizations Making a Difference</h2>
+    <p>We partner with organizations that are already doing the hard work of feeding and empowering communities. Seeds and knowledge are what we bring to the table.</p>
+  </div>
+  <div class="partner-cards">
+    <div class="partner-card reveal">
+      <div class="partner-icon">🏦</div>
+      <h3>Food Banks &amp; Pantries</h3>
+      <p>We donate seed packets and growing guides to food banks so their clients can supplement pantry supplies with homegrown produce — extending the impact of every visit.</p>
+    </div>
+    <div class="partner-card reveal">
+      <div class="partner-icon">🏫</div>
+      <h3>Schools &amp; Educators</h3>
+      <p>From seed kits to full growing curricula, we support K–12 school garden programs with everything teachers need to get students growing food and understanding where it comes from.</p>
+    </div>
+    <div class="partner-card reveal">
+      <div class="partner-icon">🌿</div>
+      <h3>Community Gardens</h3>
+      <p>Community gardens in food deserts receive priority access to our seed donation program. We help coordinate variety selection, planting guides, and volunteer resources.</p>
+    </div>
+    <div class="partner-card reveal">
+      <div class="partner-icon">💛</div>
+      <h3>Nonprofits &amp; Charities</h3>
+      <p>Organizations working in food security, urban agriculture, or community development can apply to become distribution partners — getting seeds and education to those who need it most.</p>
+    </div>
+    <div class="partner-card reveal">
+      <div class="partner-icon">🏛️</div>
+      <h3>Civic &amp; Government Programs</h3>
+      <p>Municipal gardens, public housing initiatives, and city-run food programs can partner with us to expand access to fresh produce growing resources in underserved neighborhoods.</p>
+    </div>
+    <div class="partner-card reveal">
+      <div class="partner-icon">🔬</div>
+      <h3>Research &amp; Agriculture Programs</h3>
+      <p>Universities and agricultural extension programs interested in seed diversity, food systems research, or community growing initiatives are welcome to reach out about collaboration.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE OFFER -->
+<section class="offer">
+  <div class="offer-inner">
+    <div class="offer-header reveal">
+      <p class="eyebrow">✦ What We Bring</p>
+      <h2>What a Partnership Can Include</h2>
+      <p>Every partnership is different. Here's what we're currently able to offer qualifying organizations — subject to capacity and alignment with our mission.</p>
+    </div>
+    <div class="offer-grid">
+      <div class="offer-item reveal">
+        <span class="offer-icon">🌱</span>
+        <div>
+          <h4>Seed Donations</h4>
+          <p>Qualifying food banks, community gardens, and nonprofits can receive donated seed packets sourced from our vendor network. Quantities depend on capacity and need.</p>
+        </div>
+      </div>
+      <div class="offer-item reveal">
+        <span class="offer-icon">📚</span>
+        <div>
+          <h4>Free Growing Curriculum</h4>
+          <p>Schools and educators receive access to our full growing education library — planting guides, lesson plans, and activity sheets — at no cost.</p>
+        </div>
+      </div>
+      <div class="offer-item reveal">
+        <span class="offer-icon">📍</span>
+        <div>
+          <h4>Regional Planting Support</h4>
+          <p>We help organizations select seed varieties suited to their specific climate and growing conditions, with personalized planting timelines.</p>
+        </div>
+      </div>
+      <div class="offer-item reveal">
+        <span class="offer-icon">📣</span>
+        <div>
+          <h4>Community Visibility</h4>
+          <p>Active partners are featured in our community network and impact reports, helping raise awareness of the work your organization is already doing.</p>
+        </div>
+      </div>
+    </div>
+    <p class="offer-disclaimer reveal">We are a growing organization with limited capacity. Not every inquiry will result in a formal partnership. We prioritize organizations in food deserts and communities with demonstrated need.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-header reveal">
+    <p class="eyebrow" style="font-family:'Caveat',cursive;font-size:1.2rem;color:var(--sky);">✦ The Process</p>
+    <h2>How Partnerships Work</h2>
+  </div>
+  <div class="how-steps">
+    <div class="how-step reveal">
+      <div class="how-step-num">1</div>
+      <h4>Submit an Inquiry</h4>
+      <p>Tell us about your organization and what kind of support would be most valuable to your community.</p>
+    </div>
+    <div class="how-step reveal">
+      <div class="how-step-num">2</div>
+      <h4>We Review &amp; Respond</h4>
+      <p>Our team reviews every inquiry within 7 business days and follows up to learn more about your work.</p>
+    </div>
+    <div class="how-step reveal">
+      <div class="how-step-num">3</div>
+      <h4>We Shape a Plan Together</h4>
+      <p>If there's a fit, we work with you to define what a partnership looks like — seeds, curriculum, visibility, or all three.</p>
+    </div>
+    <div class="how-step reveal">
+      <div class="how-step-num">4</div>
+      <h4>We Get to Work</h4>
+      <p>Your community starts receiving seeds, education, and support. We track impact together and share it in our quarterly reports.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact">
+  <div class="impact-inner">
+    <p class="eyebrow reveal">✦ Why It Matters</p>
+    <h2 class="reveal">Every Seed Is a Step<br>Toward Food Security</h2>
+    <p class="reveal">34 million Americans face food insecurity. Community organizations are on the front lines. We exist to support them with tools that create long-term self-sufficiency — not just short-term relief.</p>
+    <div class="impact-stats reveal">
+      <div class="impact-stat">
+        <span class="impact-num">200+</span>
+        <span class="impact-label">communities currently reached</span>
+      </div>
+      <div class="impact-stat">
+        <span class="impact-num">50+</span>
+        <span class="impact-label">food bank & garden partnerships</span>
+      </div>
+      <div class="impact-stat">
+        <span class="impact-num">1M+</span>
+        <span class="impact-label">meals enabled through seed donations</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-bottom">
+  <h2 class="reveal">Ready to <em>Connect?</em></h2>
+  <p class="reveal">Scroll back up to send your inquiry, or learn more about our hunger mission before reaching out.</p>
+  <div class="cta-btns reveal">
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="btn-primary">Send an Inquiry</a>
+    <a href="mission.html" class="btn-outline">Our Hunger Mission</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
+      </div>
+      <div class="footer-col"><h4>Marketplace</h4><ul>
+        <li><a href="app.html">Browse All Seeds</a></li>
+        <li><a href="app.html">Heirloom Seeds</a></li>
+        <li><a href="app.html">Organic Seeds</a></li>
+        <li><a href="seedcompany.html">Become a Vendor</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Learn</h4><ul>
+        <li><a href="learn.html">Beginner Guides</a></li>
+        <li><a href="learn.html">Planting Calendars</a></li>
+        <li><a href="learn.html">Urban Growing</a></li>
+        <li><a href="learn.html">School Programs</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Mission</h4><ul>
+        <li><a href="mission.html">Our Story</a></li>
+        <li><a href="mission.html">Hunger Initiative</a></li>
+        <li><a href="mission.html">Impact Reports</a></li>
+        <li><a href="partner.html">Partnerships</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function selectType(el) {
+  document.querySelectorAll('.partner-type').forEach(function(t) { t.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function handleSignup() {
+  var first = document.getElementById('first-name').value.trim();
+  var org = document.getElementById('org').value.trim();
+  var email = document.getElementById('email').value.trim();
+  if (!first || !org || !email) {
+    showToast('⚠️ Please fill in your name, organization, and email');
+    return;
+  }
+  showToast('✅ Inquiry received! We\'ll be in touch within 7 business days.');
+  setTimeout(function() {
+    document.getElementById('first-name').value = '';
+    document.getElementById('last-name').value = '';
+    document.getElementById('org').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('need').value = '';
+    document.querySelectorAll('.partner-type').forEach(function(t) { t.classList.remove('selected'); });
+  }, 600);
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry, i) {
+    if (entry.isIntersecting) {
+      setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+</script>
+</body>
+</html>
