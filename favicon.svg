@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle - soil/bark color -->
+  <circle cx="32" cy="32" r="32" fill="#4a3728"/>
+
+  <!-- Soil mound -->
+  <ellipse cx="32" cy="52" rx="18" ry="6" fill="#6b4c35"/>
+
+  <!-- Stem -->
+  <line x1="32" y1="50" x2="32" y2="28" stroke="#7a9e4e" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Left leaf -->
+  <path d="M32 36 Q18 28 20 16 Q30 22 32 36Z" fill="#7a9e4e"/>
+
+  <!-- Right leaf -->
+  <path d="M32 30 Q46 22 44 10 Q34 18 32 30Z" fill="#9db96a"/>
+
+  <!-- Leaf vein left -->
+  <path d="M32 36 Q22 26 20 16" stroke="#5a7a38" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.6"/>
+
+  <!-- Leaf vein right -->
+  <path d="M32 30 Q42 20 44 10" stroke="#7a9a50" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.6"/>
+
+  <!-- Tiny sprout tip -->
+  <circle cx="32" cy="27" r="1.5" fill="#b8d48a"/>
+</svg>
