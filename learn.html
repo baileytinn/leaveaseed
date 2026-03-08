@@ -537,7 +537,8 @@
     <li><a href="resources.html">Resources</a></li>
     <li><a href="index.html#join">Join Us</a></li>
     <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
-      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -859,4 +860,12 @@
     });
     drawer.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        hamburger.classLi
+        hamburger.classList.remove('open');
+        drawer.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+</script>
+</body>
+</html>
