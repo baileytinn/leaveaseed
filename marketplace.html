@@ -706,14 +706,71 @@
   @media (max-width: 600px) {
     .products-grid { grid-template-columns: 1fr; }
   }
-</style>
+
+    /* HAMBURGER */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      z-index: 1001;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--bark);
+      border-radius: 2px;
+      transition: all 0.3s;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--parchment);
+      z-index: 999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--soil);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-drawer a:hover { color: var(--moss); }
+    .nav-drawer .drawer-cta {
+      background: var(--moss);
+      color: var(--cream) !important;
+      padding: 0.8rem 2.2rem;
+      border-radius: 2rem;
+      font-family: 'Lato', sans-serif !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+  </style>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-15PQCNRKX1');
 </script>
 </head>
@@ -726,10 +783,23 @@
     <li><a href="marketplace.html" class="active">Marketplace</a></li>
     <li><a href="learn.html">Learn</a></li>
     <li><a href="mission.html">Mission</a></li>
+    <li><a href="resources.html">Resources</a></li>
     <li><a href="index.html#join">Join Us</a></li>
     <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
-  </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Home</a>
+  <a href="marketplace.html">Marketplace</a>
+  <a href="learn.html">Learn</a>
+  <a href="mission.html">Mission</a>
+  <a href="resources.html">Resources</a>
+  <a href="index.html#join">Join Us</a>
+  <a href="marketplace.html" class="drawer-cta">Get Started</a>
+</div>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
@@ -1061,7 +1131,7 @@
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <a href="index.html" class="nav-logo" style="color: var(--cream); white-space: nowrap;">🌱 Leave a <span>Seed</span></a>
         <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
       </div>
       <div class="footer-col">
@@ -1087,16 +1157,16 @@
       <div class="footer-col">
         <h4>Mission</h4>
         <ul>
-          <li><a href="mission.html">Our Story</a></li>
-          <li><a href="mission.html">Hunger Initiative</a></li>
+          <li><a href="index.html">Our Story</a></li>
+          <li><a href="hunger-initiative.html">Hunger Initiative</a></li>
           <li><a href="mission.html">Impact Reports</a></li>
           <li><a href="mission.html">Partnerships</a></li>
-          <li><a href="mission.html">Donate Seeds</a></li>
+          <li><a href="mailto:hello@leaveaseed.com">Donate Seeds</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <p>© 2026 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
       <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
     </div>
   </div>
@@ -1138,6 +1208,24 @@
     });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('navDrawer');
+  if (hamburger && drawer) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      drawer.classList.toggle('open');
+      document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+    });
+    drawer.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        drawer.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  }
 </script>
 </body>
 </html>

@@ -773,14 +773,17 @@
     }
   </style>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-15PQCNRKX1');
-  </script>
+  
+  
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-15PQCNRKX1');
+</script>
 </head>
 <body>
 
@@ -790,7 +793,7 @@
   <ul class="nav-links">
     <li><a href="marketplace.html">Marketplace</a></li>
     <li><a href="learn.html">Learn</a></li>
-    <li><a href="hunger-initiative.html">Mission</a></li>
+    <li><a href="mission.html" class="active">Mission</a></li>
     <li><a href="resources.html">Resources</a></li>
     <li><a href="index.html#join">Join Us</a></li>
     <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
@@ -949,7 +952,7 @@
         <div class="involve-card-body">
           <div class="involve-card-title">Donate Seeds or Supplies</div>
           <div class="involve-card-desc">Have extra seeds, tools, or growing supplies? Connect with us to get them into the hands of families who need them most in your community.</div>
-          <a href="mailto:hello@leaveaseed.com" class="involve-card-link">Contact Us →</a>
+          <a href="/cdn-cgi/l/email-protection#543c3138383b14383135223135273131307a373b39" class="involve-card-link">Contact Us →</a>
         </div>
       </div>
       <div class="involve-card reveal">
@@ -959,7 +962,7 @@
         <div class="involve-card-body">
           <div class="involve-card-title">Partner With Us</div>
           <div class="involve-card-desc">Food banks, schools, and community organizations — we'd love to work together. Bring a seed program to your community.</div>
-          <a href="mailto:hello@leaveaseed.com" class="involve-card-link">Become a Partner →</a>
+          <a href="/cdn-cgi/l/email-protection#f39b969f9f9cb39f969285969280969697dd909c9e" class="involve-card-link">Become a Partner →</a>
         </div>
       </div>
     </div>
@@ -1012,8 +1015,8 @@
         <ul>
           <li><a href="index.html">Our Story</a></li>
           <li><a href="hunger-initiative.html">Hunger Initiative</a></li>
-          <li><a href="index.html">Impact Reports</a></li>
-          <li><a href="index.html">Partnerships</a></li>
+          <li><a href="mission.html">Impact Reports</a></li>
+          <li><a href="mission.html">Partnerships</a></li>
           <li><a href="mailto:hello@leaveaseed.com">Donate Seeds</a></li>
         </ul>
       </div>
@@ -1025,7 +1028,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
@@ -1052,13 +1055,4 @@
     drawer.classList.toggle('open');
     document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
   });
-  drawer.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('open');
-      drawer.classList.remove('open');
-      document.body.style.overflow = '';
-    });
-  });
-</script>
-</body>
-</html>
+  drawer.querySel
