@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intermediate Grower — Leave a Seed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15PQCNRKX1');</script>
+<style>
+  :root {
+    --soil: #2C1A0E; --bark: #4A2C17; --moss: #3D5A2A; --sage: #6B8F5E;
+    --fern: #8FAF7A; --straw: #D4A843; --wheat: #E8C97A; --cream: #F5EDD8;
+    --parchment: #FAF3E6; --rust: #B85C2A; --terracotta: #C4703F; --sky: #7BA7BC;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Lato', sans-serif; background: var(--parchment); color: var(--soil); overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.4; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; align-items: center; justify-content: space-between; background: rgba(245,237,216,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(44,26,14,0.1); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo span { color: var(--straw); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--bark); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover { color: var(--moss); }
+  .nav-cta { background: var(--moss); color: var(--cream) !important; padding: 0.6rem 1.5rem; border-radius: 2rem; }
+  .nav-cta:hover { background: var(--bark) !important; }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; z-index: 1001; }
+  .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--bark); border-radius: 2px; transition: all 0.3s; transform-origin: center; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--parchment); z-index: 999; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer a { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; color: var(--soil); text-decoration: none; }
+  .nav-drawer a:hover { color: var(--moss); }
+  .nav-drawer .drawer-cta { background: var(--moss); color: var(--cream) !important; padding: 0.8rem 2.2rem; border-radius: 2rem; font-family: 'Lato', sans-serif !important; font-size: 1rem !important; font-weight: 700 !important; text-transform: uppercase; }
+
+  .page-hero { padding-top: 80px; min-height: 420px; background: linear-gradient(135deg, var(--bark) 0%, var(--terracotta) 100%); display: flex; align-items: center; position: relative; overflow: hidden; }
+  .page-hero::after { content: ''; position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=60'); background-size: cover; background-position: center; opacity: 0.1; mix-blend-mode: luminosity; }
+  .page-hero::before { content: ''; position: absolute; bottom: -80px; right: -80px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(212,168,67,0.2) 0%, transparent 70%); border-radius: 50%; }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; padding: 4rem 3rem; position: relative; z-index: 1; }
+  .page-eyebrow { font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--wheat); margin-bottom: 1rem; animation: fadeUp 0.8s ease both; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.1; margin-bottom: 1.2rem; animation: fadeUp 0.8s 0.15s ease both; }
+  .page-title em { font-style: italic; color: var(--wheat); }
+  .page-subtitle { font-size: 1.1rem; color: rgba(245,237,216,0.85); max-width: 560px; line-height: 1.75; font-weight: 300; animation: fadeUp 0.8s 0.3s ease both; }
+  .level-pills { display: flex; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; animation: fadeUp 0.8s 0.45s ease both; }
+  .level-pill { padding: 0.5rem 1.2rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+  .level-pill.active { background: var(--straw); color: var(--soil); }
+  .level-pill.inactive { border: 2px solid rgba(245,237,216,0.35); color: rgba(245,237,216,0.7); }
+  .level-pill.inactive:hover { border-color: var(--cream); color: var(--cream); }
+  .tagline-track span { margin: 0 2rem; opacity: 0.5; }
+
+  .content-wrap { max-width: 1300px; margin: 0 auto; padding: 5rem 3rem; }
+  .content-header { margin-bottom: 3.5rem; }
+  .section-eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--terracotta); margin-bottom: 0.8rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--soil); line-height: 1.2; }
+  .content-intro { font-size: 1.05rem; color: var(--bark); line-height: 1.8; font-weight: 300; max-width: 680px; margin-top: 1rem; }
+
+  .accordion { display: flex; flex-direction: column; gap: 1rem; }
+  .accordion-item { background: white; border-radius: 1.2rem; box-shadow: 0 4px 20px rgba(44,26,14,0.07); overflow: hidden; transition: box-shadow 0.3s, transform 0.3s; }
+  .accordion-item:hover, .accordion-item.open { box-shadow: 0 8px 35px rgba(44,26,14,0.13); transform: translateY(-2px); }
+  .accordion-header { width: 100%; background: none; border: none; cursor: pointer; padding: 1.6rem 2rem; display: flex; align-items: center; gap: 1.2rem; text-align: left; }
+  .lesson-num { min-width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(196,112,63,0.1); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--terracotta); font-size: 1rem; flex-shrink: 0; transition: all 0.3s; }
+  .accordion-item.open .lesson-num { background: var(--terracotta); color: white; }
+  .lesson-title-group { flex: 1; }
+  .lesson-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--soil); display: block; }
+  .lesson-subtitle { font-size: 0.82rem; color: var(--bark); opacity: 0.6; font-weight: 300; margin-top: 0.2rem; }
+  .accordion-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(44,26,14,0.06); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--bark); transition: transform 0.35s, background 0.3s; flex-shrink: 0; }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); background: rgba(196,112,63,0.12); color: var(--terracotta); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+  .accordion-body.open { max-height: 1800px; }
+  .accordion-content { padding: 1.5rem 2rem 2rem 5.8rem; border-top: 1px solid rgba(44,26,14,0.07); }
+  .accordion-content p { font-size: 0.95rem; line-height: 1.85; color: var(--bark); margin-bottom: 1rem; font-weight: 300; }
+  .accordion-content p:last-child { margin-bottom: 0; }
+  .accordion-content h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--soil); margin: 1.4rem 0 0.5rem; }
+  .tip-box { background: linear-gradient(135deg, rgba(196,112,63,0.06), rgba(212,168,67,0.08)); border-left: 3px solid var(--straw); padding: 1rem 1.2rem; border-radius: 0 0.8rem 0.8rem 0; margin: 1.2rem 0; font-size: 0.9rem; color: var(--bark); line-height: 1.65; }
+  .tip-box strong { color: var(--terracotta); }
+
+  .path-nav { background: var(--soil); padding: 4rem 3rem; }
+  .path-nav-inner { max-width: 1300px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+  .path-nav p { font-family: 'Caveat', cursive; font-size: 1.1rem; color: var(--sage); }
+  .path-nav h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--cream); margin-top: 0.3rem; }
+  .path-btn { background: var(--straw); color: var(--soil); padding: 0.85rem 2rem; border-radius: 3rem; text-decoration: none; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(212,168,67,0.3); }
+  .path-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,168,67,0.5); }
+  .path-back { color: rgba(245,237,216,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .path-back:hover { color: var(--wheat); }
+
+  footer { background: var(--soil); padding: 4rem 3rem 2rem; }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .footer-brand .nav-logo { color: var(--fern); margin-bottom: 1rem; display: block; font-size: 1.3rem; }
+  .footer-brand .nav-logo span { color: var(--straw); }
+  .footer-brand p { font-size: 0.85rem; color: rgba(245,237,216,0.5); line-height: 1.7; font-weight: 300; max-width: 260px; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; color: var(--cream); margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a { color: rgba(245,237,216,0.45); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+  .footer-col a:hover { color: var(--wheat); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-bottom p { font-size: 0.8rem; color: rgba(245,237,216,0.3); }
+  .footer-mission { font-family: 'Caveat', cursive; font-size: 1rem; color: var(--sage); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; } .nav-links { display: none; } .nav-hamburger { display: flex; }
+    .page-hero-inner { padding: 3rem 1.5rem; } .content-wrap { padding: 3rem 1.5rem; }
+    .accordion-content { padding: 1.2rem 1.5rem 1.5rem; } .footer-top { grid-template-columns: 1fr 1fr; } .path-nav { padding: 3rem 1.5rem; }
+  }
+  @media (max-width: 600px) { .footer-top { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+  <ul class="nav-links">
+    <li><a href="marketplace.html">Marketplace</a></li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="mission.html">Mission</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="index.html#join">Join Us</a></li>
+    <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="learn.html">Learn</a>
+  <a href="mission.html">Mission</a><a href="resources.html">Resources</a><a href="index.html#join">Join Us</a>
+  <a href="marketplace.html" class="drawer-cta">Get Started</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-eyebrow">✦ Intermediate Growing Path</p>
+    <h1 class="page-title">Deepen Your<br><em>Growing Skills.</em></h1>
+    <p class="page-subtitle">You have a harvest or two behind you. Now it's time to understand the "why" behind what works — and grow with more intention, variety, and confidence.</p>
+    <div class="level-pills">
+      <a href="beginner-grower.html" class="level-pill inactive">🌱 Beginner</a>
+      <a href="intermediate-grower.html" class="level-pill active">🪴 Intermediate</a>
+      <a href="advanced-grower.html" class="level-pill inactive">🌳 Advanced</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="content-wrap">
+  <div class="content-header reveal">
+    <p class="section-eyebrow">✦ Six Lessons</p>
+    <h2 class="section-title">Your Intermediate Lesson Plan</h2>
+    <p class="content-intro">These lessons build on the basics. Click any lesson to read it right here.</p>
+  </div>
+
+  <div class="accordion">
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">1</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Companion Planting</span>
+          <span class="lesson-subtitle">Which plants help each other — and which to keep apart</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Companion planting is the practice of growing certain plants near each other because they benefit one another — through pest deterrence, pollinator attraction, nutrient sharing, or improved flavor. It costs nothing and takes no extra space.</p>
+          <h4>Classic Combinations That Work</h4>
+          <p><strong>Tomatoes + Basil:</strong> Basil is said to repel aphids and whiteflies and may improve tomato flavor when grown close by. <strong>The Three Sisters (Corn, Beans, Squash):</strong> Corn provides a pole for beans to climb; beans fix nitrogen into the soil that feeds corn and squash; squash leaves shade the ground, suppressing weeds and holding moisture. <strong>Carrots + Onions:</strong> Onion scent deters carrot fly; carrot scent deters onion fly — they protect each other.</p>
+          <h4>Combinations to Avoid</h4>
+          <p><strong>Fennel</strong> is allelopathic — it releases chemicals that inhibit the growth of most vegetables. Keep it in its own spot or a container. <strong>Onions and beans</strong> inhibit each other's growth. <strong>Brassicas</strong> (broccoli, cabbage, kale) and <strong>tomatoes</strong> compete and can stunt each other — keep them separated.</p>
+          <div class="tip-box"><strong>Start simple:</strong> You don't need to redesign your whole garden. Try one or two companion pairs this season and observe the results. The knowledge compounds quickly.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">2</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Crop Rotation</span>
+          <span class="lesson-subtitle">Protecting your soil season after season</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Growing the same crop in the same spot year after year depletes specific nutrients and allows soil-borne diseases and pests to build up. Crop rotation is the solution — and it's simpler than it sounds.</p>
+          <h4>The Four Main Families to Rotate</h4>
+          <p><strong>Nightshades</strong> (tomatoes, peppers, eggplant, potatoes) are heavy feeders and disease-prone. <strong>Brassicas</strong> (broccoli, cabbage, kale, radishes) are susceptible to clubroot. <strong>Legumes</strong> (beans, peas) fix nitrogen and improve soil for the crop that follows. <strong>Root vegetables</strong> (carrots, beets, onions) are lighter feeders and a good follow to nightshades.</p>
+          <h4>A Simple Four-Year Rotation</h4>
+          <p>Move each family to a new bed or section each year, rotating in one direction. Year 1: Nightshades. Year 2: Brassicas. Year 3: Legumes. Year 4: Root vegetables. Then start again. Even two or three beds rotating helps significantly.</p>
+          <div class="tip-box"><strong>Keep a simple map:</strong> Sketch your beds each year and note what grew where. A photo on your phone works fine. Without records it's easy to accidentally repeat the same spot.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">3</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Building Better Soil</span>
+          <span class="lesson-subtitle">Compost, amendments, and the long game</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>At the intermediate level, you stop thinking about feeding your plants and start thinking about feeding your soil. Healthy soil biology feeds plants far more effectively than any fertilizer — and it gets better every year if you take care of it.</p>
+          <h4>Start a Compost Pile</h4>
+          <p>A basic compost system needs two things: <strong>greens</strong> (nitrogen-rich materials like food scraps, fresh grass clippings, and coffee grounds) and <strong>browns</strong> (carbon-rich materials like dry leaves, straw, and cardboard). Aim for roughly 3 parts browns to 1 part greens, keep it as moist as a wrung-out sponge, and turn it occasionally. In 2–6 months you'll have finished compost that looks and smells like rich dark earth.</p>
+          <h4>Organic Fertilizers vs. Synthetics</h4>
+          <p>Organic fertilizers (compost, worm castings, fish meal, kelp) release nutrients slowly and feed soil biology at the same time. Synthetic fertilizers deliver nutrients quickly but don't build long-term soil health and can harm beneficial microbes. For a food garden, organic inputs compound in value over years — synthetics don't.</p>
+          <div class="tip-box"><strong>The no-dig principle:</strong> Every time you till, you break up fungal networks and disrupt soil structure. Many experienced growers shift to minimal-till methods and see measurable improvements in soil health within a few seasons.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">4</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Extending Your Season</span>
+          <span class="lesson-subtitle">Row covers, cold frames, and succession planting</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Most gardeners stop at first frost and start again after last frost. With a few simple techniques, you can harvest weeks earlier in spring and keep picking well into fall — dramatically extending your productive season.</p>
+          <h4>Row Covers</h4>
+          <p>Lightweight spun fabric (called floating row cover or Reemay) laid over plants traps heat and protects from frost without blocking much light. It can provide 4–8°F of frost protection and also keeps out many flying insects. Drape it loosely over hoops or directly over plants and weight the edges. Remove it during the day if temperatures climb above 80°F.</p>
+          <h4>Cold Frames</h4>
+          <p>A cold frame is a low, bottomless box with a clear lid — often an old window. Set over a bed, it creates a mini-greenhouse environment that lets you grow cold-tolerant greens (kale, spinach, arugula, mâche) through much of winter in most climates.</p>
+          <h4>Succession Planting</h4>
+          <p>Instead of planting all your lettuce or radishes at once, sow a small batch every 2–3 weeks. This staggers the harvest so you have a continuous supply instead of a glut and then nothing. Works especially well for lettuce, beans, radishes, and cilantro.</p>
+          <div class="tip-box"><strong>Start with row cover:</strong> It's inexpensive, reusable for many seasons, and the single most versatile tool for season extension. A roll goes a long way.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">5</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Identifying & Managing Pests</span>
+          <span class="lesson-subtitle">Natural solutions that actually work</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Every garden has pests. The goal isn't a pest-free garden — it's a balanced one. Most insect visitors are harmless or beneficial. Learning to identify actual problems and respond proportionally saves you time, money, and unnecessary chemical use.</p>
+          <h4>Most Common Vegetable Pests</h4>
+          <p><strong>Aphids:</strong> Tiny soft-bodied clusters on new growth. A strong spray of water knocks them off; ladybugs and lacewings eat them. <strong>Squash bugs:</strong> Look for bronze egg clusters on undersides of squash leaves and remove by hand. <strong>Cabbage worms:</strong> Green caterpillars on brassicas — pick by hand or apply Bt (Bacillus thuringiensis), a naturally occurring bacteria harmless to everything except caterpillars. <strong>Slugs:</strong> Active at night and in wet weather; diatomaceous earth, copper tape, or beer traps all help.</p>
+          <h4>Neem Oil — The Organic All-Rounder</h4>
+          <p>Neem oil (diluted and sprayed on leaves in the evening) disrupts the life cycle of many soft-bodied insects and some fungal diseases. It's safe for beneficial insects once dry and breaks down quickly in the environment. Avoid spraying when bees are active.</p>
+          <div class="tip-box"><strong>Best pest control:</strong> Walk your garden every couple of days. Catching a problem early — a handful of eggs, a few aphids — is far easier than dealing with a full infestation two weeks later.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">6</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Saving Seeds</span>
+          <span class="lesson-subtitle">How to preserve your best plants for next season</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Saving seeds is one of the most meaningful practices a gardener can adopt. Over time, seeds saved from your best plants become adapted to your specific soil and climate — and you become less dependent on buying seeds every year.</p>
+          <h4>You Must Start with Open-Pollinated or Heirloom Seeds</h4>
+          <p>Hybrid (F1) seeds don't breed true — the next generation won't reliably look or perform like the parent plant. Open-pollinated and heirloom varieties do breed true and are the foundation of seed saving. Check your seed packets or look for "OP" or "heirloom" on the label.</p>
+          <h4>Easiest Seeds to Save</h4>
+          <p><strong>Beans and peas</strong> self-pollinate and are the easiest starting point — let pods dry completely on the vine, shell and store. <strong>Tomatoes</strong> require a simple fermentation to remove the gel coating: ferment seeds in water 2–3 days, rinse, and dry flat. <strong>Peppers:</strong> Let fruit fully ripen (turn red or yellow), scoop seeds, rinse, and dry. <strong>Squash:</strong> Scoop from fully mature fruit, rinse, and dry flat.</p>
+          <h4>Storing Seeds</h4>
+          <p>Store dried seeds in labeled paper envelopes inside an airtight jar in a cool, dark, dry place. Most vegetable seeds remain viable for 3–5 years with proper storage.</p>
+          <div class="tip-box"><strong>Label everything:</strong> Variety name, date saved, and notes on why you chose that plant. These notes become invaluable after a few seasons of intentional selection.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="path-nav">
+  <div class="path-nav-inner">
+    <div>
+      <a href="beginner-grower.html" class="path-back">← Back to Beginner</a>
+      <h3>Ready for the next level?</h3>
+    </div>
+    <a href="advanced-grower.html" class="path-btn">Advanced Path →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
+      </div>
+      <div class="footer-col"><h4>Marketplace</h4><ul><li><a href="marketplace.html">Browse All Seeds</a></li><li><a href="marketplace.html">Heirloom Seeds</a></li><li><a href="marketplace.html">Organic Seeds</a></li><li><a href="marketplace.html">Regional Picks</a></li></ul></div>
+      <div class="footer-col"><h4>Learn</h4><ul><li><a href="learn.html">All Lessons</a></li><li><a href="beginner-grower.html">Beginner Path</a></li><li><a href="intermediate-grower.html">Intermediate Path</a></li><li><a href="advanced-grower.html">Advanced Path</a></li></ul></div>
+      <div class="footer-col"><h4>Mission</h4><ul><li><a href="index.html">Our Story</a></li><li><a href="mission.html">Impact Reports</a></li><li><a href="mission.html">Partnerships</a></li><li><a href="index.html#join">Join Us</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggle(btn) {
+    const item = btn.closest('.accordion-item');
+    const body = item.querySelector('.accordion-body');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.accordion-item').forEach(i => { i.classList.remove('open'); i.querySelector('.accordion-body').classList.remove('open'); });
+    if (!isOpen) { item.classList.add('open'); body.classList.add('open'); }
+  }
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => { entries.forEach((entry, i) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 80); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('navDrawer');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); drawer.classList.toggle('open'); document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : ''; });
+  drawer.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { hamburger.classList.remove('open'); drawer.classList.remove('open'); document.body.style.overflow = ''; }); });
+</script>
+</body>
+</html>

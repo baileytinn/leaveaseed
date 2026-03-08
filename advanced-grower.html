@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Grower — Leave a Seed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15PQCNRKX1"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15PQCNRKX1');</script>
+<style>
+  :root {
+    --soil: #2C1A0E; --bark: #4A2C17; --moss: #3D5A2A; --sage: #6B8F5E;
+    --fern: #8FAF7A; --straw: #D4A843; --wheat: #E8C97A; --cream: #F5EDD8;
+    --parchment: #FAF3E6; --rust: #B85C2A; --terracotta: #C4703F; --sky: #7BA7BC;
+    --deep: #1e2d15;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Lato', sans-serif; background: var(--parchment); color: var(--soil); overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.4; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; align-items: center; justify-content: space-between; background: rgba(245,237,216,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(44,26,14,0.1); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--moss); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo span { color: var(--straw); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--bark); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover { color: var(--moss); }
+  .nav-cta { background: var(--moss); color: var(--cream) !important; padding: 0.6rem 1.5rem; border-radius: 2rem; }
+  .nav-cta:hover { background: var(--bark) !important; }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; z-index: 1001; }
+  .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--bark); border-radius: 2px; transition: all 0.3s; transform-origin: center; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--parchment); z-index: 999; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer a { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700; color: var(--soil); text-decoration: none; }
+  .nav-drawer a:hover { color: var(--moss); }
+  .nav-drawer .drawer-cta { background: var(--moss); color: var(--cream) !important; padding: 0.8rem 2.2rem; border-radius: 2rem; font-family: 'Lato', sans-serif !important; font-size: 1rem !important; font-weight: 700 !important; text-transform: uppercase; }
+
+  .page-hero { padding-top: 80px; min-height: 420px; background: linear-gradient(135deg, var(--deep) 0%, var(--soil) 100%); display: flex; align-items: center; position: relative; overflow: hidden; }
+  .page-hero::after { content: ''; position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200&q=60'); background-size: cover; background-position: center; opacity: 0.08; mix-blend-mode: luminosity; }
+  .page-hero::before { content: ''; position: absolute; bottom: -80px; right: -80px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(212,168,67,0.15) 0%, transparent 70%); border-radius: 50%; }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; padding: 4rem 3rem; position: relative; z-index: 1; }
+  .page-eyebrow { font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--wheat); margin-bottom: 1rem; animation: fadeUp 0.8s ease both; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.1; margin-bottom: 1.2rem; animation: fadeUp 0.8s 0.15s ease both; }
+  .page-title em { font-style: italic; color: var(--wheat); }
+  .page-subtitle { font-size: 1.1rem; color: rgba(245,237,216,0.85); max-width: 560px; line-height: 1.75; font-weight: 300; animation: fadeUp 0.8s 0.3s ease both; }
+  .level-pills { display: flex; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; animation: fadeUp 0.8s 0.45s ease both; }
+  .level-pill { padding: 0.5rem 1.2rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+  .level-pill.active { background: var(--straw); color: var(--soil); }
+  .level-pill.inactive { border: 2px solid rgba(245,237,216,0.35); color: rgba(245,237,216,0.7); }
+  .level-pill.inactive:hover { border-color: var(--cream); color: var(--cream); }
+  .tagline-track span { margin: 0 2rem; opacity: 0.5; }
+
+  .content-wrap { max-width: 1300px; margin: 0 auto; padding: 5rem 3rem; }
+  .content-header { margin-bottom: 3.5rem; }
+  .section-eyebrow { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--terracotta); margin-bottom: 0.8rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--soil); line-height: 1.2; }
+  .content-intro { font-size: 1.05rem; color: var(--bark); line-height: 1.8; font-weight: 300; max-width: 680px; margin-top: 1rem; }
+
+  .accordion { display: flex; flex-direction: column; gap: 1rem; }
+  .accordion-item { background: white; border-radius: 1.2rem; box-shadow: 0 4px 20px rgba(44,26,14,0.07); overflow: hidden; transition: box-shadow 0.3s, transform 0.3s; }
+  .accordion-item:hover, .accordion-item.open { box-shadow: 0 8px 35px rgba(44,26,14,0.13); transform: translateY(-2px); }
+  .accordion-header { width: 100%; background: none; border: none; cursor: pointer; padding: 1.6rem 2rem; display: flex; align-items: center; gap: 1.2rem; text-align: left; }
+  .lesson-num { min-width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(30,45,21,0.1); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--deep); font-size: 1rem; flex-shrink: 0; transition: all 0.3s; }
+  .accordion-item.open .lesson-num { background: var(--deep); color: white; }
+  .lesson-title-group { flex: 1; }
+  .lesson-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--soil); display: block; }
+  .lesson-subtitle { font-size: 0.82rem; color: var(--bark); opacity: 0.6; font-weight: 300; margin-top: 0.2rem; }
+  .accordion-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(44,26,14,0.06); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--bark); transition: transform 0.35s, background 0.3s; flex-shrink: 0; }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); background: rgba(30,45,21,0.1); color: var(--deep); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+  .accordion-body.open { max-height: 1800px; }
+  .accordion-content { padding: 1.5rem 2rem 2rem 5.8rem; border-top: 1px solid rgba(44,26,14,0.07); }
+  .accordion-content p { font-size: 0.95rem; line-height: 1.85; color: var(--bark); margin-bottom: 1rem; font-weight: 300; }
+  .accordion-content p:last-child { margin-bottom: 0; }
+  .accordion-content h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--soil); margin: 1.4rem 0 0.5rem; }
+  .tip-box { background: linear-gradient(135deg, rgba(30,45,21,0.06), rgba(212,168,67,0.07)); border-left: 3px solid var(--straw); padding: 1rem 1.2rem; border-radius: 0 0.8rem 0.8rem 0; margin: 1.2rem 0; font-size: 0.9rem; color: var(--bark); line-height: 1.65; }
+  .tip-box strong { color: var(--deep); }
+
+  .path-nav { background: var(--soil); padding: 4rem 3rem; }
+  .path-nav-inner { max-width: 1300px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+  .path-nav p { font-family: 'Caveat', cursive; font-size: 1.1rem; color: var(--sage); }
+  .path-nav h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--cream); margin-top: 0.3rem; }
+  .path-btn { background: var(--straw); color: var(--soil); padding: 0.85rem 2rem; border-radius: 3rem; text-decoration: none; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(212,168,67,0.3); }
+  .path-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,168,67,0.5); }
+  .path-back { color: rgba(245,237,216,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .path-back:hover { color: var(--wheat); }
+
+  footer { background: var(--soil); padding: 4rem 3rem 2rem; }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .footer-brand .nav-logo { color: var(--fern); margin-bottom: 1rem; display: block; font-size: 1.3rem; }
+  .footer-brand .nav-logo span { color: var(--straw); }
+  .footer-brand p { font-size: 0.85rem; color: rgba(245,237,216,0.5); line-height: 1.7; font-weight: 300; max-width: 260px; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; color: var(--cream); margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a { color: rgba(245,237,216,0.45); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+  .footer-col a:hover { color: var(--wheat); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-bottom p { font-size: 0.8rem; color: rgba(245,237,216,0.3); }
+  .footer-mission { font-family: 'Caveat', cursive; font-size: 1rem; color: var(--sage); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; } .nav-links { display: none; } .nav-hamburger { display: flex; }
+    .page-hero-inner { padding: 3rem 1.5rem; } .content-wrap { padding: 3rem 1.5rem; }
+    .accordion-content { padding: 1.2rem 1.5rem 1.5rem; } .footer-top { grid-template-columns: 1fr 1fr; } .path-nav { padding: 3rem 1.5rem; }
+  }
+  @media (max-width: 600px) { .footer-top { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+  <ul class="nav-links">
+    <li><a href="marketplace.html">Marketplace</a></li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="mission.html">Mission</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="index.html#join">Join Us</a></li>
+    <li><a href="marketplace.html" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="learn.html">Learn</a>
+  <a href="mission.html">Mission</a><a href="resources.html">Resources</a><a href="index.html#join">Join Us</a>
+  <a href="marketplace.html" class="drawer-cta">Get Started</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-eyebrow">✦ Advanced Growing Path</p>
+    <h1 class="page-title">Master the<br><em>Art of Growing.</em></h1>
+    <p class="page-subtitle">For growers ready to go deeper — into soil science, seed breeding, perennial systems, and the knowledge that builds a truly resilient, abundant garden for decades.</p>
+    <div class="level-pills">
+      <a href="beginner-grower.html" class="level-pill inactive">🌱 Beginner</a>
+      <a href="intermediate-grower.html" class="level-pill inactive">🪴 Intermediate</a>
+      <a href="advanced-grower.html" class="level-pill active">🌳 Advanced</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="content-wrap">
+  <div class="content-header reveal">
+    <p class="section-eyebrow">✦ Six Lessons</p>
+    <h2 class="section-title">Your Advanced Lesson Plan</h2>
+    <p class="content-intro">These lessons are for serious growers ready to think like stewards of the land. Click any lesson to dig in.</p>
+  </div>
+
+  <div class="accordion">
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">1</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Soil Biology & the Soil Food Web</span>
+          <span class="lesson-subtitle">Understanding the invisible world beneath your feet</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>A teaspoon of healthy garden soil contains billions of microorganisms — bacteria, fungi, protozoa, nematodes — that form a complex community called the <strong>soil food web</strong>. These organisms cycle nutrients, break down organic matter, suppress disease, and form direct partnerships with plant roots. Advanced growers learn to feed and protect this system rather than bypass it.</p>
+          <h4>Mycorrhizal Fungi</h4>
+          <p>Mycorrhizal fungi form symbiotic relationships with the roots of most vegetable plants. They extend the plant's root system by many times, dramatically increasing access to water and nutrients — especially phosphorus. In exchange, the plant feeds the fungi sugars. Tilling destroys these networks. Avoiding synthetic phosphorus fertilizers (which reduce the plant's need for the fungi) and minimizing soil disturbance are the two most important things you can do to support them.</p>
+          <h4>Why No-Till Matters</h4>
+          <p>Every time you till, you sever fungal networks, expose carbon to oxidation, disrupt soil structure, and bring weed seeds to the surface. No-dig and minimal-till methods — adding compost and mulch on top rather than working it in — build richer, more biologically active soil over time. The first season may look the same. By year three, the difference is dramatic.</p>
+          <div class="tip-box"><strong>Practical first step:</strong> Stop tilling your best beds. Add 1–2 inches of compost on top at the start and end of each season and let the worms incorporate it. Observe what happens to your soil texture and earthworm population over two to three years.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">2</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Reading & Amending a Soil Test</span>
+          <span class="lesson-subtitle">Using data to grow with precision</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>A soil test tells you exactly what your soil has and lacks: pH, organic matter percentage, and levels of macronutrients and micronutrients. Advanced growers use this information to make targeted, evidence-based amendments rather than guessing.</p>
+          <h4>How to Get a Soil Test</h4>
+          <p>Your local cooperative extension service offers soil testing for $15–30 — usually the most accurate and locally interpreted option. Collect samples from several spots in the bed at 6 inches deep, mix them together, and submit about a cup of the blend. Results typically come back in 1–2 weeks with specific amendment recommendations.</p>
+          <h4>Common Amendments and What They Do</h4>
+          <p><strong>Lime (calcium carbonate)</strong> raises pH in acidic soils and adds calcium. <strong>Sulfur</strong> lowers pH in alkaline soils. <strong>Rock phosphate</strong> is a slow-release phosphorus source. <strong>Greensand</strong> adds potassium and micronutrients. <strong>Gypsum</strong> adds calcium and sulfur without changing pH — useful for breaking up compacted clay. <strong>Worm castings</strong> improve soil biology and add a balanced, gentle nutrient profile.</p>
+          <div class="tip-box"><strong>Test every 2–3 years:</strong> Soil chemistry changes slowly. Once you've corrected major deficiencies, re-test periodically rather than amending blindly every year. Over-amending — especially with phosphorus — can be as harmful as under-amending.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">3</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Open-Pollinated Seed Selection</span>
+          <span class="lesson-subtitle">Breeding your own locally-adapted varieties</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Saving seeds is the first step. <strong>Intentional selection</strong> is the next level — saving seed only from plants that perform best in your specific conditions. Over years, this creates strains adapted to your soil, climate, and tastes that outperform anything from a catalog for your particular place.</p>
+          <h4>Selection Criteria</h4>
+          <p>Decide what you're selecting for before the season starts: earliness, disease resistance, flavor, productivity, heat or drought tolerance. Mark your best specimens early (a stake or tape works fine) so you don't accidentally eat your seed plants. Choose from multiple plants — never just one — to maintain genetic diversity.</p>
+          <h4>Isolation Distances</h4>
+          <p>Cross-pollinating crops (squash, corn, brassicas, beets) need distance or physical barriers to prevent crossing with neighboring varieties. Tomatoes and beans are largely self-pollinating and require minimal isolation. Look up the specific isolation requirements for each crop — they vary widely.</p>
+          <h4>Population Size Matters</h4>
+          <p>Saving seed from too few plants causes inbreeding depression over generations. For most vegetables, save from a minimum of 6–12 plants to maintain genetic diversity. For cross-pollinators like corn, you need at least 50–100 plants for a genetically healthy population.</p>
+          <div class="tip-box"><strong>Keep records:</strong> Note variety, year saved, what you selected for, and observations about the plant's performance. These notes become invaluable after just a few seasons of intentional selection.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">4</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Perennial Food Systems</span>
+          <span class="lesson-subtitle">Building a garden that feeds you for decades</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Annual vegetables are the foundation of most gardens. But perennial food plants — fruit trees, berry bushes, asparagus, artichokes, herbs — dramatically reduce labor over time while building ecological complexity and resilience. A well-established perennial system produces food with very little yearly input.</p>
+          <h4>Food Forest Design Principles</h4>
+          <p>A food forest layers plants vertically to mimic a natural woodland edge: <strong>tall canopy</strong> (fruit and nut trees), <strong>sub-canopy</strong> (dwarf trees, elderberry), <strong>shrub layer</strong> (currants, gooseberries, raspberries), <strong>herbaceous layer</strong> (comfrey, herbs, perennial vegetables), <strong>ground cover</strong> (strawberries, thyme), <strong>root layer</strong> (garlic, Jerusalem artichoke), and <strong>vine layer</strong> (grapes, kiwi). Each layer fills a niche, reduces competition, and creates habitat for beneficial insects.</p>
+          <h4>Highest-Return Perennial Crops</h4>
+          <p><strong>Asparagus</strong> produces for 20+ years once established (harvest begins year 3). <strong>Raspberries and blackberries</strong> are prolific and nearly self-sufficient after the first year. <strong>Comfrey</strong> is a dynamic accumulator whose deep roots mine minerals and whose leaves make excellent mulch. <strong>Fruit trees</strong> take 3–7 years to reach full production but then give for generations.</p>
+          <div class="tip-box"><strong>Start with one element:</strong> Even a single asparagus bed or a row of raspberries begins building your perennial system. You don't need to design a complete food forest on day one.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">5</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Water Harvesting & Irrigation Design</span>
+          <span class="lesson-subtitle">Building resilience into your water supply</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Water is the variable most likely to limit or destroy a garden. Advanced growers design their property to capture, slow, and infiltrate rainfall rather than letting it run off — reducing dependence on outside water sources and building drought resilience from the ground up.</p>
+          <h4>Passive Water Harvesting</h4>
+          <p><strong>Swales on contour</strong> are level trenches dug across a slope that slow water runoff and allow it to sink into the ground rather than erode downhill. The soil downslope of a swale stays noticeably moister through dry periods. <strong>Berms and basins</strong> around trees and shrubs capture runoff at the root zone. Even small earthworks at the household scale can significantly reduce irrigation needs.</p>
+          <h4>Rain Barrels and Cisterns</h4>
+          <p>A single 1,000-square-foot roof sheds roughly 600 gallons of water per inch of rain. Rain barrels (55–100 gallons) are simple and low-cost. Larger cisterns (500–2,500 gallons) store enough to meaningfully supplement irrigation through dry periods. Many municipalities offer rebates on rain barrels — worth checking locally.</p>
+          <h4>Drip Irrigation</h4>
+          <p>Drip systems deliver water directly to root zones at a slow rate, dramatically reducing evaporation and foliar disease compared to overhead watering. A basic drip system can be set up for under $50 and saves significant water and time over a season. Pair it with a simple timer and it largely takes care of itself.</p>
+          <div class="tip-box"><strong>Observe before you build:</strong> After a heavy rain, walk your property and watch where water flows, pools, and disappears. Those observations are more valuable than any book diagram for understanding where water interventions will have the most impact.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <button class="accordion-header" onclick="toggle(this)">
+        <div class="lesson-num">6</div>
+        <div class="lesson-title-group">
+          <span class="lesson-title">Fermentation & Food Preservation</span>
+          <span class="lesson-subtitle">Closing the loop from seed to stored abundance</span>
+        </div>
+        <div class="accordion-icon">+</div>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Growing food is only half the equation. Knowing how to preserve what you grow transforms a seasonal harvest into year-round food security. Each method has its strengths — the goal is building a toolkit that matches your crops, storage space, and family's eating habits.</p>
+          <h4>Lacto-Fermentation</h4>
+          <p>Lacto-fermentation uses naturally occurring bacteria to preserve vegetables in a salt brine. No heat or canning equipment required. The result is living food rich in probiotics. Sauerkraut, kimchi, fermented pickles, and fermented salsa are all made this way. The basic ratio is 2% salt by weight of vegetables — pack tightly in a jar, submerge under brine, and leave at room temperature for 3–7 days.</p>
+          <h4>Water Bath & Pressure Canning</h4>
+          <p>High-acid foods (tomatoes, pickles, jams, fruit) can be preserved with water bath canning. Low-acid foods (most vegetables, beans, meat) require a pressure canner to reach temperatures that eliminate botulism risk. Follow tested USDA recipes exactly — canning is the one preservation method where improvising on timing or ratios carries real safety risk.</p>
+          <h4>Dehydrating and Root Cellaring</h4>
+          <p>A food dehydrator removes moisture, concentrating flavor and extending shelf life dramatically. Tomatoes, herbs, peppers, and beans are excellent candidates. Root cellaring — storing crops like potatoes, carrots, beets, and winter squash in a cool, dark, humid space — requires no energy and preserves flavor beautifully for months.</p>
+          <div class="tip-box"><strong>Start with fermentation:</strong> It requires no special equipment, no heat, and teaches you a lot about food chemistry. A jar of sauerkraut is a perfect first project — simple, delicious, and practically foolproof.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="path-nav">
+  <div class="path-nav-inner">
+    <div>
+      <a href="intermediate-grower.html" class="path-back">← Back to Intermediate</a>
+      <h3>Explore the full learning library.</h3>
+    </div>
+    <a href="learn.html" class="path-btn">All Lessons →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">🌱 Leave a <span>Seed</span></a>
+        <p>America's trusted seed marketplace, food growing education platform, and hunger-ending initiative — all in one place.</p>
+      </div>
+      <div class="footer-col"><h4>Marketplace</h4><ul><li><a href="marketplace.html">Browse All Seeds</a></li><li><a href="marketplace.html">Heirloom Seeds</a></li><li><a href="marketplace.html">Organic Seeds</a></li><li><a href="marketplace.html">Regional Picks</a></li></ul></div>
+      <div class="footer-col"><h4>Learn</h4><ul><li><a href="learn.html">All Lessons</a></li><li><a href="beginner-grower.html">Beginner Path</a></li><li><a href="intermediate-grower.html">Intermediate Path</a></li><li><a href="advanced-grower.html">Advanced Path</a></li></ul></div>
+      <div class="footer-col"><h4>Mission</h4><ul><li><a href="index.html">Our Story</a></li><li><a href="mission.html">Impact Reports</a></li><li><a href="mission.html">Partnerships</a></li><li><a href="index.html#join">Join Us</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Leave a Seed Inc. All rights reserved. · Based in the United States</p>
+      <span class="footer-mission">Grow Food. Share Knowledge. End Hunger. 🌱</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggle(btn) {
+    const item = btn.closest('.accordion-item');
+    const body = item.querySelector('.accordion-body');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.accordion-item').forEach(i => { i.classList.remove('open'); i.querySelector('.accordion-body').classList.remove('open'); });
+    if (!isOpen) { item.classList.add('open'); body.classList.add('open'); }
+  }
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => { entries.forEach((entry, i) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 80); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('navDrawer');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); drawer.classList.toggle('open'); document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : ''; });
+  drawer.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { hamburger.classList.remove('open'); drawer.classList.remove('open'); document.body.style.overflow = ''; }); });
+</script>
+</body>
+</html>
