@@ -80,13 +80,18 @@
 
   .section-divider { border: none; border-top: 1px solid rgba(44,26,14,0.07); margin: 2rem 0; }
 
-  /* PAYMENT COMING SOON */
+  /* PAYMENT SECTION */
   .payment-soon { background: linear-gradient(135deg, rgba(61,90,42,0.06), rgba(212,168,67,0.08)); border: 1.5px dashed rgba(61,90,42,0.25); border-radius: 1.2rem; padding: 2.5rem; text-align: center; }
   .payment-soon-icon { font-size: 2.5rem; margin-bottom: 1rem; }
   .payment-soon h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--soil); margin-bottom: 0.6rem; }
-  .payment-soon p { font-size: 0.88rem; color: var(--bark); font-weight: 300; line-height: 1.7; max-width: 320px; margin: 0 auto; }
+  .payment-soon p { font-size: 0.88rem; color: var(--bark); font-weight: 300; line-height: 1.7; max-width: 340px; margin: 0 auto; }
   .payment-methods { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.4rem; flex-wrap: wrap; }
   .payment-badge { background: white; border: 1.5px solid rgba(44,26,14,0.1); border-radius: 0.5rem; padding: 0.4rem 0.9rem; font-size: 0.75rem; font-weight: 700; color: rgba(44,26,14,0.45); }
+  .paypal-section { margin-top: 2rem; padding-top: 1.8rem; border-top: 1px solid rgba(44,26,14,0.08); }
+  .paypal-section h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--soil); margin-bottom: 0.5rem; }
+  .paypal-section p { font-size: 0.82rem; color: var(--bark); font-weight: 300; line-height: 1.6; margin-bottom: 1.2rem; max-width: 300px; margin-left: auto; margin-right: auto; }
+  .paypal-btn { display: inline-flex; align-items: center; gap: 0.6rem; background: #0070ba; color: white; font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2rem; border-radius: 3rem; text-decoration: none; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(0,112,186,0.3); letter-spacing: 0.02em; }
+  .paypal-btn:hover { background: #003087; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,112,186,0.4); }
 
   /* ORDER SUMMARY */
   .order-summary { background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 4px 25px rgba(44,26,14,0.07); position: sticky; top: 100px; }
@@ -347,15 +352,26 @@
         Payment
       </h2>
       <div class="payment-soon">
-        <div class="payment-soon-icon">🔒</div>
-        <h3>Secure Payment Coming Soon</h3>
-        <p>We're setting up our payment system. Leave your details above and we'll reach out to complete your order personally.</p>
+        <div class="payment-soon-icon">🌱</div>
+        <h3>We're in Our Growing Stages</h3>
+        <p>Leave a Seed is a brand-new, independent initiative — and we're building something meaningful from the ground up. Full online checkout is on its way. For now, submit your details above and we'll personally follow up to complete your order.</p>
         <div class="payment-methods">
           <span class="payment-badge">Visa</span>
           <span class="payment-badge">Mastercard</span>
           <span class="payment-badge">Amex</span>
           <span class="payment-badge">PayPal</span>
           <span class="payment-badge">Apple Pay</span>
+        </div>
+
+        <div class="paypal-section">
+          <h4>💛 Support Our Mission</h4>
+          <p>Every dollar goes toward building this platform, expanding our seed library, and funding our hunger-reduction goals. If you'd like to give while we grow, we'd be so grateful.</p>
+          <a href="https://www.paypal.me/leaveaseed" target="_blank" rel="noopener" class="paypal-btn">
+            <!-- PayPal logo SVG -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.771.771 0 0 1 .761-.641h6.964c2.34 0 4.01.549 4.956 1.631.91 1.042 1.148 2.45.705 4.185-.017.065-.033.13-.051.198C16.647 12.38 14.4 13.92 11.126 13.92H9.103a.77.77 0 0 0-.761.641l-.78 4.921-.486 1.855z"/><path d="M19.238 7.386c-.017.1-.035.202-.055.306-.98 5.023-4.332 6.757-8.613 6.757H8.547a.947.947 0 0 0-.935.8l-1.253 7.944a.498.498 0 0 0 .493.578h3.46a.66.66 0 0 0 .652-.557l.027-.14.518-3.284.033-.18a.66.66 0 0 1 .652-.558h.41c2.659 0 4.74-.978 5.346-3.808.253-1.236.122-2.268-.52-2.994a2.48 2.48 0 0 0-.633-.464z"/></svg>
+            Donate via PayPal
+          </a>
+          <p style="margin-top:0.8rem;font-size:0.75rem;color:rgba(44,26,14,0.4);margin-bottom:0">Secure donation powered by PayPal</p>
         </div>
       </div>
 
@@ -431,7 +447,7 @@
           <li><a href="hunger-initiative.html">Hunger Initiative</a></li>
           <li><a href="mission.html">Impact Reports</a></li>
           <li><a href="mission.html">Partnerships</a></li>
-          <li><a href="mailto:hello@leaveaseed.com">Donate Seeds</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#b8d0ddd4d4d7f8d4ddd9ceddd9cbdddddc96dbd7d5">Donate Seeds</a></li>
         </ul>
       </div>
     </div>
@@ -442,7 +458,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Read cart from sessionStorage if app.html stored it, otherwise show empty state
 // For now we show the empty state — when cart persistence is added this will populate
 function loadCart() {
@@ -525,12 +541,4 @@ loadCart();
     });
     drawer.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        drawer.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
-  }
-</script>
-</body>
-</html>
+        hamburger.classLi
